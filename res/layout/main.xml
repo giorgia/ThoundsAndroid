@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_gravity="center_horizontal"
+	android:gravity="center_vertical|center_horizontal"
+	android:layout_width="wrap_content" android:layout_height="fill_parent"
+	android:background="@color/dark_grey">
+
+
+
+	<Button android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="@string/play"
+		android:id="@+id/btnPlay" android:minWidth="100dip"
+		android:layout_y="170dip" android:layout_x="80dip"></Button>
+	<Button android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:id="@+id/btnRec" 
+		android:layout_x="30dip" android:layout_y="350dip"
+		android:minWidth="200dip" android:minHeight="60dip" android:background="@drawable/btn_record"></Button>
+	
+
+
+
+
+
+
+	<Button android:layout_height="wrap_content" android:layout_width="wrap_content" 
+		android:id="@+id/btnPause1" android:text="Pause" android:layout_y="60dip" android:layout_x="230dip"></Button>
+	<Button android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:id="@+id/btnPause2"
+		android:text="Pause" android:layout_y="110dip" android:layout_x="230dip"></Button>
+
+
+	<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" 
+		android:id="@+id/TextView01" android:layout_x="30dip" android:layout_y="135dip"></TextView>
+
+	<TextView android:layout_y="213dip" android:layout_height="wrap_content" 
+		android:layout_width="wrap_content" android:id="@+id/TextView02" android:layout_x="30dip"></TextView>
+
+<AbsoluteLayout android:layout_height="wrap_content" 
+	android:id="@+id/AbsoluteLayout02" 
+	android:layout_width="wrap_content" 
+android:layout_x="0dip" 
+android:layout_y="0dip" 
+android:background="@color/white_smoke" 
+android:minWidth="350dip" 
+android:minHeight="50dip">
+<ImageView android:id="@+id/ImageView01" android:layout_height="wrap_content" android:layout_width="wrap_content" android:background="@drawable/thounds_black" android:layout_x="100dip" android:layout_y="5dip"></ImageView></AbsoluteLayout>
+
+
+
+
+
+
+	<ProgressBar android:id="@+id/ProgressBar01"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		style="?android:attr/progressBarStyleHorizontal" android:minWidth="200dip"
+		android:layout_x="30dip" android:layout_y="70dip"></ProgressBar>
+	<ProgressBar android:layout_height="wrap_content"
+		android:layout_width="wrap_content" style="?android:attr/progressBarStyleHorizontal"
+		android:minWidth="200dip" android:layout_x="30dip" android:id="@+id/ProgressBar02" android:layout_y="120dip"></ProgressBar>
+<ProgressBar android:id="@+id/ProgressBar03" android:layout_width="wrap_content" 
+style="?android:attr/progressBarStyleHorizontal" android:layout_height="wrap_content" android:minHeight="30dip" android:minWidth="250dip" android:layout_x="30dip" android:layout_y="270dip" android:progressDrawable="@drawable/progress_bar_horizontal"></ProgressBar>
+</AbsoluteLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+   android:orientation="vertical"
+    android:layout_gravity="center_horizontal"
+    android:gravity="center_vertical|center_horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/celeste">
+   
+    
+     
+    
+   
+    <EditText android:layout_height="wrap_content"
+              android:layout_centerHorizontal="true"
+              android:layout_width="200px" 
+              android:layout_x="50px" 
+              android:text="email" 
+			  android:textColor="@color/dark_grey" 
+			  android:layout_y="50px" android:id="@+id/txt_username" android:autoLink="email" android:maxLines="1" android:clickable="true"/>
+             
+             
+    
+   
+    <EditText android:layout_height="wrap_content"
+              android:layout_centerHorizontal="true"
+              android:cursorVisible="true" android:layout_width="200px" android:layout_x="50px" android:layout_y="100px" android:text="Password" android:textColor="@color/dark_grey" android:id="@+id/txt_password" android:password="true" android:maxLines="1"/>
+   
+     <Button android:text="Login!"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerHorizontal="true"
+          android:layout_x="190dip" android:layout_y="150dip" android:id="@+id/login_button"/>
+          
+
+</AbsoluteLayout> 
