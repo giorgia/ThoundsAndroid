@@ -61,6 +61,9 @@ android:minHeight="50dip">
 	<ProgressBar android:layout_height="wrap_content"
 		android:layout_width="wrap_content" style="?android:attr/progressBarStyleHorizontal"
 		android:minWidth="200dip" android:layout_x="30dip" android:id="@+id/ProgressBar02" android:layout_y="120dip"></ProgressBar>
+		
 <ProgressBar android:id="@+id/ProgressBar03" android:layout_width="wrap_content" 
-style="?android:attr/progressBarStyleHorizontal" android:layout_height="wrap_content" android:minHeight="30dip" android:minWidth="250dip" android:layout_x="30dip" android:layout_y="270dip" android:progressDrawable="@drawable/progress_bar_horizontal"></ProgressBar>
+style="?android:attr/progressBarStyleHorizontal" android:layout_height="wrap_content" 
+android:minHeight="30dip" android:minWidth="250dip" android:layout_x="30dip" android:layout_y="270dip" 
+android:progressDrawable="@drawable/progress_bar_horizontal"></ProgressBar>
 </AbsoluteLayout>

@@ -36,23 +36,27 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class ThoundsActivity extends Activity {
-	boolean running = false;
-	private AudioRecord audioRecorder;
 	private ProgressBar progressBar1;
 	private ProgressBar progressBar2;
 	Player player1;
 	Player player2;
-	private MediaRecorder recorder;
+	
 	public static final int DEFAULT_SAMPLE_RATE = 8000;
 	private static final int DEFAULT_BUFFER_SIZE = 4096;
 	private static final int CALLBACK_PERIOD = 4000;
 	private static final int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
 
 	ProgressBar levelLine;
+	boolean isRecording = false;
+
 	int level = 100;
 	private final Handler handler = new Handler();
-
-
+	int retVal = 0;
+	int volume = 0;
+	AudioRecord arec;
+	AudioTrack atrack;
+	AudioManager am ;
+	byte[] buffer;
 	/** Called when the activity is first created. */
 
 	@Override
@@ -95,13 +99,16 @@ public class ThoundsActivity extends Activity {
 		{
 			public void onClick(View v) {
 				try {
-					Log.d(this.getClass().getSimpleName(), "rec clicked");
-					if(running){
+					
+					if(isRecording){
+						Log.d(this.getClass().getSimpleName(), "STOP REC");
 						stopRecording();
-						running= false;
+						isRecording= false;
 					}
 					else{
+						Log.d(this.getClass().getSimpleName(), "REC");
 						beginRecording();
+						
 					}
 
 				} catch (Exception e) { e.printStackTrace();
@@ -144,87 +151,82 @@ public class ThoundsActivity extends Activity {
 	private void beginRecording() throws Exception {
 		levelLine = (ProgressBar)this.findViewById(R.id.ProgressBar03);
 
-		//================ Registratore Interno =======================
-		//			Intent intt = new Intent("android.provider.MediaStore.RECORD_SOUND");
-		//			startActivityForResult(intt, 0);
+		isRecording = true;
+		 am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 
-		// //================ Registratore Media Recorder
-		// ========================
-		// killMediaRecorder();
-		// File outFile = new File(AUDIO_PATH);
-		// if(outFile.exists()) {
-		// outFile.delete();
-		// }
-		// recorder = new MediaRecorder();
-		// recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-		// recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-		// recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-		// recorder.setOutputFile(AUDIO_PATH);
-		// recorder.prepare();
-		// recorder.start();
-		// }
-		// //
-		// //@Override
-		// //protected void onActivityResult(int requestCode, int resultCode,
-		// Intent data) {
-		// // switch (requestCode) { case 0:
-		// //
-		// // if (resultCode == RESULT_OK)
-		// // { AUDIO_PATH = data.getData().toString();
-		// // int i=0;
-		// // }
-		// // }
-		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
-		running= true;
-		new Thread(new Runnable() {
-			public void run() {
-				int bufferSize = AudioRecord.getMinBufferSize(
-						11025,
-						AudioFormat.CHANNEL_CONFIGURATION_MONO, 
-						audioEncoding);
-			
-				AudioRecord audioRecorder = new AudioRecord(
-						MediaRecorder.AudioSource.MIC, 
-						11025, 
-						AudioFormat.CHANNEL_CONFIGURATION_MONO, audioEncoding,
-						bufferSize
-						);
-				Log.d(this.getClass().getSimpleName(), "loop start");
-				while(running){
-					
-					//audioRecorder.setPositionNotificationPeriod(CALLBACK_PERIOD);
-					
-					audioRecorder.setRecordPositionUpdateListener(new
-							
-							AudioRecord.OnRecordPositionUpdateListener() {
+		int actualBufferSize = 4096*8;
+		int capacity = 0;
+
+		int bufferSize =      AudioTrack.getMinBufferSize(DEFAULT_SAMPLE_RATE,
+				AudioFormat.CHANNEL_CONFIGURATION_MONO,
+				AudioFormat.ENCODING_PCM_16BIT);
+
+				atrack = new AudioTrack( AudioManager.STREAM_MUSIC,
+				DEFAULT_SAMPLE_RATE,
+				AudioFormat.CHANNEL_CONFIGURATION_MONO,
+				AudioFormat.ENCODING_PCM_16BIT,
+				actualBufferSize,
+				AudioTrack.MODE_STREAM);
+
+		capacity = AudioRecord.getMinBufferSize(DEFAULT_SAMPLE_RATE,
+				AudioFormat.CHANNEL_CONFIGURATION_MONO,
+				AudioFormat.ENCODING_PCM_16BIT);
+
+		  buffer = new byte[actualBufferSize];
+
+				arec = new AudioRecord(MediaRecorder.AudioSource.MIC,
+				DEFAULT_SAMPLE_RATE,
+				AudioFormat.CHANNEL_CONFIGURATION_MONO,
+				AudioFormat.ENCODING_PCM_16BIT,
+				actualBufferSize);
+
+		am.setSpeakerphoneOn(true);
+		am.setMicrophoneMute(false);
+
+		Log.d("SPEAKERPHONE", "Is speakerphoneon? : " +
+				am.isSpeakerphoneOn());
+
+		atrack.setPlaybackRate(DEFAULT_SAMPLE_RATE);
+		arec.startRecording();
+		//atrack.play();
+		if (am.isSpeakerphoneOn()) {
+
+			new Thread(new Runnable() {
+				public void run() {
+					while(isRecording)
+					{
+						int readSize = arec.read(buffer, 0, 320);
+						Log.v("Number of bytes read is ", " " + readSize);
 						
-						public void onMarkerReached(AudioRecord recorder) {
-							Log.d(this.getClass().getSimpleName(), "onMarkerReached Called");
-						}
+						retVal = atrack.write(buffer, 0, readSize);
+						volume = buffer[319];
+					Log.v("volume is ", "  "+ volume);
+						
+						
+						handler.post(new Runnable() {
+							public void run() {
+								levelLine.setProgress(volume);
+							}
+						});
 
-
-						public void onPeriodicNotification(AudioRecord recorder) {
-							Log.d(this.getClass().getSimpleName(), "onPeriodicNotification Called");
-						}
-					}); 
-					
+					}
 				}
-			}
 
 
-		}).start();
-	}
+			}).start();
+		}
+
+		//arec.stop();
+		//atrack.stop();
+	} 
+
 
 	private void stopRecording() throws Exception {
-		if (recorder != null) {
-			recorder.stop();
-		}
-	}
-
-	private void killMediaRecorder() {
-		if (recorder != null) {
-			recorder.release();
-		}
+		
+			arec.stop();
+			arec.release();
+			atrack.stop();
+			atrack.release();
 	}
 
 	//=======MENU==================================
