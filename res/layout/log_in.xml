@@ -18,7 +18,7 @@
               android:layout_x="50px" 
               android:text="email" 
 			  android:textColor="@color/dark_grey" 
-			  android:layout_y="50px" android:id="@+id/txt_username" android:autoLink="email" android:maxLines="1" android:clickable="true"/>
+			  android:layout_y="50px" android:id="@+id/txt_username" android:autoLink="email" android:maxLines="1" android:clickable="true" android:textSize="5pt"/>
              
              
     
@@ -27,11 +27,14 @@
               android:layout_centerHorizontal="true"
               android:cursorVisible="true" android:layout_width="200px" android:layout_x="50px" android:layout_y="100px" android:text="Password" android:textColor="@color/dark_grey" android:id="@+id/txt_password" android:password="true" android:maxLines="1"/>
    
-     <Button android:text="Login!"
-          android:layout_width="wrap_content"
+     <Button android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_centerHorizontal="true"
-          android:layout_x="190dip" android:layout_y="150dip" android:id="@+id/login_button"/>
+          android:layout_x="190dip" android:layout_y="150dip" android:id="@+id/login_button" android:text="play"/>
           
 
+<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/TextView01" android:layout_x="50dip" android:textColor="@color/dark_grey" android:layout_y="230dip"></TextView>
+<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/TextView02" android:layout_x="50dip" android:textColor="@color/dark_grey" android:layout_y="250dip"></TextView>
+
+<ImageView android:id="@+id/ImageView01" android:layout_y="230dip" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_x="150dip" android:maxHeight="150dip" android:maxWidth="150dip" android:minHeight="150dip" android:minWidth="150dip"></ImageView>
 </AbsoluteLayout> 

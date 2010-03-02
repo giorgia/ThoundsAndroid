@@ -9,7 +9,7 @@ public class Player {
 
 	private MediaPlayer mediaPlayer;
 	private final Handler handler = new Handler();
-	private ProgressBar progressBar;
+	private ProgressBar progressBar = null;
 	private int progress = 0;
 
 	private static String AUDIO_PATH = "/sdcard/thounds/";

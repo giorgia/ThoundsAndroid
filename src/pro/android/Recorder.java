@@ -6,46 +6,57 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
+import android.media.AudioTrack;
 import android.media.MediaRecorder;
+import android.os.Handler;
+
 import android.util.Log;
+import android.widget.ProgressBar;
 
 public class Recorder implements Runnable {
-	private int frequency;
-	private int channelConfiguration;
-	private volatile boolean isPaused;
-	private File fileName;
-	private volatile boolean isRecording;
-	private final Object mutex = new Object();
-
-	// Changing the sample resolution changes sample type. byte vs. short.
+	public static final int DEFAULT_SAMPLE_RATE = 8000;
 	private static final int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
-	private static final int CALLBACK_PERIOD = 4000;
+	private File fileName;
+	int bufferSize;
+	int capacity =0;
+	int idxBuffer;
+	ProgressBar levelLine;
+	boolean isRecording = false;
+	boolean isPaused = false;
+	int level = 0;
+	private final Handler handler = new Handler();
+
+	int retVal = 0;
+	int volume = 0;
+	AudioRecord arec;
+	AudioTrack atrack;
+	AudioManager audioManager ;
+	
+
+	byte[] buffer;
 
 	/**
 	 *
 	 */
+	
 	public Recorder() {
 		super();
-		this.setFrequency(11025);
-		this.setChannelConfiguration(AudioFormat.CHANNEL_CONFIGURATION_MONO);
-		this.setPaused(false);
+	}
+	
+	public Recorder(File filename) {
+		super();
+		this.fileName = filename;
 	}
 
 	public void run() {
-		// Wait until we're recording...
-		synchronized (mutex) {
-			while (!this.isRecording) {
-				try {
-					mutex.wait();
-				} catch (InterruptedException e) {
-					throw new IllegalStateException("Wait() interrupted!", e);
-				}
-			}
-		}
 
 		// Open output stream...
+		Log.d(this.getClass().getName(), "run");
+
 		if (this.fileName == null) {
 			throw new IllegalStateException("fileName is null");
 		}
@@ -62,6 +73,8 @@ public class Recorder implements Runnable {
 		try {
 			bufferedStreamInstance = new BufferedOutputStream(
 					new FileOutputStream(this.fileName));
+			Log.d(this.getClass().getName(), "bufferedStreamInstance");
+
 		} catch (FileNotFoundException e) {
 			throw new IllegalStateException("Cannot Open File", e);
 		}
@@ -69,71 +82,87 @@ public class Recorder implements Runnable {
 				bufferedStreamInstance);
 
 		// We're important...
-		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
+		//android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 
 		// Allocate Recorder and Start Recording...
-		int bufferRead = 0;
-		int bufferSize = AudioRecord.getMinBufferSize(this.getFrequency(), 
-				this.getChannelConfiguration(), this.getAudioEncoding());
-		AudioRecord recordInstance = new AudioRecord(
-				MediaRecorder.AudioSource.MIC, this.getFrequency(), 
-				this.getChannelConfiguration(), this.getAudioEncoding(),
-				bufferSize);
+		
+		
 
+		int actualBufferSize = 4096*8;
 
-		recordInstance.setPositionNotificationPeriod(CALLBACK_PERIOD);
-		recordInstance.setRecordPositionUpdateListener(new
-				AudioRecord.OnRecordPositionUpdateListener() {
-			public void onMarkerReached(AudioRecord recorder) {
-				Log.e(this.getClass().getSimpleName(), "onMarkerReached Called");
-			}
+		bufferSize =  AudioTrack.getMinBufferSize(DEFAULT_SAMPLE_RATE,
+				AudioFormat.CHANNEL_CONFIGURATION_MONO,
+				AudioFormat.ENCODING_PCM_16BIT);
 
+		atrack = new AudioTrack( AudioManager.STREAM_MUSIC,
+				DEFAULT_SAMPLE_RATE,
+				AudioFormat.CHANNEL_CONFIGURATION_MONO,
+				AudioFormat.ENCODING_PCM_16BIT,
+				actualBufferSize,
+				AudioTrack.MODE_STREAM);
 
-			public void onPeriodicNotification(AudioRecord recorder) {
-				Log.e(this.getClass().getSimpleName(), "onPeriodicNotification Called");
-			}
-		}); 
+		capacity = AudioRecord.getMinBufferSize(DEFAULT_SAMPLE_RATE,
+				AudioFormat.CHANNEL_CONFIGURATION_MONO,
+				AudioFormat.ENCODING_PCM_16BIT);
 
-		short[] tempBuffer = new short[bufferSize];
-		recordInstance.startRecording();
-		while (this.isRecording) {
-			// Are we paused?
-			synchronized (mutex) {
-				if (this.isPaused) {
-					try {
-						mutex.wait(250);
-					} catch (InterruptedException e) {
-						throw new IllegalStateException("Wait() interrupted!",
-								e);
-					}
-					continue;
-				}
-			}
+		buffer = new byte[actualBufferSize];
 
-			bufferRead = recordInstance.read(tempBuffer, 0, bufferSize);
-			if (bufferRead == AudioRecord.ERROR_INVALID_OPERATION) {
+		arec = new AudioRecord(MediaRecorder.AudioSource.MIC,
+				DEFAULT_SAMPLE_RATE,
+				AudioFormat.CHANNEL_CONFIGURATION_MONO,
+				AudioFormat.ENCODING_PCM_16BIT,
+				actualBufferSize);
+		
+		audioManager.setSpeakerphoneOn(true);
+		audioManager.setMicrophoneMute(false);
+		atrack.setPlaybackRate(DEFAULT_SAMPLE_RATE);
+		arec.startRecording();
+		
+		if (audioManager.isSpeakerphoneOn()) {
+			isRecording = true;
+			Log.d(this.getClass().getName(), "isSpeakerphoneOn");
+
+		}
+		while(isRecording)
+		{
+			int readSize = arec.read(buffer, 0, 320);
+			if (readSize == AudioRecord.ERROR_INVALID_OPERATION) {
 				throw new IllegalStateException(
 				"read() returned AudioRecord.ERROR_INVALID_OPERATION");
-			} else if (bufferRead == AudioRecord.ERROR_BAD_VALUE) {
+			} else if (readSize == AudioRecord.ERROR_BAD_VALUE) {
 				throw new IllegalStateException(
 				"read() returned AudioRecord.ERROR_BAD_VALUE");
-			} else if (bufferRead == AudioRecord.ERROR_INVALID_OPERATION) {
+			} else if (readSize == AudioRecord.ERROR_INVALID_OPERATION) {
 				throw new IllegalStateException(
 				"read() returned AudioRecord.ERROR_INVALID_OPERATION");
 			}
 			try {
-				for (int idxBuffer = 0; idxBuffer < bufferRead; ++idxBuffer) {
-					dataOutputStreamInstance.writeShort(tempBuffer[idxBuffer]);
-				}
+				
+					dataOutputStreamInstance.write(buffer, 0, readSize);
+					atrack.write(buffer, 0, readSize);
+					handler.post(new Runnable() {
+						public void run() {
+							levelLine.setProgress(buffer[319]);
+						}
+					});
+				
 			} catch (IOException e) {
 				throw new IllegalStateException(
-				"dataOutputStreamInstance.writeShort(curVal)");
+				"dataOutputStreamInstance.write(buffer, 0, readSize)");
 			}
 
 		}
 
+
 		// Close resources...
-		recordInstance.stop();
+
+
+		arec.stop();
+		arec.release();
+		atrack.stop();
+		atrack.release();
+
+
 		try {
 			bufferedStreamInstance.close();
 		} catch (IOException e) {
@@ -154,52 +183,16 @@ public class Recorder implements Runnable {
 	 *            the isRecording to set
 	 */
 	public void setRecording(boolean isRecording) {
-		synchronized (mutex) {
-			this.isRecording = isRecording;
-			if (this.isRecording) {
-				mutex.notify();
-			}
-		}
+		this.isRecording = isRecording;
 	}
 
 	/**
 	 * @return the isRecording
 	 */
 	public boolean isRecording() {
-		synchronized (mutex) {
 			return isRecording;
-		}
 	}
 
-	/**
-	 * @param frequency
-	 *            the frequency to set
-	 */
-	public void setFrequency(int frequency) {
-		this.frequency = frequency;
-	}
-
-	/**
-	 * @return the frequency
-	 */
-	public int getFrequency() {
-		return frequency;
-	}
-
-	/**
-	 * @param channelConfiguration
-	 *            the channelConfiguration to set
-	 */
-	public void setChannelConfiguration(int channelConfiguration) {
-		this.channelConfiguration = channelConfiguration;
-	}
-
-	/**
-	 * @return the channelConfiguration
-	 */
-	public int getChannelConfiguration() {
-		return channelConfiguration;
-	}
 
 	/**
 	 * @return the audioEncoding
@@ -213,18 +206,30 @@ public class Recorder implements Runnable {
 	 *            the isPaused to set
 	 */
 	public void setPaused(boolean isPaused) {
-		synchronized (mutex) {
-			this.isPaused = isPaused;
-		}
+			this.isPaused = isPaused;	
 	}
 
 	/**
 	 * @return the isPaused
 	 */
 	public boolean isPaused() {
-		synchronized (mutex) {
 			return isPaused;
-		}
+	}
+	
+	public ProgressBar getLevelLine() {
+		return levelLine;
+	}
+
+	public void setLevelLine(ProgressBar levelLine) {
+		this.levelLine = levelLine;
+	}
+
+	public AudioManager getAudioManager() {
+		return audioManager;
+	}
+
+	public void setAudioManager(AudioManager audioManager) {
+		this.audioManager = audioManager;
 	}
 
 }
