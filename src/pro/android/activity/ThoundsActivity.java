@@ -1,6 +1,14 @@
-package pro.android;
+package pro.android.activity;
 
 import java.io.File;
+
+import pro.android.R;
+import pro.android.R.drawable;
+import pro.android.R.id;
+import pro.android.R.layout;
+import pro.android.R.menu;
+import pro.android.utils.Player;
+import pro.android.utils.Recorder;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -15,6 +23,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -24,7 +34,8 @@ import android.widget.ProgressBar;
 
 // Classe iniziale di prova che include Player - Recorder - Menu e Notifiche
 
-public class ThoundsActivity extends Activity {
+public class ThoundsActivity extends CommonActivity {
+	
 	private ProgressBar progressBar1;
 	private ProgressBar progressBar2;
 	Player player1;
@@ -50,7 +61,7 @@ public class ThoundsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		
+
 		ImageView img = (ImageView) this.findViewById(R.id.ImageView01);
 		img.setOnClickListener(new OnClickListener() {
 
@@ -59,7 +70,7 @@ public class ThoundsActivity extends Activity {
 				startActivity(logIntent);
 			}
 		});
-		
+
 		//Bottone Play - test del play di due mp3 contemporaneamente
 		progressBar1 = (ProgressBar)this.findViewById(R.id.ProgressBar01);
 		progressBar2 = (ProgressBar)this.findViewById(R.id.ProgressBar02);
@@ -123,7 +134,7 @@ public class ThoundsActivity extends Activity {
 						Log.d(this.getClass().getSimpleName(), "STOP REC");
 						rec.setRecording(false);
 						isRecording= false;
-						
+
 					}
 					else{
 
@@ -143,7 +154,7 @@ public class ThoundsActivity extends Activity {
 				}
 			}
 		});
-		
+
 		ImageButton playRec = (ImageButton)findViewById(R.id.ImageButton01);
 		playRec.setOnClickListener(new OnClickListener()
 
@@ -158,18 +169,9 @@ public class ThoundsActivity extends Activity {
 		});	
 
 
-	
+
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		//call the base class to include system menus
-		super.onCreateOptionsMenu(menu);
-		menu.add(0,1,0,"item1");
-		menu.add(0,2,1,"item2");
-		menu.add(0,3,2,"item3");
-		return true;
-	}
 
 
 
@@ -203,5 +205,7 @@ public class ThoundsActivity extends Activity {
 		}
 
 	}
+
+
 
 }

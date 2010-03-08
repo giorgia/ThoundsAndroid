@@ -1,4 +1,4 @@
-package pro.android;
+package pro.android.activity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +15,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpProtocolParams;
 import org.json.JSONObject;
+
+import pro.android.R;
+import pro.android.R.id;
+import pro.android.R.layout;
 
 import android.app.Activity;
 import android.content.Context;
@@ -95,9 +99,9 @@ public class LoginActivity extends Activity {
 
 						HttpResponse response = client.execute(httpget);
 						in = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
-						
-				
-			//======================== DEBUG =================================================
+
+
+						//======================== DEBUG =================================================
 						Log.d("LOGIN","----------------------------------------");
 
 						Log.d("LOGIN", ""+response.getStatusLine());
@@ -112,8 +116,8 @@ public class LoginActivity extends Activity {
 
 						String result = sb.toString();
 						Log.d("LOGIN", result);
-			//====================================================================================
-						
+						//====================================================================================
+
 						// A Simple JSONObject Creation
 						JSONObject json=new JSONObject(result);
 
