@@ -2,8 +2,8 @@
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
 <item android:title="Home" android:icon="@drawable/menu_home1" android:id="@+id/home"></item>
-<item android:title="Notifications" android:icon="@drawable/menu_not" android:id="@+id/notifications"></item>
+<item android:title="Notifications" android:icon="@android:drawable/ic_menu_view" android:id="@+id/notifications"></item>
 <item android:title="Record" android:icon="@android:drawable/ic_btn_speak_now" android:id="@+id/record"></item>
 <item android:title="Profile" android:icon="@drawable/menu_prof" android:id="@+id/profile"></item>
-<item android:title="Search" android:icon="@@android:drawable/ic_menu_search" android:id="@+id/search"></item>
+<item android:title="Search" android:icon="@android:drawable/ic_menu_search" android:id="@+id/search"></item>
 </menu>

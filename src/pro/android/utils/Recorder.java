@@ -123,9 +123,11 @@ public class Recorder implements Runnable {
 			Log.d(this.getClass().getName(), "isSpeakerphoneOn");
 
 		}
+		int i = 0;
 		while(isRecording)
 		{
 			int readSize = arec.read(buffer, 0, 320);
+		
 			if (readSize == AudioRecord.ERROR_INVALID_OPERATION) {
 				throw new IllegalStateException(
 				"read() returned AudioRecord.ERROR_INVALID_OPERATION");
@@ -139,7 +141,8 @@ public class Recorder implements Runnable {
 			try {
 				
 					dataOutputStreamInstance.write(buffer, 0, readSize);
-					atrack.write(buffer, 0, readSize);
+					atrack.write(buffer, 0 , readSize);
+					
 					handler.post(new Runnable() {
 						public void run() {
 							levelLine.setProgress(buffer[319]);
@@ -152,16 +155,17 @@ public class Recorder implements Runnable {
 			}
 
 		}
-
-
+		
 		// Close resources...
+		Log.d(this.getClass().getName(), "PLAY");
 
+		atrack.play();
 
 		arec.stop();
 		arec.release();
 		atrack.stop();
 		atrack.release();
-
+		
 
 		try {
 			bufferedStreamInstance.close();

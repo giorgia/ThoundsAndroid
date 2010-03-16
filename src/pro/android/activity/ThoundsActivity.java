@@ -11,14 +11,21 @@ import pro.android.utils.Player;
 import pro.android.utils.Recorder;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -31,29 +38,18 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SlidingDrawer;
 
-// Classe iniziale di prova che include Player - Recorder - Menu e Notifiche
 
 public class ThoundsActivity extends CommonActivity {
-	
-	private ProgressBar progressBar1;
-	private ProgressBar progressBar2;
-	Player player1;
-	Player player2;
 
-	public static final int DEFAULT_SAMPLE_RATE = 8000;
-	Recorder rec = new Recorder();
-	ProgressBar levelLine;
-	boolean isRecording = false;
+	NetworkInfo wifiInfo, mobileInfo;
 
-	int level = 100;
-	private final Handler handler = new Handler();
-	int retVal = 0;
-	int volume = 0;
-	AudioRecord arec;
-	AudioTrack atrack;
-	AudioManager am ;
-	byte[] buffer;
+	private static final int DIALOG1_KEY = 0;
+	private static final int DIALOG2_KEY = 1;
+
+	String username;
+	String password;
 	/** Called when the activity is first created. */
 
 	@Override
@@ -61,117 +57,86 @@ public class ThoundsActivity extends CommonActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-
 		ImageView img = (ImageView) this.findViewById(R.id.ImageView01);
 		img.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				Intent logIntent = new Intent(v.getContext(), LoginActivity.class);
-				startActivity(logIntent);
-			}
-		});
+				//========= CHECK CONNECTION ===================
+				ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		//Bottone Play - test del play di due mp3 contemporaneamente
-		progressBar1 = (ProgressBar)this.findViewById(R.id.ProgressBar01);
-		progressBar2 = (ProgressBar)this.findViewById(R.id.ProgressBar02);
+				wifiInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+				mobileInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-		Button btnPlay = (Button)this.findViewById(R.id.btnPlay);
-		btnPlay.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v) {
-				try { 
-					player1 = new Player(progressBar1, "robots3humans0.mp3");
+				if(wifiInfo.getState().name().equals("DISCONNECTED") && mobileInfo.getState().name().equals("DISCONNECTED")){
 
-					player2 = new Player(progressBar2,"dethroned.mp3");
+					showDialog(DIALOG2_KEY);
 
-					player1.playAudio();
-					player2.playAudio();
-				} catch (Exception e) { e.printStackTrace();
-				}
-			}
-		});
-		//Bottone che mette in pausa il primo player
-		Button btnPause1 = (Button)this.findViewById(R.id.btnPause1);
-		btnPause1.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v) {
-				try {
-					if(player1.getMediaPlayer().isPlaying())
-						player1.getMediaPlayer().pause();
-					else
-						player1.getMediaPlayer().start();
-				} catch (Exception e) { e.printStackTrace();
-				}
-			}
-		});
-		//Bottone che mette in pausa il secondo player
-		Button btnPause2 = (Button)this.findViewById(R.id.btnPause2);
+				}else{
 
-		btnPause2.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v) {
-				try {
-					if(player2.getMediaPlayer().isPlaying())
-						player2.getMediaPlayer().pause();
-					else
-						player2.getMediaPlayer().start();
-				} catch (Exception e) { e.printStackTrace();
-				}
-			}
-		});
+					showDialog(DIALOG1_KEY);
 
-		//Bottone Rec - utilizza la classe Recorder (scrittura su file da sistemare)
-		Button btnRec = (Button)this.findViewById(R.id.btnRec);
-		levelLine = (ProgressBar)this.findViewById(R.id.ProgressBar03);
-
-		btnRec.setOnClickListener(new OnClickListener()
-
-		{
-			public void onClick(View v) {
-				try {
-
-					if(isRecording){
-						Log.d(this.getClass().getSimpleName(), "STOP REC");
-						rec.setRecording(false);
-						isRecording= false;
-
-					}
+					//=========CHECK IS LOGGED===================
+					// Restore preferences
+					SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+					 username = settings.getString("silentUsername", username);
+					 password = settings.getString("silentPassword", password);	
+					
+					if(isLogged ){	
+						nextIntent = new Intent(v.getContext(), HomeActivity.class);
+					}else if(username != null && password != null){
+						login(username, password, "http://thounds.com/home");
+						nextIntent = new Intent(v.getContext(), HomeActivity.class);
+					}			
 					else{
-
-						Log.d(this.getClass().getSimpleName(), "REC");
-						rec.setFileName(new File("/sdcard/thounds/test.pcm")); 
-						rec.setLevelLine(levelLine);
-						am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-						rec.setAudioManager(am);
-						isRecording = true;
-						new Thread(rec).start();
-
-						//beginRecording();
-
+						nextIntent = new Intent(v.getContext(), LoginActivity.class);
 					}
+					// Waiting 2 sec for ProgressDialog displayed
+					new Handler().postDelayed(new Runnable() {
 
-				} catch (Exception e) { e.printStackTrace();
+						public void run() {
+							dismissDialog(DIALOG1_KEY);		
+						}
+					}, 4000);
+
+
 				}
+
 			}
 		});
-
-		ImageButton playRec = (ImageButton)findViewById(R.id.ImageButton01);
-		playRec.setOnClickListener(new OnClickListener()
-
-		{
-			public void onClick(View v) {
-				try {
-					Player play = new Player("test.pcm");
-					play.playAudio();
-				} catch (Exception e) { e.printStackTrace();
-				}
-			}
-		});	
-
-
-
 	}
+	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case DIALOG1_KEY: {
+			ProgressDialog mDialog1 = new ProgressDialog(this);
+			mDialog1.setMessage("Loading. Please wait...");
+			mDialog1.setIndeterminate(true);
+			mDialog1.setCancelable(true);
+			mDialog1.setOnDismissListener(new DialogInterface.OnDismissListener() {	
+				public void onDismiss(DialogInterface dialog) {
+					startActivity(nextIntent);
+				}
+			});
+			return mDialog1;
+		}
+		case DIALOG2_KEY: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Alert")
+			.setMessage("No network connection!")
+			.setCancelable(false)
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
 
+			return builder.create();
+		}
+		}
+		return null;
+	}
 
 
 

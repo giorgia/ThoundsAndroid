@@ -6,4 +6,5 @@
   
       <TextView android:layout_width="wrap_content" android:layout_y="80dip" android:layout_height="wrap_content" android:id="@+id/TextView01" android:layout_x="50dip" android:text="HOME"></TextView>
   
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/Button01" android:layout_y="170dip" android:layout_x="100dip" android:text="Logout"></Button>
 </AbsoluteLayout>
