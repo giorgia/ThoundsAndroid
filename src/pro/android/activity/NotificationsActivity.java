@@ -13,5 +13,5 @@ public class NotificationsActivity extends CommonActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.notifications);
 	}
-	
+
 }

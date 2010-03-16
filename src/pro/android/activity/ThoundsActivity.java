@@ -40,7 +40,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SlidingDrawer;
 
-
 public class ThoundsActivity extends CommonActivity {
 
 	NetworkInfo wifiInfo, mobileInfo;
@@ -50,6 +49,7 @@ public class ThoundsActivity extends CommonActivity {
 
 	String username;
 	String password;
+
 	/** Called when the activity is first created. */
 
 	@Override
@@ -61,50 +61,55 @@ public class ThoundsActivity extends CommonActivity {
 		img.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				//========= CHECK CONNECTION ===================
+				// ========= CHECK CONNECTION ===================
 				ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-				wifiInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-				mobileInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+				wifiInfo = connectivity
+						.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+				mobileInfo = connectivity
+						.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-				if(wifiInfo.getState().name().equals("DISCONNECTED") && mobileInfo.getState().name().equals("DISCONNECTED")){
+				if (wifiInfo.getState().name().equals("DISCONNECTED")
+						&& mobileInfo.getState().name().equals("DISCONNECTED")) {
 
 					showDialog(DIALOG2_KEY);
 
-				}else{
+				} else {
 
 					showDialog(DIALOG1_KEY);
 
-					//=========CHECK IS LOGGED===================
+					// =========CHECK IS LOGGED===================
 					// Restore preferences
-					SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-					 username = settings.getString("silentUsername", username);
-					 password = settings.getString("silentPassword", password);	
-					
-					if(isLogged ){	
-						nextIntent = new Intent(v.getContext(), HomeActivity.class);
-					}else if(username != null && password != null){
+					SharedPreferences settings = getSharedPreferences(
+							PREFS_NAME, 0);
+					username = settings.getString("silentUsername", username);
+					password = settings.getString("silentPassword", password);
+
+					if (isLogged) {
+						nextIntent = new Intent(v.getContext(),
+								HomeActivity.class);
+					} else if (username != null && password != null) {
 						login(username, password, "http://thounds.com/home");
-						nextIntent = new Intent(v.getContext(), HomeActivity.class);
-					}			
-					else{
-						nextIntent = new Intent(v.getContext(), LoginActivity.class);
+						nextIntent = new Intent(v.getContext(),
+								HomeActivity.class);
+					} else {
+						nextIntent = new Intent(v.getContext(),
+								LoginActivity.class);
 					}
 					// Waiting 2 sec for ProgressDialog displayed
 					new Handler().postDelayed(new Runnable() {
 
 						public void run() {
-							dismissDialog(DIALOG1_KEY);		
+							dismissDialog(DIALOG1_KEY);
 						}
 					}, 4000);
-
 
 				}
 
 			}
 		});
 	}
-	
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
@@ -113,24 +118,26 @@ public class ThoundsActivity extends CommonActivity {
 			mDialog1.setMessage("Loading. Please wait...");
 			mDialog1.setIndeterminate(true);
 			mDialog1.setCancelable(true);
-			mDialog1.setOnDismissListener(new DialogInterface.OnDismissListener() {	
-				public void onDismiss(DialogInterface dialog) {
-					startActivity(nextIntent);
-				}
-			});
+			mDialog1
+					.setOnDismissListener(new DialogInterface.OnDismissListener() {
+						public void onDismiss(DialogInterface dialog) {
+							startActivity(nextIntent);
+						}
+					});
 			return mDialog1;
 		}
 		case DIALOG2_KEY: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Alert")
-			.setMessage("No network connection!")
-			.setCancelable(false)
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					dialog.cancel();
-				}
-			});
+			builder.setTitle("Alert").setMessage("No network connection!")
+					.setCancelable(false).setIcon(
+							android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int id) {
+									dialog.cancel();
+								}
+							});
 
 			return builder.create();
 		}
@@ -138,13 +145,10 @@ public class ThoundsActivity extends CommonActivity {
 		return null;
 	}
 
-
-
-	//=======NOTIFICHE==================================
+	// =======NOTIFICHE==================================
 	public void notification() {
 
-		NotificationManager not = (NotificationManager)
-		getSystemService(NOTIFICATION_SERVICE);
+		NotificationManager not = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		int icon = R.drawable.icon;
 		CharSequence tickerText = "Thounds!";
 		long when = java.lang.System.currentTimeMillis();
@@ -166,11 +170,10 @@ public class ThoundsActivity extends CommonActivity {
 		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
 		try {
 			not.notify(1, notification);
-		} catch (Exception e) { e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
-
-
 
 }

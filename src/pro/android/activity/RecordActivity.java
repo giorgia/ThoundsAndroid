@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -33,21 +32,22 @@ public class RecordActivity extends CommonActivity {
 	int volume = 0;
 	AudioRecord arec;
 	AudioTrack atrack;
-	AudioManager am ;
+	AudioManager am;
 	byte[] buffer;
-	
-	
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.record);
-		
-		//Bottone Rec - utilizza la classe Recorder (scrittura su file da sistemare)
-		final Button btnRec = (Button)this.findViewById(R.id.btnRec);
-		levelLine = (ProgressBar)this.findViewById(R.id.LevelLineBar);
-		final LinearLayout mediaLayout = (LinearLayout) this.findViewById(R.id.MediaLayout);
-		final LinearLayout recLayout = (LinearLayout) this.findViewById(R.id.RecLayout);
+
+		// Bottone Rec - utilizza la classe Recorder (scrittura su file da
+		// sistemare)
+		final Button btnRec = (Button) this.findViewById(R.id.btnRec);
+		levelLine = (ProgressBar) this.findViewById(R.id.LevelLineBar);
+		final LinearLayout mediaLayout = (LinearLayout) this
+				.findViewById(R.id.MediaLayout);
+		final LinearLayout recLayout = (LinearLayout) this
+				.findViewById(R.id.RecLayout);
 
 		btnRec.setOnClickListener(new OnClickListener()
 
@@ -55,36 +55,35 @@ public class RecordActivity extends CommonActivity {
 			public void onClick(View v) {
 				try {
 
-					if(isRecording){
+					if (isRecording) {
 						recLayout.setVisibility(View.INVISIBLE);
 						mediaLayout.setVisibility(View.VISIBLE);
-					
-						
+
 						Log.d(this.getClass().getSimpleName(), "STOP REC");
 						rec.setRecording(false);
-						isRecording= false;
+						isRecording = false;
 
-					}
-					else{
+					} else {
 						btnRec.setBackgroundResource(R.drawable.btn_stop);
 						Log.d(this.getClass().getSimpleName(), "REC");
-						rec.setFileName(new File("/sdcard/thounds/test.pcm")); 
+						rec.setFileName(new File("/sdcard/thounds/test.pcm"));
 						rec.setLevelLine(levelLine);
-						am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+						am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 						rec.setAudioManager(am);
 						isRecording = true;
 						new Thread(rec).start();
 
-						//beginRecording();
+						// beginRecording();
 
 					}
 
-				} catch (Exception e) { e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		});
 
-		ImageButton play = (ImageButton)findViewById(R.id.btnPlay);
+		ImageButton play = (ImageButton) findViewById(R.id.btnPlay);
 		play.setOnClickListener(new OnClickListener()
 
 		{
@@ -92,13 +91,12 @@ public class RecordActivity extends CommonActivity {
 				try {
 					Player play = new Player("test.pcm");
 					play.playAudio();
-				} catch (Exception e) { e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
-		});	
-
+		});
 
 	}
-	
 
 }
