@@ -36,6 +36,8 @@ public class RecordActivity extends CommonActivity {
 	AudioManager am ;
 	byte[] buffer;
 	
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
