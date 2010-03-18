@@ -1,6 +1,10 @@
 package pro.android.activity;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import pro.android.R;
 import pro.android.R.drawable;
@@ -44,13 +48,7 @@ public class ThoundsActivity extends CommonActivity {
 
 	NetworkInfo wifiInfo, mobileInfo;
 
-	private static final int DIALOG1_KEY = 0;
-	private static final int DIALOG2_KEY = 1;
-
-	String username;
-	String password;
-
-	/** Called when the activity is first created. */
+	String username, password;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -65,85 +63,49 @@ public class ThoundsActivity extends CommonActivity {
 				ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
 				wifiInfo = connectivity
-						.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 				mobileInfo = connectivity
-						.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-				if (wifiInfo.getState().name().equals("DISCONNECTED")
-						&& mobileInfo.getState().name().equals("DISCONNECTED")) {
+				//Aggiungere controllo  UNKNOWN
 
-					showDialog(DIALOG2_KEY);
+				if (wifiInfo.getState() == NetworkInfo.State.DISCONNECTED && mobileInfo.getState() == NetworkInfo.State.DISCONNECTED) {
+					showDialog(DIALOG_ALERT_CONNECTION);				
+				} else {
+					showDialog(DIALOG_LOADING);
+				}
+				// =========CHECK IS LOGGED===================
+				// Restore preferences
+				SharedPreferences settings = getSharedPreferences(
+						PREFS_NAME, 0);
+				username = settings.getString("silentUsername", username);
+				password = settings.getString("silentPassword", password);
+
+				if (isLogged) {
+					nextIntent = new Intent(v.getContext(), HomeActivity.class);
+
+				} else if (login(username, password, "http://thounds.com/profile")){
+
+					nextIntent = new Intent(v.getContext(), HomeActivity.class);
 
 				} else {
-
-					showDialog(DIALOG1_KEY);
-
-					// =========CHECK IS LOGGED===================
-					// Restore preferences
-					SharedPreferences settings = getSharedPreferences(
-							PREFS_NAME, 0);
-					username = settings.getString("silentUsername", username);
-					password = settings.getString("silentPassword", password);
-
-					if (isLogged) {
-						nextIntent = new Intent(v.getContext(),
-								HomeActivity.class);
-					} else if (username != null && password != null) {
-						login(username, password, "http://thounds.com/home");
-						nextIntent = new Intent(v.getContext(),
-								HomeActivity.class);
-					} else {
-						nextIntent = new Intent(v.getContext(),
-								LoginActivity.class);
-					}
-					// Waiting 2 sec for ProgressDialog displayed
-					new Handler().postDelayed(new Runnable() {
-
-						public void run() {
-							dismissDialog(DIALOG1_KEY);
-						}
-					}, 4000);
-
+					nextIntent = new Intent(v.getContext(), LoginActivity.class);
 				}
+				
+				// Waiting 2 sec for ProgressDialog displayed
+				new Handler().postDelayed(new Runnable() {
+
+					public void run() {
+						dismissDialog(DIALOG_LOADING);
+					}
+				}, 4000);
 
 			}
+
 		});
 	}
 
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		switch (id) {
-		case DIALOG1_KEY: {
-			ProgressDialog mDialog1 = new ProgressDialog(this);
-			mDialog1.setMessage("Loading. Please wait...");
-			mDialog1.setIndeterminate(true);
-			mDialog1.setCancelable(true);
-			mDialog1
-					.setOnDismissListener(new DialogInterface.OnDismissListener() {
-						public void onDismiss(DialogInterface dialog) {
-							startActivity(nextIntent);
-						}
-					});
-			return mDialog1;
-		}
-		case DIALOG2_KEY: {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Alert").setMessage("No network connection!")
-					.setCancelable(false).setIcon(
-							android.R.drawable.ic_dialog_alert)
-					.setPositiveButton("Ok",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int id) {
-									dialog.cancel();
-								}
-							});
 
-			return builder.create();
-		}
-		}
-		return null;
-	}
 
 	// =======NOTIFICHE==================================
 	public void notification() {

@@ -159,12 +159,12 @@ public class Recorder implements Runnable {
 		// Close resources...
 		Log.d(this.getClass().getName(), "PLAY");
 
-		atrack.play();
+		//atrack.play();
 
 		arec.stop();
 		arec.release();
 		atrack.stop();
-		atrack.release();
+		//atrack.release();
 		
 
 		try {
@@ -234,6 +234,14 @@ public class Recorder implements Runnable {
 
 	public void setAudioManager(AudioManager audioManager) {
 		this.audioManager = audioManager;
+	}
+
+	public AudioTrack getAtrack() {
+		return atrack;
+	}
+
+	public void setAtrack(AudioTrack atrack) {
+		this.atrack = atrack;
 	}
 
 }

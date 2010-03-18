@@ -1,5 +1,7 @@
 package pro.android.activity;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.URI;
 
 import org.apache.http.HttpResponse;
@@ -8,9 +10,15 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpProtocolParams;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import pro.android.R;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -22,6 +30,12 @@ public class CommonActivity extends Activity {
 
 	public static final String PREFS_NAME = "thound_prefs";
 
+	static final int DIALOG_LOADING = 0;
+	static final int DIALOG_ALERT_CONNECTION = 1;
+	static final int DIALOG_LOGIN = 2;
+	static final int DIALOG_ALERT_LOGIN = 3;
+	
+	
 	public static boolean isLogged = false;
 
 	Intent nextIntent = null;
@@ -32,10 +46,9 @@ public class CommonActivity extends Activity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
 		return true;
-
 	}
 
-	public HttpResponse login(String username, String password, String url) {
+	public boolean login(String username, String password, String url) {
 		DefaultHttpClient client = new DefaultHttpClient();
 
 		HttpProtocolParams.setUseExpectContinue(client.getParams(), false);
@@ -54,10 +67,34 @@ public class CommonActivity extends Activity {
 
 			response = client.execute(httpget);
 
+			BufferedReader in = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
+
+			Log.d("LOGIN","----------------------------------------");
+
+			StringBuffer sb = new StringBuffer(""); 
+			String line = ""; 
+			String NL = System.getProperty("line.separator"); 
+			while ((line = in.readLine()) != null) {
+				sb.append(line + NL); 
+			}
+			in.close();
+
+			String result = sb.toString();
+			Log.d("LOGIN", result);
+
+			JSONObject json = new JSONObject(result);
+
+			if(json.getString("email").equals(username))
+				return true;
+
+		}catch (JSONException e) {
+			//Access denied
+			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
-		return response;
+		return false;
 	}
 
 	public void logout() {
@@ -97,7 +134,40 @@ public class CommonActivity extends Activity {
 
 		return false;
 	}
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case DIALOG_LOADING: {
+			ProgressDialog mDialog1 = new ProgressDialog(this);
+			mDialog1.setMessage("Loading. Please wait...");
+			mDialog1.setIndeterminate(true);
+			mDialog1.setCancelable(true);
+			mDialog1
+			.setOnDismissListener(new DialogInterface.OnDismissListener() {
+				public void onDismiss(DialogInterface dialog) {
+					startActivity(nextIntent);
+				}
+			});
+			return mDialog1;
+		}
+		case DIALOG_ALERT_CONNECTION: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Alert").setMessage("No network connection!")
+			.setCancelable(false).setIcon(
+					android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							dialog.cancel();
+						}
+					});
 
+			return builder.create();
+		}
+		}
+		return null;
+	}
 	@Override
 	protected void onDestroy() {
 

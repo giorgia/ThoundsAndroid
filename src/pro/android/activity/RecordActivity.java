@@ -89,8 +89,9 @@ public class RecordActivity extends CommonActivity {
 		{
 			public void onClick(View v) {
 				try {
-					Player play = new Player("test.pcm");
-					play.playAudio();
+					//Player play = new Player("test.pcm");
+					//play.playAudio();
+					rec.getAtrack().play();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

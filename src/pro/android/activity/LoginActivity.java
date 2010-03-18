@@ -1,9 +1,15 @@
 package pro.android.activity;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyStore;
+import java.security.NoSuchProviderException;
 
 import org.apache.http.HttpResponse;
 
@@ -11,6 +17,7 @@ import pro.android.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,8 +34,8 @@ public class LoginActivity extends CommonActivity {
 
 	public static boolean isLogged = false;
 
-	private static final int DIALOG1_KEY = 0;
-	private static final int DIALOG2_KEY = 1;
+	static KeyStore keyStore; 
+	String filenameKeyStore = "KeyStore.kstore"; 
 
 	String username;
 	String password;
@@ -51,37 +58,30 @@ public class LoginActivity extends CommonActivity {
 				password = passwordEditText.getText().toString();
 
 				if (usernameEditText == null || passwordEditText == null) {
-					showDialog(DIALOG2_KEY);
+					showDialog(DIALOG_ALERT_LOGIN);
 				} else {
 					BufferedReader in = null;
 					try {
-						showDialog(DIALOG1_KEY);
+						showDialog(DIALOG_LOGIN);
 
-						HttpResponse response = login(username, password,
-								"http://thounds.com/home");
+						if (login(username, password,"http://thounds.com/profile")) {
+							new Handler().postDelayed(new Runnable() {
 
-						new Handler().postDelayed(new Runnable() {
-
-							public void run() {
-								dismissDialog(DIALOG1_KEY);
-							}
-						}, 4000);
-
-						if (response != null
-								&& response.getStatusLine().getReasonPhrase()
-										.equals("OK")) {
+								public void run() {
+									dismissDialog(DIALOG_LOGIN);
+								}
+							}, 2000);
 							isLogged = true;
 							nextIntent = new Intent(viewParam.getContext(),
 									HomeActivity.class);
 
 						} else {
-							dismissDialog(DIALOG1_KEY);
+							dismissDialog(DIALOG_LOGIN);
 
-							showDialog(DIALOG2_KEY);
+							showDialog(DIALOG_ALERT_LOGIN);
 
 						}
-						in = new BufferedReader(new InputStreamReader(response
-								.getEntity().getContent()));
+
 
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -117,38 +117,39 @@ public class LoginActivity extends CommonActivity {
 
 		// Don't forget to commit your edits!!!
 		editor.commit();
+		
 	}
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-		case DIALOG1_KEY: {
+		case DIALOG_LOGIN: {
 			ProgressDialog mDialog1 = new ProgressDialog(this);
 			mDialog1.setTitle("Login");
 			mDialog1.setMessage("Please wait...");
 			mDialog1.setIndeterminate(true);
 			mDialog1.setCancelable(true);
 			mDialog1
-					.setOnDismissListener(new DialogInterface.OnDismissListener() {
-						public void onDismiss(DialogInterface dialog) {
-							if (nextIntent != null)
-								startActivity(nextIntent);
-						}
-					});
+			.setOnDismissListener(new DialogInterface.OnDismissListener() {
+				public void onDismiss(DialogInterface dialog) {
+					if (nextIntent != null)
+						startActivity(nextIntent);
+				}
+			});
 			return mDialog1;
 		}
-		case DIALOG2_KEY: {
+		case DIALOG_ALERT_LOGIN: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Alert").setIcon(
 					android.R.drawable.ic_dialog_alert).setMessage(
 					"Username or Password incorrect. Try again!")
 					.setCancelable(false).setPositiveButton("Ok",
 							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int id) {
-									dialog.cancel();
-								}
-							});
+						public void onClick(DialogInterface dialog,
+								int id) {
+							dialog.cancel();
+						}
+					});
 
 			return builder.create();
 		}
@@ -160,5 +161,6 @@ public class LoginActivity extends CommonActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		return false;
 	}
-
+	
+	
 }
