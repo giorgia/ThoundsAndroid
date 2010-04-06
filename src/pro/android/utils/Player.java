@@ -1,5 +1,6 @@
 package pro.android.utils;
 
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.Log;
@@ -32,7 +33,9 @@ public class Player {
 		killMediaPlayer();
 
 		mediaPlayer = new MediaPlayer();
+		mediaPlayer.release();
 		mediaPlayer.setDataSource(AUDIO_PATH+audioName);
+		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		mediaPlayer.prepare();
 		mediaPlayer.start();
 

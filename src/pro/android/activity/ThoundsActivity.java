@@ -59,6 +59,7 @@ public class ThoundsActivity extends CommonActivity {
 		img.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
+				
 				// ========= CHECK CONNECTION ===================
 				ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -68,8 +69,8 @@ public class ThoundsActivity extends CommonActivity {
 				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
 				//Aggiungere controllo  UNKNOWN
-
-				if (wifiInfo.getState() == NetworkInfo.State.DISCONNECTED && mobileInfo.getState() == NetworkInfo.State.DISCONNECTED) {
+				
+				if (!wifiInfo.isConnectedOrConnecting() && !mobileInfo.isConnectedOrConnecting()) {
 					showDialog(DIALOG_ALERT_CONNECTION);				
 				} else {
 					showDialog(DIALOG_LOADING);
@@ -81,10 +82,11 @@ public class ThoundsActivity extends CommonActivity {
 				username = settings.getString("silentUsername", username);
 				password = settings.getString("silentPassword", password);
 
-				if (isLogged) {
-					nextIntent = new Intent(v.getContext(), HomeActivity.class);
+				//if (isLogged) {
+					//nextIntent = new Intent(v.getContext(), HomeActivity.class);
 
-				} else if (login(username, password, "http://thounds.com/profile")){
+			//	} else
+					if (username != null && password!= null && login(username, password, "http://thounds.com/profile")){
 
 					nextIntent = new Intent(v.getContext(), HomeActivity.class);
 
@@ -103,6 +105,7 @@ public class ThoundsActivity extends CommonActivity {
 			}
 
 		});
+		
 	}
 
 

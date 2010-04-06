@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,8 +43,8 @@ public class LoginActivity extends CommonActivity {
 				// Get the text from the editexts
 				username = usernameEditText.getText().toString();
 				password = passwordEditText.getText().toString();
-
-				if (usernameEditText == null || passwordEditText == null) {
+				Log.d("login", username+"  "+password);
+				if (username == null || password == null) {
 					showDialog(DIALOG_ALERT_LOGIN);
 				} else {
 					BufferedReader in = null;

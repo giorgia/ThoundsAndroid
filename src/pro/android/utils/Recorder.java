@@ -12,13 +12,14 @@ import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
+import android.os.Environment;
 import android.os.Handler;
 
 import android.util.Log;
 import android.widget.ProgressBar;
 
 public class Recorder implements Runnable {
-	public static final int DEFAULT_SAMPLE_RATE = 8000;
+	public static final int DEFAULT_SAMPLE_RATE = 11025;
 	private static final int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
 	private File fileName;
 	int bufferSize;
@@ -26,27 +27,21 @@ public class Recorder implements Runnable {
 	int idxBuffer;
 	ProgressBar levelLine;
 	boolean isRecording = false;
-	boolean isPaused = false;
 	int level = 0;
 	private final Handler handler = new Handler();
 
 	int retVal = 0;
 	int volume = 0;
 	AudioRecord arec;
-	AudioTrack atrack;
 	AudioManager audioManager ;
-	
 
 	byte[] buffer;
 
-	/**
-	 *
-	 */
-	
+
 	public Recorder() {
 		super();
 	}
-	
+
 	public Recorder(File filename) {
 		super();
 		this.fileName = filename;
@@ -57,13 +52,17 @@ public class Recorder implements Runnable {
 		// Open output stream...
 		Log.d(this.getClass().getName(), "run");
 
+
 		if (this.fileName == null) {
 			throw new IllegalStateException("fileName is null");
 		}
+
 		BufferedOutputStream bufferedStreamInstance = null;
+
 		if (fileName.exists()) {
 			fileName.delete();
 		}
+
 		try {
 			fileName.createNewFile();
 		} catch (IOException e) {
@@ -75,6 +74,7 @@ public class Recorder implements Runnable {
 					new FileOutputStream(this.fileName));
 			Log.d(this.getClass().getName(), "bufferedStreamInstance");
 
+
 		} catch (FileNotFoundException e) {
 			throw new IllegalStateException("Cannot Open File", e);
 		}
@@ -85,49 +85,41 @@ public class Recorder implements Runnable {
 		//android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 
 		// Allocate Recorder and Start Recording...
-		
-		
 
-		int actualBufferSize = 4096*8;
+
+
+		int actualBufferSize = 4096*16;
 
 		bufferSize =  AudioTrack.getMinBufferSize(DEFAULT_SAMPLE_RATE,
 				AudioFormat.CHANNEL_CONFIGURATION_MONO,
 				AudioFormat.ENCODING_PCM_16BIT);
 
-		atrack = new AudioTrack( AudioManager.STREAM_MUSIC,
-				DEFAULT_SAMPLE_RATE,
-				AudioFormat.CHANNEL_CONFIGURATION_MONO,
-				AudioFormat.ENCODING_PCM_16BIT,
-				actualBufferSize,
-				AudioTrack.MODE_STREAM);
-
 		capacity = AudioRecord.getMinBufferSize(DEFAULT_SAMPLE_RATE,
 				AudioFormat.CHANNEL_CONFIGURATION_MONO,
 				AudioFormat.ENCODING_PCM_16BIT);
 
-		buffer = new byte[actualBufferSize];
+		buffer = new  byte[bufferSize];
 
 		arec = new AudioRecord(MediaRecorder.AudioSource.MIC,
 				DEFAULT_SAMPLE_RATE,
 				AudioFormat.CHANNEL_CONFIGURATION_MONO,
 				AudioFormat.ENCODING_PCM_16BIT,
 				actualBufferSize);
-		
+
 		audioManager.setSpeakerphoneOn(true);
 		audioManager.setMicrophoneMute(false);
-		atrack.setPlaybackRate(DEFAULT_SAMPLE_RATE);
 		arec.startRecording();
-		
+
 		if (audioManager.isSpeakerphoneOn()) {
 			isRecording = true;
 			Log.d(this.getClass().getName(), "isSpeakerphoneOn");
 
 		}
-		int i = 0;
+
 		while(isRecording)
 		{
 			int readSize = arec.read(buffer, 0, 320);
-		
+
 			if (readSize == AudioRecord.ERROR_INVALID_OPERATION) {
 				throw new IllegalStateException(
 				"read() returned AudioRecord.ERROR_INVALID_OPERATION");
@@ -139,32 +131,27 @@ public class Recorder implements Runnable {
 				"read() returned AudioRecord.ERROR_INVALID_OPERATION");
 			}
 			try {
-				
-					dataOutputStreamInstance.write(buffer, 0, readSize);
-					atrack.write(buffer, 0 , readSize);
-					
-					handler.post(new Runnable() {
-						public void run() {
-							levelLine.setProgress(buffer[319]);
-						}
-					});
-				
+
+				dataOutputStreamInstance.write(buffer, 0, 320);
+
+
+				handler.post(new Runnable() {
+					public void run() {
+						volume = buffer[319];
+						levelLine.setProgress(volume);
+
+					}
+				});
+
 			} catch (IOException e) {
 				throw new IllegalStateException(
-				"dataOutputStreamInstance.write(buffer, 0, readSize)");
+						"dataOutputStreamInstance.write(buffer, 0, readSize)");
 			}
 
 		}
-		
-		// Close resources...
-		Log.d(this.getClass().getName(), "PLAY");
-
-		//atrack.play();
 
 		arec.stop();
 		arec.release();
-		atrack.stop();
-		//atrack.release();
 		
 
 		try {
@@ -194,7 +181,7 @@ public class Recorder implements Runnable {
 	 * @return the isRecording
 	 */
 	public boolean isRecording() {
-			return isRecording;
+		return isRecording;
 	}
 
 
@@ -205,21 +192,6 @@ public class Recorder implements Runnable {
 		return audioEncoding;
 	}
 
-	/**
-	 * @param isPaused
-	 *            the isPaused to set
-	 */
-	public void setPaused(boolean isPaused) {
-			this.isPaused = isPaused;	
-	}
-
-	/**
-	 * @return the isPaused
-	 */
-	public boolean isPaused() {
-			return isPaused;
-	}
-	
 	public ProgressBar getLevelLine() {
 		return levelLine;
 	}
@@ -234,14 +206,6 @@ public class Recorder implements Runnable {
 
 	public void setAudioManager(AudioManager audioManager) {
 		this.audioManager = audioManager;
-	}
-
-	public AudioTrack getAtrack() {
-		return atrack;
-	}
-
-	public void setAtrack(AudioTrack atrack) {
-		this.atrack = atrack;
 	}
 
 }
