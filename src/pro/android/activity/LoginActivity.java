@@ -22,7 +22,7 @@ import android.widget.EditText;
 public class LoginActivity extends CommonActivity {
 
 	public static boolean isLogged = false;
-
+    private Intent	nextIntent;
 	String username;
 	String password;
 
@@ -34,7 +34,21 @@ public class LoginActivity extends CommonActivity {
 		final EditText usernameEditText = (EditText) findViewById(R.id.txt_username);
 		final EditText passwordEditText = (EditText) findViewById(R.id.txt_password);
 		Button launch = (Button) findViewById(R.id.login_button);
-
+		Button signUp = (Button) findViewById(R.id.ButtonSignUpLogin);
+		
+		//Click on SignUp Button
+		signUp.setOnClickListener(new OnClickListener() {
+			public void onClick(View viewParam) {
+				
+			nextIntent = new Intent(viewParam.getContext(), SignUpActivity.class);
+			 startActivity(nextIntent);
+			}
+			
+			
+		});
+		
+		
+	
 		// Click on login button
 		launch.setOnClickListener(new OnClickListener() {
 			public void onClick(View viewParam) {
@@ -43,14 +57,15 @@ public class LoginActivity extends CommonActivity {
 				username = usernameEditText.getText().toString();
 				password = passwordEditText.getText().toString();
 
-				if (usernameEditText == null || passwordEditText == null) {
+				if (usernameEditText == null || passwordEditText == null || usernameEditText.equals("")) {
 					showDialog(DIALOG_ALERT_LOGIN);
 				} else {
 					BufferedReader in = null;
 					try {
 						showDialog(DIALOG_LOGIN);
 
-						if (login(username, password,"http://thounds.com/profile")) {
+						if (comm.login(username, password))
+						{
 							new Handler().postDelayed(new Runnable() {
 
 								public void run() {
@@ -60,6 +75,7 @@ public class LoginActivity extends CommonActivity {
 							isLogged = true;
 							nextIntent = new Intent(viewParam.getContext(),
 									HomeActivity.class);
+							 startActivity(nextIntent);
 
 						} else {
 							dismissDialog(DIALOG_LOGIN);
@@ -87,7 +103,8 @@ public class LoginActivity extends CommonActivity {
 		});
 
 	}
-
+	
+	
 	@Override
 	protected void onStop() {
 		super.onStop();

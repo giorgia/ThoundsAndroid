@@ -48,7 +48,7 @@ public class ThoundsActivity extends CommonActivity {
 
 	NetworkInfo wifiInfo, mobileInfo;
 
-	String username, password;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,15 +76,15 @@ public class ThoundsActivity extends CommonActivity {
 				}
 				// =========CHECK IS LOGGED===================
 				// Restore preferences
-				SharedPreferences settings = getSharedPreferences(
-						PREFS_NAME, 0);
+				SharedPreferences settings = getSharedPreferences( PREFS_NAME, 0);
 				username = settings.getString("silentUsername", username);
 				password = settings.getString("silentPassword", password);
-
-				if (isLogged) {
+			
+				Log.d("notification", "faccio il login");
+				if (comm.isLogged) {
 					nextIntent = new Intent(v.getContext(), HomeActivity.class);
 
-				} else if (login(username, password, "http://thounds.com/profile")){
+				} else if (comm.login(username, password)){
 
 					nextIntent = new Intent(v.getContext(), HomeActivity.class);
 
@@ -109,7 +109,7 @@ public class ThoundsActivity extends CommonActivity {
 
 	// =======NOTIFICHE==================================
 	public void notification() {
-
+		Log.d("notification", "notification entry");
 		NotificationManager not = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		int icon = R.drawable.icon;
 		CharSequence tickerText = "Thounds!";
