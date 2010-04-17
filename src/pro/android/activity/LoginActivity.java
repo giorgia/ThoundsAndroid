@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,9 +40,17 @@ public class LoginActivity extends CommonActivity {
 		//Click on SignUp Button
 		signUp.setOnClickListener(new OnClickListener() {
 			public void onClick(View viewParam) {
-				
+				try
+				{
 			nextIntent = new Intent(viewParam.getContext(), SignUpActivity.class);
+			
 			 startActivity(nextIntent);
+				}
+				catch(Exception e)
+				{
+					
+					Log.d("ATTENZIONE",e.toString());
+				}
 			}
 			
 			
@@ -75,7 +84,7 @@ public class LoginActivity extends CommonActivity {
 							isLogged = true;
 							nextIntent = new Intent(viewParam.getContext(),
 									HomeActivity.class);
-							 startActivity(nextIntent);
+							
 
 						} else {
 							dismissDialog(DIALOG_LOGIN);

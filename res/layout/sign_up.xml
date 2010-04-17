@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<ScrollView android:id="@+id/ScrollView01" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android" android:background="@color/celeste"><AbsoluteLayout android:id="@+id/AbsoluteLayout01" android:background="@color/celeste" android:layout_height="fill_parent" android:layout_width="fill_parent"><EditText android:text="@+id/EditText01" android:id="@+id/EditText01" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText><EditText android:text="@+id/EditText02" android:id="@+id/EditText02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="50px"></EditText>
+<EditText android:text="@+id/EditText03" android:id="@+id/EditText03" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="100px"></EditText>
+<EditText android:text="@+id/EditText04" android:id="@+id/EditText04" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="150px"></EditText>
+<EditText android:text="@+id/EditText05" android:id="@+id/EditText05" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="200px"></EditText>
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="250px" android:text="SignUP" android:id="@+id/ButtonSignUp"></Button>
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="250px" android:layout_x="150px" android:text="Reset" android:id="@+id/ButtonReset"></Button>
+</AbsoluteLayout>
+
+</ScrollView>
