@@ -1,10 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<AbsoluteLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content">
-  
-      <TextView android:layout_width="wrap_content" android:layout_y="80dip" android:layout_height="wrap_content" android:id="@+id/TextView01" android:layout_x="50dip" android:text="HOME"></TextView>
-  
-<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/Button01" android:layout_y="170dip" android:layout_x="100dip" android:text="Logout"></Button>
-</AbsoluteLayout>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_height="fill_parent"
+	android:layout_width="fill_parent">
+
+	<AbsoluteLayout android:orientation="horizontal"
+		android:layout_height="wrap_content" android:layout_gravity="center"
+		android:background="@android:color/background_light" android:layout_width="fill_parent">
+
+		<TextView android:layout_width="wrap_content"
+			android:textSize="20px" android:textStyle="bold"
+			android:layout_height="wrap_content" android:id="@+id/TextView01"
+			android:text="> home" android:layout_x="120dip" android:layout_y="10dip" android:textColor="@color/dark_grey"></TextView>
+
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/Button01"
+			android:text="Logout" android:layout_y="5dip"></Button>
+		<ImageButton android:layout_width="wrap_content"
+			android:src="@android:drawable/ic_popup_sync" android:layout_height="wrap_content"
+			android:id="@+id/Button02" android:text="Reload" android:layout_x="260dip"
+			android:layout_y="5dip"></ImageButton>
+
+	</AbsoluteLayout>
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent" android:layout_height="330dip">
+		<ListView android:layout_width="wrap_content" android:id="@+id/list"
+			android:clickable="true" android:layout_height="wrap_content"
+			android:layoutAnimation="@anim/layout_bottom_to_top_slide"></ListView>
+	</LinearLayout>
+
+	<LinearLayout android:orientation="horizontal"
+		android:layout_gravity="center" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:background="@drawable/black_gradient"
+		android:gravity="center_vertical">
+
+
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/timePlay"
+			android:text="00:00"></TextView>
+
+		<SeekBar android:id="@+id/SeekBar01" android:layout_height="wrap_content"
+			android:layout_width="240dip" android:paddingTop="10dip"
+			android:paddingBottom="10dip"></SeekBar>
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/timeToPlay"
+			android:text="-00:00"></TextView>
+
+
+	</LinearLayout>
+
+
+</LinearLayout>

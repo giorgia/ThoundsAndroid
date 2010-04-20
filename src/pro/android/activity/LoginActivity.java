@@ -3,11 +3,16 @@ package pro.android.activity;
 import java.io.BufferedReader;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+
+import org.json.JSONException;
 
 import pro.android.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,7 +43,7 @@ public class LoginActivity extends CommonActivity {
 
 		// Click on login button
 		launch.setOnClickListener(new OnClickListener() {
-			public void onClick(View viewParam) {
+			public void onClick(final View viewParam) {
 
 				// Get the text from the editexts
 				username = usernameEditText.getText().toString();
@@ -47,48 +52,45 @@ public class LoginActivity extends CommonActivity {
 				if (username == null || password == null) {
 					showDialog(DIALOG_ALERT_LOGIN);
 				} else {
-					BufferedReader in = null;
-					try {
-						showDialog(DIALOG_LOGIN);
 
-						if (login(username, password,"http://thounds.com/profile")) {
-							new Handler().postDelayed(new Runnable() {
-
-								public void run() {
-									dismissDialog(DIALOG_LOGIN);
-								}
-							}, 2000);
-							isLogged = true;
-							nextIntent = new Intent(viewParam.getContext(),
-									HomeActivity.class);
-
-						} else {
-							dismissDialog(DIALOG_LOGIN);
-
-							showDialog(DIALOG_ALERT_LOGIN);
-
-						}
-
-
-					} catch (Exception e) {
-						e.printStackTrace();
-
-					} finally {
-						if (in != null) {
-							try {
-								in.close();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-
+					Runnable run = new Runnable(){
+						public void run() {
+							
+							
+									if (login(username, password,"http://thounds.com/profile")) {
+										isLogged =true;
+										nextIntent = new Intent(viewParam.getContext(), HomeActivity.class);
+									}
+									else{
+										isLogged = false;
+									}
+							
+							
+							runOnUiThread(returnRes);
+						}			
+					};
+					Thread thread =  new Thread(null, run, "Login");
+					thread.start();
+					showDialog(DIALOG_LOGIN);
 				}
 			}
 		});
 
 	}
+	private Runnable returnRes = new Runnable() {
+		public void run() {
+			if(isLogged){
+				dismissDialog(DIALOG_LOGIN);
 
+			} else {
+				dismissDialog(DIALOG_LOGIN);
+
+				showDialog(DIALOG_ALERT_LOGIN);
+
+			}
+		}
+
+	};
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -104,7 +106,7 @@ public class LoginActivity extends CommonActivity {
 
 		// Don't forget to commit your edits!!!
 		editor.commit();
-		
+
 	}
 
 	@Override
@@ -148,6 +150,6 @@ public class LoginActivity extends CommonActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		return false;
 	}
-	
-	
+
+
 }

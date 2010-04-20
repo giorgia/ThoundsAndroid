@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 import pro.android.R;
 import pro.android.R.drawable;
@@ -58,57 +59,56 @@ public class ThoundsActivity extends CommonActivity {
 		ImageView img = (ImageView) this.findViewById(R.id.ImageView01);
 		img.setOnClickListener(new OnClickListener() {
 
-			public void onClick(View v) {
-				
+			public void onClick(final View v) {
+
 				// ========= CHECK CONNECTION ===================
 				ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-				wifiInfo = connectivity
-				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-				mobileInfo = connectivity
-				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+				wifiInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+				mobileInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-				//Aggiungere controllo  UNKNOWN
-				
 				if (!wifiInfo.isConnectedOrConnecting() && !mobileInfo.isConnectedOrConnecting()) {
 					showDialog(DIALOG_ALERT_CONNECTION);				
 				} else {
+
+					Runnable run = new Runnable(){
+						public void run() {
+							// =========CHECK IS LOGGED===================
+							// Restore preferences
+							SharedPreferences settings = getSharedPreferences(
+									PREFS_NAME, 0);
+							username = settings.getString("silentUsername", username);
+							password = settings.getString("silentPassword", password);
+
+
+								if (username != null && password!= null && login(username, password, "http://thounds.com/profile")){
+									isLogged = true;
+									nextIntent = new Intent(v.getContext(), HomeActivity.class);
+
+								} else {
+									isLogged = false;
+									nextIntent = new Intent(v.getContext(), LoginActivity.class);
+								}
+							
+
+							runOnUiThread(returnRes);
+						}			
+					};
+					Thread thread =  new Thread(null, run, "LoginMain");
+					thread.start();
 					showDialog(DIALOG_LOADING);
 				}
-				// =========CHECK IS LOGGED===================
-				// Restore preferences
-				SharedPreferences settings = getSharedPreferences(
-						PREFS_NAME, 0);
-				username = settings.getString("silentUsername", username);
-				password = settings.getString("silentPassword", password);
-
-				//if (isLogged) {
-					//nextIntent = new Intent(v.getContext(), HomeActivity.class);
-
-			//	} else
-					if (username != null && password!= null && login(username, password, "http://thounds.com/profile")){
-
-					nextIntent = new Intent(v.getContext(), HomeActivity.class);
-
-				} else {
-					nextIntent = new Intent(v.getContext(), LoginActivity.class);
-				}
-				
-				// Waiting 2 sec for ProgressDialog displayed
-				new Handler().postDelayed(new Runnable() {
-
-					public void run() {
-						dismissDialog(DIALOG_LOADING);
-					}
-				}, 4000);
 
 			}
-
 		});
-		
 	}
 
+	private Runnable returnRes = new Runnable() {
+		public void run() {
+			dismissDialog(DIALOG_LOADING);
+		}
 
+	};
 
 	// =======NOTIFICHE==================================
 	public void notification() {

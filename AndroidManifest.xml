@@ -13,6 +13,8 @@
 			android:windowSoftInputMode="stateAlwaysVisible"></activity>
 		<activity android:name=".activity.HomeActivity"
 			android:screenOrientation="portrait"></activity>
+			<activity android:name=".activity.TracksActivity"
+			android:screenOrientation="portrait"></activity>
 		<activity android:name=".activity.RecordActivity"
 			android:screenOrientation="portrait"></activity>
 		<activity android:name=".activity.NotificationsActivity"
