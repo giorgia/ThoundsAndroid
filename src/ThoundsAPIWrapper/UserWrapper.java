@@ -47,6 +47,10 @@ public class UserWrapper{
 		return profile.getString("about");
 	}
 	
+	public String getAvatarUrl() throws JSONException{
+		return profile.getString("avatar");
+	}
+	
 	public Drawable getAvatar() throws JSONException{
 		String avatarUrl = profile.getString("avatar");
 		Drawable image = null;
@@ -69,5 +73,12 @@ public class UserWrapper{
 			tagList[i] = tags.getJSONObject(i).getString("name");
 		}
 		return tagList;
+	}
+	
+	public ThoundWrapper getDefaultThound()throws JSONException{
+		JSONObject thound = profile.getJSONObject("default_thound");
+		if(thound != null)
+			return new ThoundWrapper(thound);
+		return null;
 	}
 }

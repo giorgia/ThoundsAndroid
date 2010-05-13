@@ -21,11 +21,11 @@ public class HomeWrapper {
 		return home.getJSONObject("thounds-collection").getInt("page");
 	}
 	
-	public int getPageNumber()throws JSONException{
+	public int getPageTotalNumber()throws JSONException{
 		return home.getJSONObject("thounds-collection").getInt("pages");
 	}
 	
-	public int getThoundsNumber()throws JSONException{
+	public int getThoundsTotalNumber()throws JSONException{
 		return home.getJSONObject("thounds-collection").getInt("total");
 	}
 	
