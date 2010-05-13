@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 
 import java.io.IOException;
 
+
 import pro.android.R;
+import ThoundsAPIWrapper.RequestWrapper;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -42,9 +44,9 @@ public class LoginActivity extends CommonActivity {
 			public void onClick(View viewParam) {
 				try
 				{
-			nextIntent = new Intent(viewParam.getContext(), SignUpActivity.class);
-			
-			 startActivity(nextIntent);
+		//	nextIntent = new Intent(viewParam.getContext(), SignUpActivity.class);
+			RequestWrapper.registrateUser("ale", "onni7@msn.com", "padova", "padova", "rock");
+	//		 startActivity(nextIntent);
 				}
 				catch(Exception e)
 				{
