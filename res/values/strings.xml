@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stop">Stop</string>
-    <string name="rec">Rec</string>
-    <string name="play">Play</string>
-    
-    <string name="g">giorgia</string><string name="hello">Hello World!</string>
-    <string name="app_name">Thounds</string>
+	<string name="stop">Stop</string>
+	<string name="rec">Rec</string>
+	<string name="play">Play</string>
 
-<color name="black">#000</color>
+	<string name="app_name">Thounds</string>
 
-<color name="white_smoke">#f5f5f5</color>
+	<color name="black">#000</color>
 
-<color name="dark_grey">#6E6E6E</color>
+	<color name="white_smoke">#f5f5f5</color>
 
-<color name="red_btn">#A62A2A</color>
+	<color name="dark_grey">#6E6E6E</color>
 
-<color name="celeste">#00B2ED</color>
+	<color name="red_btn">#A62A2A</color>
+
+	<color name="celeste">#00B2ED</color>
+
+	<style name="shadow">
+		<item name="android:background">@layout/shape</item>
+		<item name="android:shadowColor">#000000</item>
+		<item name="android:shadowDy">1.2</item>
+		<item name="android:shadowDx">1.2</item>
+		<item name="android:shadowRadius">1.2</item>
+	</style>
 </resources>

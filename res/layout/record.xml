@@ -10,10 +10,11 @@
 
 	<ProgressBar android:layout_width="wrap_content"
 		style="?android:attr/progressBarStyleHorizontal"
-		android:layout_height="wrap_content" android:minHeight="30dip"
+		android:layout_height="35dip" android:minHeight="30dip"
 		android:minWidth="250dip" android:layout_x="30dip"
 		android:progressDrawable="@drawable/progress_bar_horizontal"
 		android:layout_y="50dip" android:id="@+id/LevelLineBar"></ProgressBar>
+		
 <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" 
 	android:layout_x="30dip" android:id="@+id/ImageView01" android:layout_y="110dip" android:src="@android:drawable/divider_horizontal_bright" android:minWidth="200dip"></ImageView>
 

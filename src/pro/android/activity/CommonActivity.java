@@ -42,11 +42,12 @@ public class CommonActivity extends Activity {
 	static final int DIALOG_ALERT_LOGIN = 3;
 	static final int DIALOG_RETRIEVING_DATA = 4;
 
-	
-	
+
+
 	public static boolean isLogged = false;
 
-	Intent nextIntent = null;
+	public Intent nextIntent = null;
+	public int currentActivity;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -99,7 +100,7 @@ public class CommonActivity extends Activity {
 			}
 		} catch (UnknownHostException e) {
 			Log.d("LOGIN", "Cacth UnknownHostException");
-			
+
 		}catch (ClientProtocolException e) {
 			// TODO: handle exception
 			Log.d("LOGIN", "Cacth ClientProtocolException");
@@ -109,12 +110,12 @@ public class CommonActivity extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.d("LOGIN", "Cacth Exception");
-		
+
 		}
 		return false;
 	}
 
-	
+
 	public JSONObject getJson(String url) throws SocketException{
 		DefaultHttpClient client = new DefaultHttpClient();
 
@@ -142,19 +143,19 @@ public class CommonActivity extends Activity {
 			in.close();
 
 			String result = sb.toString();
-			
+
 			JSONObject json = new JSONObject(result);
 
 			return json;
 
-	
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
 		}
 		return null;
 	}
-	
+
 	public void logout() {
 		isLogged = false;
 
@@ -170,25 +171,25 @@ public class CommonActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if(currentActivity != item.getItemId())
+			switch (item.getItemId()) {
 
-		switch (item.getItemId()) {
-
-		case R.id.home:
-			item.setIntent(new Intent(this, HomeActivity.class));
-			break;
-		case R.id.notifications:
-			item.setIntent(new Intent(this, NotificationsActivity.class));
-			break;
-		case R.id.record:
-			item.setIntent(new Intent(this, RecordActivity.class));
-			break;
-		case R.id.profile:
-			item.setIntent(new Intent(this, ProfileActivity.class));
-			break;
-		case R.id.search:
-			item.setIntent(new Intent(this, SearchActivity.class));
-			break;
-		}
+			case R.id.home:
+				item.setIntent(new Intent(this, HomeActivity.class));
+				break;
+			case R.id.notifications:
+				item.setIntent(new Intent(this, NotificationsActivity.class));
+				break;
+			case R.id.record:
+				item.setIntent(new Intent(this, RecordActivity.class));
+				break;
+			case R.id.profile:
+				item.setIntent(new Intent(this, ProfileActivity.class));
+				break;
+			case R.id.search:
+				item.setIntent(new Intent(this, SearchActivity.class));
+				break;
+			}
 
 		return false;
 	}

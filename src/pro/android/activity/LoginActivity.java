@@ -29,16 +29,18 @@ public class LoginActivity extends CommonActivity {
 
 	public static boolean isLogged = false;
 
-	String username;
-	String password;
-
+	private String username;
+	private String password;
+	private EditText usernameEditText;
+	private EditText passwordEditText;
+	
 	@Override
 	public void onCreate(Bundle cicle) {
 		super.onCreate(cicle);
 		setContentView(R.layout.log_in);
 
-		final EditText usernameEditText = (EditText) findViewById(R.id.txt_username);
-		final EditText passwordEditText = (EditText) findViewById(R.id.txt_password);
+		usernameEditText = (EditText) findViewById(R.id.txt_username);
+		passwordEditText = (EditText) findViewById(R.id.txt_password);
 		Button launch = (Button) findViewById(R.id.login_button);
 
 		// Click on login button
@@ -150,6 +152,14 @@ public class LoginActivity extends CommonActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		return false;
 	}
-
+	
+	public void onClickUsername(View v){
+		if((usernameEditText.getText().toString()).equals("e-mail"))
+			usernameEditText.setText("");
+	}
+	public void onClickPassword(View v){
+		if((passwordEditText.getText().toString()).equals("password"))
+			passwordEditText.setText("");
+	}
 
 }

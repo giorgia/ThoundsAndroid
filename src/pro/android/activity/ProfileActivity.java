@@ -11,6 +11,7 @@ public class ProfileActivity extends CommonActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profile);
+		currentActivity = R.id.profile;
 	}
 
 }

@@ -46,7 +46,7 @@ public class RecordActivity extends CommonActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.record);
-
+		currentActivity = R.id.record;
 		// Bottone Rec - utilizza la classe Recorder (scrittura su file da
 		// sistemare)
 

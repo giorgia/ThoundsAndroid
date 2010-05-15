@@ -2,47 +2,62 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_height="fill_parent" android:layout_width="fill_parent"
 	android:orientation="vertical">
-	<AbsoluteLayout android:orientation="horizontal"
-		android:layout_height="wrap_content" android:layout_gravity="center"
-		android:background="@android:color/background_light"
-		android:layout_width="fill_parent">
-	
-	<ImageView android:id="@+id/cover" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/icon" android:layout_y="5dip" android:layout_x="5dip" android:maxWidth="60dip" android:maxHeight="60dip" android:minWidth="60dip" android:minHeight="60dip" android:scaleType="center"></ImageView>
-	
-		<TextView android:layout_width="wrap_content"
-			android:textSize="20px" android:textStyle="bold"
-			android:layout_height="wrap_content" android:id="@+id/ThoundTitle"
-			android:text="Thound Title" android:layout_y="10dip"
-			android:textColor="@color/dark_grey" android:layout_x="70dip"></TextView>
+	<RelativeLayout android:layout_width="fill_parent"
+		android:layout_height="60dip" android:background="@drawable/gradient">
 
-		<ImageButton android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/BtnBack"
-			android:src="@android:drawable/ic_menu_revert" android:text="Logout"
-			android:layout_y="5dip" android:layout_x="250dip"></ImageButton>
+		<ImageView android:id="@+id/cover" android:src="@drawable/no_cover"
+			android:scaleType="centerCrop" android:layout_height="55dip"
+			android:layout_width="55dip" android:layout_centerVertical="true"
+			android:background="@android:color/darker_gray" android:padding="3dip"
+			android:layout_alignParentRight="true" android:layout_margin="3dip" />
+		<TextView android:textStyle="bold" android:layout_height="wrap_content"
+			android:id="@+id/ThoundTitle" android:textSize="18px" android:layout_marginLeft="5dip"
+			android:layout_centerVertical="true" android:maxLines="1"
+			android:ellipsize="marquee" android:marqueeRepeatLimit="marquee_forever"
+			android:scrollHorizontally="true" android:focusable="true"
+			android:selectAllOnFocus="true" android:focusableInTouchMode="true"
+			android:text="Thound Title" android:layout_width="250dip" android:textColor="@color/white_smoke" android:shadowColor="@android:color/black" android:shadowDx="1.2" android:shadowDy="1.2" android:shadowRadius="1.2"></TextView>
 
 
-		<TextView android:layout_height="wrap_content"
-			android:layout_width="wrap_content" android:id="@+id/Thounder"
-			android:text="Thounder Name" android:layout_y="40dip" android:layout_x="70dip"></TextView>
-	</AbsoluteLayout>
+
+
+
+	</RelativeLayout>
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="fill_parent" android:layout_height="305dip">
+		android:layout_width="fill_parent" android:layout_height="280dip">
 		<ListView android:id="@+id/list_tracks"
 			android:layoutAnimation="@anim/layout_bottom_to_top_slide"
 			android:layout_height="wrap_content" android:layout_width="wrap_content"></ListView>
 	</LinearLayout>
-	<LinearLayout android:orientation="horizontal"
-		android:layout_width="fill_parent" android:layout_height="fill_parent"
-		android:background="@drawable/black_gradient" android:gravity="center"
-		android:layout_gravity="center_vertical">
 
-		<Button android:id="@+id/Button01" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" style="?android:attr/buttonStyleSmall"
-			android:text="   PLAY   "></Button>
-		<Button android:id="@+id/Button02" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" style="?android:attr/buttonStyleSmall"
-			android:text=" RECORD "></Button>
-	</LinearLayout>
+	<RelativeLayout android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:background="@drawable/gradient_reverse">
+
+		
+
+		
+		
+		<LinearLayout android:id="@+id/TracksDownloading" android:layout_centerHorizontal="true" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="30dip">
+			<ProgressBar android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/ProgressBarDownloading" style="?android:attr/progressBarStyleSmall" android:layout_gravity="center"></ProgressBar>
+			<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/TextViewDownloading" android:text="Downloading..." android:gravity="center" android:layout_gravity="center"></TextView>
+			</LinearLayout><LinearLayout android:orientation="horizontal" android:gravity="center" android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/TracksProgress" android:visibility="visible">
+
+
+			<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/timePlay1" android:text="00:00" android:textColor="@android:color/white" android:layout_centerVertical="true"></TextView>
+
+			<SeekBar android:id="@+id/SeekBarTracks" android:paddingTop="10dip" android:paddingBottom="10dip" android:layout_toRightOf="@+id/timePlay1" android:layout_centerInParent="true" android:thumb="@drawable/thumb" android:layout_height="35dip" android:layout_margin="3dip" android:progress="3" android:layout_width="233dip"></SeekBar>
+			<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/timeToPlay1" android:text="-00:00" android:textColor="@android:color/white" android:layout_toRightOf="@+id/SeekBarHome"></TextView>
+		
+
+			</LinearLayout><LinearLayout android:orientation="horizontal" android:gravity="center" android:layout_alignParentBottom="true" android:layout_width="fill_parent" android:layout_height="50dip" android:id="@+id/TracksCommand">
+
+			<Button android:layout_width="wrap_content" style="?android:attr/buttonStyleSmall" android:text="   PLAY   " android:layout_height="40dip" android:id="@+id/PlayTracks"></Button>
+			<Button android:id="@+id/Button02" android:layout_width="wrap_content" style="?android:attr/buttonStyleSmall" android:text=" RECORD " android:layout_height="40dip"></Button>
+		</LinearLayout>
+
+	
+</RelativeLayout>
 
 
 </LinearLayout>

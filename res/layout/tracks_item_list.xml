@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent" android:layout_width="fill_parent"
-	android:orientation="horizontal">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent"
+	android:orientation="horizontal" android:clickable="true" android:focusable="true" android:id="@+id/trackItemLayout">
 
-	<LinearLayout android:onClick="onClickItem"
+	<LinearLayout
 		android:orientation="vertical" android:layout_height="fill_parent" android:layout_width="210dip">
-	
-	
-		<TextView android:id="@+id/text1" android:textSize="20px" android:paddingRight="50dip"
-			android:textStyle="bold" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
+
+
+		<TextView android:id="@+id/text1" android:textSize="17px"
+			android:paddingRight="50dip" android:textStyle="bold"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" />
 
 		<TextView android:id="@+id/text2" android:textSize="14px"
 			android:textStyle="italic" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" />
-	
-	
 
 
-</LinearLayout><ToggleButton android:text="@+id/ToggleButton01" android:id="@+id/ToggleButton01" android:layout_width="wrap_content" android:layout_height="wrap_content"></ToggleButton>
-	
-		
+
+
+</LinearLayout>
+	<ToggleButton android:text="@+id/ToggleButton01" android:textOff="SOLO" android:textOn="SOLO" android:layout_height="wrap_content" android:textSize="4pt" android:layout_width="50dip" android:onClick="onClickSolo" android:layout_marginTop="2dip" android:id="@+id/ToggleSolo"></ToggleButton><ToggleButton android:text="@+id/ToggleButton02" android:layout_height="wrap_content" android:textOff="MUTE" android:textOn="MUTE" android:textSize="4pt" android:layout_width="50dip" android:onClick="onClickMute" android:checked="false" android:layout_marginTop="2dip" android:id="@+id/ToggleMute"></ToggleButton>
+
+
+
+
 </LinearLayout>	

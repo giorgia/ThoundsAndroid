@@ -1,39 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<AbsoluteLayout
-     xmlns:android="http://schemas.android.com/apk/res/android"
-   android:orientation="vertical"
-    android:layout_gravity="center_horizontal"
-    android:gravity="center_vertical|center_horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/celeste">
-   
-    
-     
-    
-   
-    <EditText android:layout_height="wrap_content"
-              android:layout_centerHorizontal="true"
-              android:textColor="@color/dark_grey" 
-			  android:layout_y="50px" android:id="@+id/txt_username" android:maxLines="1" android:clickable="true" android:layout_width="250px" android:layout_x="30px" android:textSize="8pt" android:inputType="textEmailAddress" android:text="e-mail"/>
-             
-             
-    
-   
-    <EditText android:layout_height="wrap_content"
-              android:layout_centerHorizontal="true"
-              android:cursorVisible="true" android:layout_y="100px" android:textColor="@color/dark_grey" android:id="@+id/txt_password" android:maxLines="1" android:layout_width="250px" android:layout_x="30px" android:textSize="8pt" android:inputType="textPassword" android:text="password"/>
-   
-     <Button android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_centerHorizontal="true"
-          android:id="@+id/login_button" android:layout_y="150dip" android:minWidth="120dip" android:layout_x="160dip" android:text="Play"/>
-          
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_gravity="center_horizontal"
+	android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="@color/celeste">
 
-<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/TextView01" android:layout_x="50dip" android:textColor="@color/dark_grey" android:layout_y="230dip"></TextView>
-<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/TextView02" android:layout_x="50dip" android:textColor="@color/dark_grey" android:layout_y="250dip"></TextView>
 
-<ImageView android:id="@+id/ImageView01" android:layout_y="230dip" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_x="150dip" android:maxHeight="150dip" android:maxWidth="150dip" android:minHeight="150dip" android:minWidth="150dip"></ImageView>
 
-<Button android:layout_height="wrap_content" android:id="@+id/Button01" android:layout_width="wrap_content" android:layout_x="30dip" android:layout_y="150dip" android:minWidth="120dip" android:text="Sign Up!"></Button>
-</AbsoluteLayout> 
+
+	<RelativeLayout android:gravity="center_vertical|center_horizontal"
+		android:layout_centerInParent="true" android:layout_width="wrap_content" android:layout_alignParentTop="true" android:id="@+id/lLogin" android:layout_height="wrap_content" android:layout_margin="8dip" android:padding="8dip" style="@style/shadow">
+		<EditText android:layout_height="wrap_content"
+			android:layout_centerHorizontal="true" android:textColor="@color/dark_grey"
+			android:id="@+id/txt_username"
+			android:maxLines="1" android:clickable="true" android:textSize="8pt" android:inputType="textEmailAddress"
+			android:text="e-mail" android:layout_width="280px" android:onClick="onClickUsername"/>
+
+
+
+
+		<EditText android:layout_height="wrap_content"
+			android:layout_centerHorizontal="true" android:cursorVisible="true"
+			android:textColor="@color/dark_grey"
+			android:id="@+id/txt_password" android:maxLines="1"
+			android:textSize="8pt" android:inputType="textPassword" android:text="password" android:layout_below="@+id/txt_username" android:layout_width="280px" android:onClick="onClickPassword"/>
+
+		<Button android:layout_centerHorizontal="true"
+			android:id="@+id/login_button" android:minWidth="120dip" android:text="Play" android:layout_below="@+id/txt_password" android:layout_height="wrap_content" android:layout_width="280dip"/>
+
+
+		<TextView android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/TextView01"
+			android:layout_x="50dip" android:textColor="@color/dark_grey"
+			android:layout_y="230dip"></TextView>
+		<TextView android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/TextView02"
+			android:layout_x="50dip" android:textColor="@color/dark_grey"
+			android:layout_y="250dip"></TextView>
+
+		
+
+		
+	</RelativeLayout>
+
+<LinearLayout android:layout_height="wrap_content" android:layout_toRightOf="@+id/Button02" android:id="@+id/LinearLayout01" android:layout_width="wrap_content" android:layout_below="@+id/lLogin" android:layout_centerInParent="true"><Button android:layout_height="wrap_content" android:id="@+id/Button01" android:text="Sign Up!" android:layout_below="@+id/lLogin" android:layout_width="150dip"></Button><Button android:layout_height="wrap_content" android:id="@+id/Button02" android:layout_toRightOf="@+id/Button01" android:layout_below="@+id/lLogin" android:layout_width="150dip" android:text="More info..."></Button></LinearLayout>
+</RelativeLayout> 
