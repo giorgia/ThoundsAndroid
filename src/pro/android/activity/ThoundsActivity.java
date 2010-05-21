@@ -55,6 +55,8 @@ public class ThoundsActivity extends CommonActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		
+		
 		ImageView img = (ImageView) this.findViewById(R.id.ImageView01);
 		img.setOnClickListener(new OnClickListener() {
 
@@ -89,7 +91,9 @@ public class ThoundsActivity extends CommonActivity {
 					nextIntent = new Intent(v.getContext(), HomeActivity.class);
 
 				} else {
+					Log.e("SIGN_UP","Qui passaaaaaaaaaaaaaaaaaa");
 					nextIntent = new Intent(v.getContext(), LoginActivity.class);
+				
 				}
 				
 				// Waiting 2 sec for ProgressDialog displayed
@@ -105,7 +109,8 @@ public class ThoundsActivity extends CommonActivity {
 		});
 	}
 
-
+	
+	
 
 	// =======NOTIFICHE==================================
 	public void notification() {

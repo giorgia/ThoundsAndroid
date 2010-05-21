@@ -12,8 +12,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpProtocolParams;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import pro.android.R;
+
 import pro.android.utils.Communication;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -45,6 +45,7 @@ public class CommonActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// call the base class to include system menus
 		MenuInflater inflater = getMenuInflater();
+	
 		inflater.inflate(R.menu.menu, menu);
 		return true;
 	}
@@ -148,7 +149,7 @@ public class CommonActivity extends Activity {
 		  password = settings.getString("silentPassword", password);
 	    
 		  Log.e("REQUEST", "Entra...REQUEST");
-		if (comm.isLogged || comm.login(username, password)) {
+		if (Communication.isLogged || comm.login(username, password)) {
 
 			  Log.e("lOGGATO", "CHIAMO GET reQUEST");
 			//nextIntent = new Intent(v.getContext(), HomeActivity.class);

@@ -22,6 +22,7 @@ import android.widget.EditText;
 
 public class LoginActivity extends CommonActivity {
 
+	private static final int DIALOG_SIGN_UP = 0;
 	public static boolean isLogged = false;
     private Intent	nextIntent;
 	String username;
@@ -42,9 +43,10 @@ public class LoginActivity extends CommonActivity {
 			public void onClick(View viewParam) {
 				try
 				{
-			nextIntent = new Intent(viewParam.getContext(), SignUpActivity.class);
-			
-			 startActivity(nextIntent);
+					Log.e("MA ALLORA PASSIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIs","siiiiiiiiiii");
+			     nextIntent = new Intent(viewParam.getContext(), SignUpActivity.class);
+			     //showDialog(DIALOG_SIGN_UP);
+			     startActivity(nextIntent);
 				}
 				catch(Exception e)
 				{
@@ -56,7 +58,7 @@ public class LoginActivity extends CommonActivity {
 			
 		});
 		
-		
+	
 	
 		// Click on login button
 		launch.setOnClickListener(new OnClickListener() {
@@ -82,8 +84,7 @@ public class LoginActivity extends CommonActivity {
 								}
 							}, 2000);
 							isLogged = true;
-							nextIntent = new Intent(viewParam.getContext(),
-									HomeActivity.class);
+							nextIntent = new Intent(viewParam.getContext(),HomeActivity.class);
 							
 
 						} else {
@@ -165,6 +166,7 @@ public class LoginActivity extends CommonActivity {
 
 			return builder.create();
 		}
+		
 		}
 		return null;
 	}
