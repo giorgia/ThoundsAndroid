@@ -2,32 +2,22 @@ package pro.android.utils;
 
 import java.io.IOException;
 
-import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.media.AudioManager;
-import android.media.AudioTrack;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnBufferingUpdateListener;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Handler;
-import android.os.IBinder;
+import android.media.MediaPlayer.OnErrorListener;
 import android.util.Log;
-import android.widget.SeekBar;
+import android.widget.Toast;
+import android.widget.MediaController.MediaPlayerControl;
 
-public class Player implements SeekBar.OnSeekBarChangeListener , OnCompletionListener{
-	
-	private MediaPlayer mediaPlayer;
-	private final Handler handler = new Handler();
-	private SeekBar seekBar = null;
+public class Player implements MediaPlayerControl, OnErrorListener{
+
+	//private MediaPlayer mediaPlayer;
+	private MediaPlayer[] mediaPlayers = new MediaPlayer[1];;
+
 	private int progress = 0;
-	private int offset = 0;
-	private boolean isBuffered= false;
-	private String audioUrl;
-
+	private int[] offsets = new int[1];
+	private String[] audioUrls = new String[1];
+	
 	public static final int STATE_STOPPED = 0;
 	public static final int STATE_BUFFERING = 1;
 	public static final int STATE_PLAYING = 2;
@@ -35,187 +25,157 @@ public class Player implements SeekBar.OnSeekBarChangeListener , OnCompletionLis
 	public static final int STATE_NODATA = 4;
 	public static final int STATE_ERROR = -1;
 	private int currentState = STATE_STOPPED;
-	private boolean mDoHasWiFi = false;
+
 	private int bufferPercent;
 
 
 	public Player(String audioUrl) {
-		this.audioUrl = audioUrl;
-		mediaPlayer = new MediaPlayer();
+		this.audioUrls[0] = audioUrl;	
+		mediaPlayers[0] = new MediaPlayer();
 	}
 
 	public Player(String audioUrl, int offset) {	
-		this.offset = offset;
-		this.audioUrl = audioUrl;
-		mediaPlayer = new MediaPlayer();
+		this.offsets[0] = offset;
+		this.audioUrls[0] = audioUrl;
+		mediaPlayers[0] = new MediaPlayer();
 	}
 
-	public Player(String audioUrl, SeekBar seekBar) {		
-		this.seekBar = seekBar;
-		this.audioUrl = audioUrl;
-		mediaPlayer = new MediaPlayer();
+	public Player(int size) {
+		this.mediaPlayers = new MediaPlayer[size];
 	}
-
-	public Player(String audioUrl, SeekBar seekBar, int offset) {		
-		this.offset = offset;
-		this.seekBar = seekBar;
-		this.audioUrl = audioUrl;
-		mediaPlayer = new MediaPlayer();
-
+	
+	public Player(String[] audioUrls, int[] offsets) {	
+		this.offsets = offsets;
+		this.audioUrls = audioUrls;
+		for(int i=0; i< audioUrls.length; i++){
+			mediaPlayers[i] = new MediaPlayer();
+		}
 	}
-
+	
+	public void setData(String uri, int offset, int index) {
+		mediaPlayers[index] = new MediaPlayer();
+		try {
+			mediaPlayers[index].setDataSource(uri);
+			mediaPlayers[index].setAudioStreamType(AudioManager.STREAM_MUSIC);
+			mediaPlayers[index].prepare();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//this.audioUrls[index] = uri;
+		//this.offsets[index] = offset;
+	}
+	
 	public void bufferedAudio()throws Exception{
-		Log.d("Player", "bufferedAudio()");
-		mediaPlayer.setDataSource(audioUrl);
-		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		mediaPlayer.prepare();
-		isBuffered = true;
-	}
-	public void playAudio() throws Exception  {
-		//checkConnection();
-		if(currentState == STATE_STOPPED){	
-
-			if(!isBuffered){
-				bufferedAudio();
-				seekBar.setProgress(0);
-			}else{
-
-				if(offset != 0){
-					Log.d("Player","offset  "+offset);
-					mediaPlayer.seekTo(offset);
-				}
-				mediaPlayer.start();
-				currentState = STATE_PLAYING;
-				if(seekBar != null){
-					seekBar.setProgress(0);
-					progressUpdater();
-				}
-			}
-
-		}else{
-			mediaPlayer.seekTo((mediaPlayer.getDuration())*(progress)/100);
-			Log.d("Player" , "CurrPos ="+mediaPlayer.getCurrentPosition()+"  durata = "+mediaPlayer.getDuration());
-			mediaPlayer.start();
-			currentState = STATE_PLAYING;
-			progressUpdater();
-
+		for(int i = 0; i<mediaPlayers.length; i++){
+			mediaPlayers[i].setDataSource(audioUrls[i]);
+			mediaPlayers[i].setAudioStreamType(AudioManager.STREAM_MUSIC);
+			mediaPlayers[i].prepare();
 		}
+	}
+
+	public void bufferedAudio(int index)throws Exception{
+		
+			mediaPlayers[index].setDataSource(audioUrls[index]);
+			mediaPlayers[index].setAudioStreamType(AudioManager.STREAM_MUSIC);
+			mediaPlayers[index].prepare();
+		
+	}
+	public void muteAudio(int index) {
+
+		mediaPlayers[index].setVolume(0, 0);
+
+	}
+	public void unmuteAudio(float volume, int index) {
+
+		mediaPlayers[index].setVolume(volume, volume);
 
 	}
 
-	public void stopAudio()  throws Exception {
-		currentState = STATE_STOPPED;
-		seekBar.setProgress(0);
-		mediaPlayer.stop();
-		killMediaPlayer();
+
+	public int getBufferPercentage() {
+		// TODO Auto-generated method stub
+		return bufferPercent;
 	}
 
-	public void pauseAudio() {
+	public int getCurrentPosition() {
+		// TODO Auto-generated method stub
+		return mediaPlayers[0].getCurrentPosition();
+	}
+
+	public int getDuration() {
+		// TODO Auto-generated method stub
+		return mediaPlayers[0].getDuration();
+	}
+
+	public boolean isPlaying() {
+		// TODO Auto-generated method stub
+		return mediaPlayers[0].isPlaying();
+	}
+
+	public boolean isPlaying(int index) {
+		// TODO Auto-generated method stub
+		return mediaPlayers[index].isPlaying();
+	}
+
+	public void pause() {
+		// TODO Auto-generated method stub
 		currentState = STATE_PAUSED;
-		mediaPlayer.pause();
+		mediaPlayers[0].pause();
+	}
+	
+	public void pause(int index) {
+		// TODO Auto-generated method stub
+		currentState = STATE_PAUSED;
+		mediaPlayers[index].pause();
+	}
+	
+	public void seekTo(int pos) {
+		// TODO Auto-generated method stub
+		mediaPlayers[0].seekTo(pos);
+	}
+	
+	public void seekTo(int pos, int index) {
+		// TODO Auto-generated method stub
+		mediaPlayers[index].seekTo(pos);
+	}
+	
+	public void start() {
+		// TODO Auto-generated method stub
+		mediaPlayers[0].start();
 
 	}
 
-	public void muteAudio() {
-
-		mediaPlayer.setVolume(0, 0);
-
-	}
-	public void unmuteAudio(float volume) {
-
-		mediaPlayer.setVolume(volume, volume);
+	public void start(int index) {
+		// TODO Auto-generated method stub
+		mediaPlayers[index].start();
 
 	}
-
-	public void progressUpdater() {
-
-		if (currentState == STATE_PLAYING) {
-
-			new Thread(new Runnable() {
-				public void run() {
-					while ((currentState != STATE_STOPPED && currentState != STATE_PAUSED) && progress < 100) {
-						progress = ((mediaPlayer.getCurrentPosition()/1000)*100/(mediaPlayer.getDuration()/1000));
-						handler.post(new Runnable() {
-							public void run() {
-								seekBar.setProgress(progress);
-							}
-						});
-					}
-				}
-			}).start();
-		}
+	
+	public void setBufferPercent(int percent) {
+		// TODO Auto-generated method stub
+		bufferPercent = percent;
 	}
 
-
-	private void killMediaPlayer() {
-		if (mediaPlayer != null) {
-			try {
-				mediaPlayer.release();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+	public MediaPlayer getDefaulMediaPlayer() {
+		return mediaPlayers[0];
 	}
 
-	private void checkConnection(){
-		BroadcastReceiver connectivityListener = new BroadcastReceiver() {
-
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				NetworkInfo ni = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-
-				if (ni.getState() == NetworkInfo.State.DISCONNECTED) {
-					if (currentState != STATE_STOPPED) {
-						// Ignore disconnections that don't change our WiFi / cell
-						// state
-						if ((ni.getType() == ConnectivityManager.TYPE_WIFI) != mDoHasWiFi ) {
-							return;
-						}
-
-						// We just lost the WiFi connection so update our state
-						if (ni.getType() == ConnectivityManager.TYPE_WIFI)
-							mDoHasWiFi = false;
-
-						Log.d("PLAYER","Data connection lost! Type: " + ni.getTypeName() + " Subtype: " + ni.getSubtypeName() + "Extra Info: " + ni.getExtraInfo()
-								+ " Reason: " + ni.getReason());
-						if (mediaPlayer != null && bufferPercent < 100) {
-							try {
-								mediaPlayer.stop();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-
-							currentState = STATE_NODATA;
-
-						}
-
-					}
-				} else if (ni.getState() == NetworkInfo.State.CONNECTED && currentState != STATE_STOPPED && currentState != STATE_PAUSED) {
-					if (currentState == STATE_NODATA || ni.isFailover() || ni.getType() == ConnectivityManager.TYPE_WIFI) {
-						if (ni.getType() == ConnectivityManager.TYPE_WIFI) {
-							if (!mDoHasWiFi)
-								mDoHasWiFi = true;
-							else
-								return;
-						}
-						Log.d("PLAYER","New data connection attached! Type: " + ni.getTypeName() + " Subtype: " + ni.getSubtypeName() + "Extra Info: "
-								+ ni.getExtraInfo() + " Reason: " + ni.getReason());
-						//currentState = STATE_TUNING;
-					}
-				}
-			}
-
-
-		};
+	public MediaPlayer getMediaPlayer(int i) {
+		// TODO Auto-generated method stub
+		return mediaPlayers[i];
 	}
-	public MediaPlayer getMediaPlayer() {
-		return mediaPlayer;
+	
+	public void setDefaultMediaPlayer(MediaPlayer mediaPlayer) {
+		this.mediaPlayers[0] = mediaPlayer;
 	}
-
-	public void setMediaPlayer(MediaPlayer mediaPlayer) {
-		this.mediaPlayer = mediaPlayer;
-	}
+	
 
 	public int getProgress() {
 		return progress;
@@ -223,14 +183,6 @@ public class Player implements SeekBar.OnSeekBarChangeListener , OnCompletionLis
 
 	public void setProgress(int progress) {
 		this.progress = progress;
-	}
-
-	public SeekBar getSeekBar() {
-		return seekBar;
-	}
-
-	public void setSeekBar(SeekBar seekBar) {
-		this.seekBar = seekBar;
 	}
 
 	public int getCurrentState() {
@@ -242,49 +194,32 @@ public class Player implements SeekBar.OnSeekBarChangeListener , OnCompletionLis
 	}
 
 	public String getAudioUrl() {
-		return audioUrl;
+		return audioUrls[0];
 	}
 
 	public void setAudioUrl(String audioUrl) {
-		this.audioUrl = audioUrl;
+		this.audioUrls[0] = audioUrl;
 	}
 
-	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-		if(fromTouch){
-			Log.d("HOME", "fromTouch"); 
-			this.progress = progress;
-		}
-	}
 
-	public void onStartTrackingTouch(SeekBar seekBar) {
-		Log.d("HOME", "onStart"); 
-		pauseAudio();
-	}
-
-	public void onStopTrackingTouch(SeekBar seekBar) {
-		try {
-			Log.d("HOME", "onStop"); 
-			playAudio();
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void onCompletion(MediaPlayer mp) {
-		progress = 0;
-		seekBar.setProgress(0);
-		mediaPlayer.seekTo(0);
-		currentState = STATE_STOPPED;
-	}
 
 	public int getOffset() {
 		// TODO Auto-generated method stub
-		return this.offset;
+		return this.offsets[0];
 	}
+
+	public boolean onError(MediaPlayer mp, int what, int extra) {
+		// TODO Auto-generated method stub
+		Toast.makeText(null, "Errore", 4);
+		Log.d("Player","error player"+what);
+		return false;
+	}
+
+	public int size() {
+		// TODO Auto-generated method stub
+		return mediaPlayers.length;
+	}
+
 	
 	
-
-
 }

@@ -1,27 +1,22 @@
 package pro.android.activity;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.thounds.thoundsapi.ThoundWrapper;
+import org.thounds.thoundsapi.TrackWrapper;
 
 import pro.android.R;
 import pro.android.utils.ImageFromUrl;
 import pro.android.utils.Player;
-import android.app.ListActivity;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
-import android.media.MediaPlayer.OnPreparedListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,26 +25,25 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ExpandableListAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class TracksActivity extends CommonActivity{
 
 	ListView listView;
-	//SimpleAdapter adapter;
 	TracksAdapter mAdapter;
 	ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
-	JSONObject thound;
-	JSONArray jsTracks;
-	JSONObject track;
-	Vector<Player> tracks;
+	ThoundWrapper thound;
+	TrackWrapper track;
+	TrackWrapper[] tracks;
+
+	//Vector<Player> tracksPlayers;
+	Player p;
+
 	SeekBar seek;
 	int buffered = 0;
 	boolean isAllDownload = false;
@@ -60,13 +54,13 @@ public class TracksActivity extends CommonActivity{
 	ToggleButton tMute = null;
 	LinearLayout lTrack = null;
 	AudioManager am;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tracks);
 		currentActivity = -1;
-		
+
 		am =(AudioManager) this.getSystemService(AUDIO_SERVICE);
 		TextView thoundTitle = (TextView)findViewById(R.id.ThoundTitle);
 		ImageView cover = (ImageView)findViewById(R.id.cover);
@@ -74,24 +68,23 @@ public class TracksActivity extends CommonActivity{
 		lDowloading = (LinearLayout) findViewById(R.id.TracksDownloading);
 		lProgress = (LinearLayout) findViewById(R.id.TracksProgress);
 
-		Bundle extras = getIntent().getExtras();
-		//=============DA SOSTITUIRE CON METODI API THOUNDS==============
+		//Bundle extras = getIntent().getExtras();
 		try {
-			if(extras !=null)
-				thound = new JSONObject(extras.getString("thound"));
+			//if(extras !=null)
+			//thound = (ThoundWrapper)extras.getSerializable("thound");
+			if(obj != null)
+				thound = obj;
+			tracks = thound.getTracksList();
 
-			jsTracks = thound.getJSONArray("tracks");
+			thoundTitle.setText(tracks[0].getTitle());
 
-			thoundTitle.setText(thound.getJSONArray("tracks").getJSONObject(0).getString("title"));
-
-			if(!jsTracks.getJSONObject(0).get("cover").equals(null))
-				cover.setImageDrawable(new ImageFromUrl(this,jsTracks.getJSONObject(0).getString("cover"), ""+jsTracks.getJSONObject(0).getInt("id")).getDrawable());
+			//if(tracks[0].getUserAvatarUrl() != null)
+			//	cover.setImageDrawable(new ImageFromUrl(this,tracks[0].getCover()).getDrawable());
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//================================================================
 
 		listView = (ListView) findViewById(R.id.list_tracks);
 		mAdapter = new TracksAdapter(
@@ -101,19 +94,19 @@ public class TracksActivity extends CommonActivity{
 		);
 		listView.setAdapter(mAdapter);
 
-		tracks = new Vector<Player>(jsTracks.length());
+		//tracksPlayers = new Vector<Player>(tracks.length);
+		p = new Player(tracks.length);
 
-		for(int i=0; i< jsTracks.length(); i++){
+		for(int i=0; i< tracks.length; i++){
 
 			final HashMap<String,String> item = new HashMap<String,String>();
 			try {
-				track = jsTracks.getJSONObject(i);
+				track = tracks[i];
 
-				//=============DA SOSTITUIRE CON METODI API THOUNDS==============
-				tracks.add(new Player(track.getString("uri"), track.getInt("offset")));
-				item.put("line1",track.getJSONObject("user").getString("name"));
-				item.put("line2",track.getString("created_at"));
-				//===============================================================
+				p.setData(track.getUri(), track.getOffset(), i);
+
+				item.put("line1",track.getUserName());
+				item.put("line2", "data creazione");//track.getCreatedAt();
 
 				list.add( item );
 
@@ -129,58 +122,71 @@ public class TracksActivity extends CommonActivity{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
+			
 		}
-	
 		
-		tracks.elementAt(0).setSeekBar(seek);
+	
+		//tracksPlayers.elementAt(0).setSeekBar(seek);
 
 		Button play = (Button) findViewById(R.id.PlayTracks);
 		play.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				new Thread(downlodingTracks).start();
-				lDowloading.setVisibility(View.VISIBLE);
-				lProgress.setVisibility(View.INVISIBLE);
+				playTracks();
+
+				//new Thread(downlodingTracks).start();
+				//lDowloading.setVisibility(View.VISIBLE);
+				//lProgress.setVisibility(View.INVISIBLE);
 			}
 		});
 	}
 
+	@Override
+	public void onStart(){
+		super.onStart();
+		new Thread(downlodingTracks).start();
+	}
 
+	@Override
+	public void onPause(){
+		super.onPause();
+		pauseTracks();
+	}
 	private Runnable downlodingTracks  = new Runnable(){
 
 		public void run() {
 
-			for(int i =0; i < tracks.size(); i++){
-				
+			for(int i =0; i < p.size(); i++ ){
+
 				try {
-					
-					tracks.elementAt(i).bufferedAudio();
-					tracks.elementAt(i).getMediaPlayer().setOnBufferingUpdateListener(new OnBufferingUpdateListener() {
+
+					//p.bufferedAudio();
+					p.getMediaPlayer(i).setOnBufferingUpdateListener(new OnBufferingUpdateListener() {
 
 						public void onBufferingUpdate(MediaPlayer mp, int percent) {
+							showDialog(DIALOG_RETRIEVING_TRACKS);
 							if(percent == 100){
-								buffered++;
-								for(int j=0;  j < tracks.size(); j++)
-									if(tracks.elementAt(j).equals(mp)){
-										
-										lTrack = (LinearLayout) listView.findViewWithTag("layout"+j);
-										lTrack.setBackgroundColor(Color.LTGRAY);
-									}
+								buffered++;		
+								
+								//lTrack = (LinearLayout) listView.findViewWithTag("layout"+Math.random()%p.size());
+								//lTrack.setBackgroundColor(Color.LTGRAY);
+
 								Log.d("Tracks"," -----> Buffered =" +buffered);
-								if(buffered == tracks.size()){
+								if(buffered == p.size()){
 									isAllDownload = true;
 									Log.d("Tracks"," -------->isAllDownload =" +isAllDownload);
-
+									dismissDialog(DIALOG_RETRIEVING_TRACKS);
 									playTracks();
 								}
 							}
 						}
 
 					});
-					
-				
 
 				}catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -196,9 +202,9 @@ public class TracksActivity extends CommonActivity{
 			lDowloading.setVisibility(View.INVISIBLE);
 			lProgress.setVisibility(View.VISIBLE);
 			Log.d("Tracks"," playTracks CALL");
-			for(int i =0; i < tracks.size(); i++){
+			for(int i =0; i < p.size(); i++){
 				try {
-					tracks.elementAt(i).playAudio();
+					p.start(i);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -208,9 +214,9 @@ public class TracksActivity extends CommonActivity{
 	}
 
 	private void pauseTracks() {
-		for(int i =0; i < tracks.size(); i++){
+		for(int i =0; i < p.size(); i++){
 			try {
-				tracks.elementAt(i).pauseAudio();
+				p.pause(i);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -225,42 +231,38 @@ public class TracksActivity extends CommonActivity{
 		ToggleButton tsMute;
 		int tag = Integer.parseInt(((String) tSolo.getTag()).substring(4));
 		if(tSolo.isChecked()){
-			for(int i = 0; i< tracks.size(); i++){
+			for(int i = 0; i< p.size(); i++){
 				tsMute = (ToggleButton) listView.findViewWithTag("mute"+i);
 				if(i != tag){
-					tracks.elementAt(i).muteAudio();
+					p.muteAudio(i);
 					tsMute.setChecked(true);
 				}else if(tsMute.isChecked()){
-					tracks.elementAt(tag).unmuteAudio(am.getStreamVolume(AudioManager.STREAM_MUSIC));
+					p.unmuteAudio(am.getStreamVolume(AudioManager.STREAM_MUSIC) , tag);
 					tsMute.setChecked(false);
 				}
 			}
 		}else{
-			for(int i = 0; i< tracks.size(); i++){
+			for(int i = 0; i< p.size(); i++){
 				tsMute = (ToggleButton) listView.findViewWithTag("mute"+i);
-				tracks.elementAt(i).unmuteAudio(am.getStreamVolume(AudioManager.STREAM_MUSIC));
+				p.unmuteAudio(am.getStreamVolume(AudioManager.STREAM_MUSIC), i);
 				tsMute.setChecked(false);
 			}
 		}
 	}
-	
+
 	public void onClickMute(View v){
 		tMute = (ToggleButton)v;
 		int tag = Integer.parseInt(((String) tMute.getTag()).substring(4));
 		if(tMute.isChecked()){
-			tracks.elementAt(tag).muteAudio();
+			p.muteAudio(tag);
 
 		}else{
-			tracks.elementAt(tag).unmuteAudio(am.getStreamVolume(AudioManager.STREAM_MUSIC));
+			p.unmuteAudio(am.getStreamVolume(AudioManager.STREAM_MUSIC), tag);
 		}
 	}
 
 
-	@Override
-	public void onPause(){
-		super.onPause();
-		pauseTracks();
-	}
+	
 
 	private class TracksAdapter extends ArrayAdapter<HashMap<String,String>> {
 
@@ -283,7 +285,7 @@ public class TracksActivity extends CommonActivity{
 				ToggleButton tSolo = (ToggleButton) v.findViewById(R.id.ToggleSolo);
 				ToggleButton tMute = (ToggleButton) v.findViewById(R.id.ToggleMute);
 				LinearLayout lTrack = (LinearLayout) v.findViewById(R.id.trackItemLayout);
-				
+
 				if (tt != null) {
 					tt.setText( item.get("line1"));                            }
 				if(bt != null){
@@ -292,7 +294,7 @@ public class TracksActivity extends CommonActivity{
 				tSolo.setTag("solo"+position);
 				tMute.setTag("mute"+position);
 				lTrack.setTag("layout"+position);
-				
+
 			}
 			return v;
 		}

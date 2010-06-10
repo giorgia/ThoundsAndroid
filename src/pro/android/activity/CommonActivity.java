@@ -1,20 +1,6 @@
 package pro.android.activity;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.SocketException;
-import java.net.URI;
-import java.net.UnknownHostException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpProtocolParams;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.thounds.thoundsapi.ThoundWrapper;
 
 import pro.android.R;
 import android.app.Activity;
@@ -24,7 +10,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,21 +17,18 @@ import android.view.MenuItem;
 public class CommonActivity extends Activity {
 
 	public static final String PREFS_NAME = "thound_prefs";
-
-	public static  String USERNAME = "";
-	public static  String PASSWORD = "";
-
+	public static ThoundWrapper obj;
+	
 	static final int DIALOG_LOADING = 0;
 	static final int DIALOG_ALERT_CONNECTION = 1;
 	static final int DIALOG_LOGIN = 2;
 	static final int DIALOG_ALERT_LOGIN = 3;
-	static final int DIALOG_RETRIEVING_DATA = 4;
-
-
+	static final int DIALOG_RETRIEVING_THOUNDS = 4;
+	static final int DIALOG_RETRIEVING_TRACKS = 5;
 
 	public static boolean isLogged = false;
 
-	public Intent nextIntent = null;
+	public static Intent nextIntent = null;
 	public int currentActivity;
 
 	@Override
@@ -57,105 +39,7 @@ public class CommonActivity extends Activity {
 		return true;
 	}
 
-	public boolean login(String username, String password, String url) {
-		DefaultHttpClient client = new DefaultHttpClient();
-
-		HttpProtocolParams.setUseExpectContinue(client.getParams(), false);
-
-		client.getCredentialsProvider().setCredentials(
-				new AuthScope(null, 80, "thounds"),
-				new UsernamePasswordCredentials(username, password));
-		HttpResponse response = null;
-		try {
-			HttpGet httpget = new HttpGet();
-			httpget.setURI(new URI(url));
-
-			httpget.addHeader("Accept", "application/json");
-
-			Log.d("LOGIN", "executing request" + httpget.getRequestLine());
-
-			response = client.execute(httpget);
-
-			BufferedReader in = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
-
-			Log.d("LOGIN","----------------------------------------");
-
-			StringBuffer sb = new StringBuffer(""); 
-			String line = ""; 
-			String NL = System.getProperty("line.separator"); 
-			while ((line = in.readLine()) != null) {
-				sb.append(line + NL); 
-			}
-			in.close();
-
-			String result = sb.toString();
-			Log.d("LOGIN", result);
-
-			JSONObject json = new JSONObject(result);
-
-			if(json.getString("email").equals(username)){
-				USERNAME = username;
-				PASSWORD = password;
-				return true;
-			}
-		} catch (UnknownHostException e) {
-			Log.d("LOGIN", "Cacth UnknownHostException");
-
-		}catch (ClientProtocolException e) {
-			// TODO: handle exception
-			Log.d("LOGIN", "Cacth ClientProtocolException");
-		}catch (JSONException e) {
-			//Access denied
-			Log.d("LOGIN", "Cacth JSONException");
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.d("LOGIN", "Cacth Exception");
-
-		}
-		return false;
-	}
-
-
-	public JSONObject getJson(String url) throws SocketException{
-		DefaultHttpClient client = new DefaultHttpClient();
-
-		HttpProtocolParams.setUseExpectContinue(client.getParams(), false);
-
-		client.getCredentialsProvider().setCredentials(
-				new AuthScope(null, 80, "thounds"),
-				new UsernamePasswordCredentials(USERNAME, PASSWORD));
-		HttpResponse response = null;
-		try {
-			HttpGet httpget = new HttpGet();
-			httpget.setURI(new URI(url));
-
-			httpget.addHeader("Accept", "application/json");
-			response = client.execute(httpget);
-
-			BufferedReader in = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
-
-			StringBuffer sb = new StringBuffer(""); 
-			String line = ""; 
-			String NL = System.getProperty("line.separator"); 
-			while ((line = in.readLine()) != null) {
-				sb.append(line + NL); 
-			}
-			in.close();
-
-			String result = sb.toString();
-
-			JSONObject json = new JSONObject(result);
-
-			return json;
-
-
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		}
-		return null;
-	}
-
+	
 	public void logout() {
 		isLogged = false;
 
@@ -225,10 +109,17 @@ public class CommonActivity extends Activity {
 
 			return builder.create();
 		}
-		case DIALOG_RETRIEVING_DATA: {
+		case DIALOG_RETRIEVING_THOUNDS: {
 			ProgressDialog progressDialog = new ProgressDialog(this);
 			progressDialog.setTitle("Please wait...");
 			progressDialog.setMessage("Retrieving data ...");
+			progressDialog.setIndeterminate(true);
+			progressDialog.setCancelable(true);   
+			return progressDialog;
+		}
+		case DIALOG_RETRIEVING_TRACKS: {
+			ProgressDialog progressDialog = new ProgressDialog(this);
+			progressDialog.setMessage("Downloading tracks...");
 			progressDialog.setIndeterminate(true);
 			progressDialog.setCancelable(true);   
 			return progressDialog;

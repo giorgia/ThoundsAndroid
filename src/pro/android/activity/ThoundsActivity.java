@@ -1,49 +1,24 @@
 package pro.android.activity;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.UnknownHostException;
 
-import pro.android.R;
-import pro.android.R.drawable;
-import pro.android.R.id;
-import pro.android.R.layout;
-import pro.android.R.menu;
-import pro.android.utils.Player;
-import pro.android.utils.Recorder;
+import org.thounds.thoundsapi.RequestWrapper;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
+import pro.android.R;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
-import android.media.AudioRecord;
-import android.media.AudioTrack;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.SlidingDrawer;
 
 public class ThoundsActivity extends CommonActivity {
 
@@ -80,15 +55,12 @@ public class ThoundsActivity extends CommonActivity {
 							username = settings.getString("silentUsername", username);
 							password = settings.getString("silentPassword", password);
 
-
-								if (username != null && password!= null && login(username, password, "http://thounds.com/profile")){
-									isLogged = true;
-									nextIntent = new Intent(v.getContext(), HomeActivity.class);
-
-								} else {
-									isLogged = false;
-									nextIntent = new Intent(v.getContext(), LoginActivity.class);
-								}
+							
+							if (username != null && password!= null && RequestWrapper.login(username, password)){	
+								nextIntent = new Intent(v.getContext(), HomeActivity.class);
+							} else {
+								nextIntent = new Intent(v.getContext(), LoginActivity.class);
+							}
 							
 
 							runOnUiThread(returnRes);

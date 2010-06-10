@@ -1,23 +1,16 @@
 package pro.android.activity;
 
-import java.io.BufferedReader;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-
-import org.json.JSONException;
+import org.thounds.thoundsapi.RequestWrapper;
 
 import pro.android.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -27,13 +20,11 @@ import android.widget.EditText;
 
 public class LoginActivity extends CommonActivity {
 
-	public static boolean isLogged = false;
-
 	private String username;
 	private String password;
 	private EditText usernameEditText;
 	private EditText passwordEditText;
-	
+
 	@Override
 	public void onCreate(Bundle cicle) {
 		super.onCreate(cicle);
@@ -51,23 +42,20 @@ public class LoginActivity extends CommonActivity {
 				username = usernameEditText.getText().toString();
 				password = passwordEditText.getText().toString();
 				Log.d("login", username+"  "+password);
+				
 				if (username == null || password == null) {
 					showDialog(DIALOG_ALERT_LOGIN);
 				} else {
 
 					Runnable run = new Runnable(){
 						public void run() {
+
+
+							if (RequestWrapper.login(username, password)) 
+				
+								nextIntent = new Intent(viewParam.getContext(), HomeActivity.class);
 							
-							
-									if (login(username, password,"http://thounds.com/profile")) {
-										isLogged =true;
-										nextIntent = new Intent(viewParam.getContext(), HomeActivity.class);
-									}
-									else{
-										isLogged = false;
-									}
-							
-							
+
 							runOnUiThread(returnRes);
 						}			
 					};
@@ -81,12 +69,11 @@ public class LoginActivity extends CommonActivity {
 	}
 	private Runnable returnRes = new Runnable() {
 		public void run() {
-			if(isLogged){
+			if(RequestWrapper.isLogged()){
 				dismissDialog(DIALOG_LOGIN);
 
 			} else {
 				dismissDialog(DIALOG_LOGIN);
-
 				showDialog(DIALOG_ALERT_LOGIN);
 
 			}
@@ -101,7 +88,7 @@ public class LoginActivity extends CommonActivity {
 		// make changes. All objects are from android.context.Context
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
-		if (isLogged) {
+		if (RequestWrapper.isLogged()) {
 			editor.putString("silentUsername", username);
 			editor.putString("silentPassword", password);
 		}
@@ -152,7 +139,7 @@ public class LoginActivity extends CommonActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		return false;
 	}
-	
+
 	public void onClickUsername(View v){
 		if((usernameEditText.getText().toString()).equals("e-mail"))
 			usernameEditText.setText("");
