@@ -68,7 +68,6 @@ public class HomeActivity extends CommonActivity{
 	}
 
 
-
 	private void retrievedData() {
 		try {
 			home = RequestWrapper.loadHome(1, 20);

@@ -15,7 +15,11 @@
 
 
 
-	</LinearLayout>
+	
+</LinearLayout><LinearLayout android:layout_width="fill_parent" android:layout_below="@+id/lTabs" android:layout_height="fill_parent" android:id="@+id/lContacts" android:visibility="invisible"><ListView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/contactsListView"></ListView>
+				
+
+			</LinearLayout>
 
 	<LinearLayout android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_below="@+id/lTabs"
 		android:id="@+id/lLibrary" android:visibility="invisible">
@@ -48,7 +52,8 @@
 						style="?android:attr/progressBarStyleHorizontal" android:id="@+id/ProgressDefault" android:layout_width="fill_parent"></ProgressBar>
 				</LinearLayout>
 
-			</RelativeLayout>
+			<LinearLayout android:layout_toRightOf="@+id/LinearLayout01" android:layout_above="@+id/LinearLayout02" android:layout_height="wrap_content" android:id="@+id/LinearLayout05" android:layout_width="wrap_content"></LinearLayout>
+</RelativeLayout>
 
 			<RelativeLayout android:id="@+id/RelativeLayout02" android:background="@layout/shape"
 				android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_margin="10dip">
@@ -114,17 +119,13 @@
 
 
 			<TextView android:id="@+id/TextView02" android:layout_height="wrap_content" android:text="About"
-				android:textSize="22dip" android:layout_width="fill_parent" android:layout_margin="10dip" android:textColor="@color/dark_grey"></TextView>
-			<LinearLayout android:id="@+id/LinearLayout04" android:layout_height="wrap_content" android:background="@layout/shape"
-				android:layout_width="fill_parent" android:layout_margin="10dip">
-				<TextView android:id="@+id/txtAbout" android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:layout_margin="10dip" android:text="--"></TextView>
-
-			</LinearLayout>
+				android:textSize="22dip" android:layout_width="fill_parent" android:layout_margin="10dip" android:textColor="@color/dark_grey"></TextView><LinearLayout android:id="@+id/LinearLayout04" android:layout_margin="10dip" android:layout_height="fill_parent" android:layout_width="fill_parent"><TextView android:id="@+id/txtAbout" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10dip" android:text="--" android:background="@layout/shape"></TextView></LinearLayout>
+			
 
 		
 		
 		
+
 
 </LinearLayout>
 

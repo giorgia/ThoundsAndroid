@@ -2,10 +2,13 @@ package pro.android.activity;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.thounds.thoundsapi.BandWrapper;
 import org.thounds.thoundsapi.RequestWrapper;
 import org.thounds.thoundsapi.ThoundWrapper;
 import org.thounds.thoundsapi.UserWrapper;
@@ -23,33 +26,47 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 
 public class ProfileActivity extends CommonActivity {
 
 	ThoundsList list;
+	int userId = -1;
 	UserWrapper user;
+	UserWrapper friend;
+	BandWrapper band;
 	ThoundWrapper thounds;
 	Player p;
 	ProgressBar seek;
+	ListView contactsList;
+	SimpleAdapter sAdapter;
+	//private ArrayList<HashMap<String,String>> arrayList = new ArrayList<HashMap<String,String>>();
+	//private HashMap<String,String> item = new HashMap<String,String>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profile);
 		currentActivity = R.id.profile;
-
+		
 		list = new ThoundsList(this);
 		
-		
+		userId = getIntent().getExtras()!=null?getIntent().getExtras().getInt("userId"):-1;
+	//	contactsList = (ListView) findViewById(R.id.contactsListView);
+	
+	//	sAdapter = new SimpleAdapter(this, arrayList, R.layout.contacts_item_list, new String[] {"line1", "line2"}, new int[]{R.id.ctext1, R.id.ctext2});
+		//contactsList.setAdapter(sAdapter);
+
 
 		final ScrollView lInfo = (ScrollView) findViewById(R.id.scrollInfo);
 		final LinearLayout lLibrary = (LinearLayout) findViewById(R.id.lLibrary);
-		//final LinearLayout lContacts = (LinearLayout) findViewById(R.id.);
+		final LinearLayout lContacts = (LinearLayout) findViewById(R.id.lContacts);
 
 		final Button info = (Button) findViewById(R.id.btnInfo);
 		final Button library = (Button) findViewById(R.id.btnLibrary);
@@ -61,6 +78,7 @@ public class ProfileActivity extends CommonActivity {
 			public void onClick(View v) {
 				lInfo.setVisibility(View.VISIBLE);
 				lLibrary.setVisibility(View.INVISIBLE);
+				lContacts.setVisibility(View.INVISIBLE);
 				info.setBackgroundResource(R.layout.shape_darkgray_left);
 				info.setTextColor(Color.WHITE);
 				library.setBackgroundResource(R.layout.shape_gray_center);
@@ -76,6 +94,7 @@ public class ProfileActivity extends CommonActivity {
 			public void onClick(View v) {
 				lInfo.setVisibility(View.INVISIBLE);
 				lLibrary.setVisibility(View.VISIBLE);
+				lContacts.setVisibility(View.INVISIBLE);
 				library.setBackgroundResource(R.layout.shape_darkgray_center);
 				library.setTextColor(Color.WHITE);
 				info.setBackgroundResource(R.layout.shape_gray_left);
@@ -85,11 +104,11 @@ public class ProfileActivity extends CommonActivity {
 				
 				Runnable run = new Runnable(){
 					public void run() {
-						retrievedData();
+						retrievedLibrary();
 						Log.d("Profile", "dopo retireved");
 					}			
 				};
-				Thread thread =  new Thread(run, "retrievedData");
+				Thread thread =  new Thread(run, "retrievedLibrary");
 				thread.start();
 				
 			}
@@ -100,6 +119,7 @@ public class ProfileActivity extends CommonActivity {
 		contacts.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
+				lContacts.setVisibility(View.VISIBLE);
 				lInfo.setVisibility(View.INVISIBLE);
 				lLibrary.setVisibility(View.INVISIBLE);
 				contacts.setBackgroundResource(R.layout.shape_darkgray_right);
@@ -108,6 +128,18 @@ public class ProfileActivity extends CommonActivity {
 				info.setTextColor(Color.BLACK);
 				library.setBackgroundResource(R.layout.shape_gray_center);
 				library.setTextColor(Color.BLACK);
+				
+				
+				Runnable run = new Runnable(){
+					public void run() {
+					//	retrievedContacts();
+						
+					}			
+				};
+				Thread thread =  new Thread(run, "retrievedContacts");
+				thread.start();
+				
+			
 			}
 		});
 
@@ -171,12 +203,13 @@ public class ProfileActivity extends CommonActivity {
 		}
 	}
 
-	private void retrievedData() {
+	private void retrievedLibrary() {
 		try {
-			//			
-			//			ThoundsCollection collection = RequestWrapper.loadUserLibrary();
-			list.setThound(RequestWrapper.loadUserLibrary().getThoundsList());
-
+			
+			if (userId == -1)
+				list.setThound(RequestWrapper.loadUserLibrary().getThoundsList());
+			else
+				list.setThound(RequestWrapper.loadGenericUserLibrary(userId, 1, 20).getThoundsList());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -194,6 +227,62 @@ public class ProfileActivity extends CommonActivity {
 		runOnUiThread(list.getReturnRes());
 
 	}
+	
+//	private void retrievedContacts() {
+//		try {
+//			
+//			if (userId == -1)
+//				band = RequestWrapper.loadUserBand();
+//			else
+//				band = RequestWrapper.loadGenericUserBand(userId);
+//		} catch (JSONException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ClientProtocolException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (URISyntaxException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//		runOnUiThread(returnRes);
+//
+//	}
+	
+//	private Runnable returnRes = new Runnable() {
+//		public void run() {
+//
+//			try {
+//				for(int i=0; i < band.getFriendListLength(); i++){
+//					
+//					try {
+//						friend = band.getFriend(i);
+//
+//						item.put("line1",friend.getName());
+//						item.put("line2",friend.getCity()+", "+friend.getCountry());
+//
+//						arrayList.add( item );
+//						sAdapter.notifyDataSetChanged();
+//
+//					} catch (JSONException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					//retrieving_bar.setVisibility(View.INVISIBLE);
+//
+//					
+//				}
+//			} catch (JSONException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//
+//		}
+//	};
 	public void onClickButton(View v){
 		if(v.getTag().equals("default")){
 			Log.d("Profile", "play default");

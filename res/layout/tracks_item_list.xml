@@ -2,7 +2,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_height="fill_parent" android:layout_width="fill_parent"
-	android:orientation="horizontal" android:clickable="true" android:focusable="true" android:id="@+id/trackItemLayout">
+	android:orientation="horizontal" android:clickable="true" android:focusable="true" android:id="@+id/trackItemLayout" android:focusableInTouchMode="true">
 
 	<LinearLayout
 		android:orientation="vertical" android:layout_height="fill_parent" android:layout_width="210dip">
@@ -15,6 +15,7 @@
 		<TextView android:id="@+id/text2" android:textSize="14px"
 			android:textStyle="italic" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" />
+
 
 
 

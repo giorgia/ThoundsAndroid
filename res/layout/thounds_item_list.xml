@@ -15,13 +15,12 @@
 			android:id="@+id/pBarThound" android:visibility="invisible" android:layout_height="35dip" android:layout_width="35dip"></ProgressBar>
 	</RelativeLayout>
 
-	--><ImageView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_toLeftOf="@+id/lThound" android:id="@+id/imgLed" android:layout_centerVertical="true" android:src="@drawable/blue_on" android:visibility="invisible"></ImageView><LinearLayout android:orientation="vertical"
+	--><ImageView android:layout_width="wrap_content" android:layout_toLeftOf="@+id/RadioButton01" android:layout_height="wrap_content" android:padding="2dip" android:src="@drawable/blue_on" android:layout_centerVertical="true" android:id="@+id/imgLed" android:visibility="invisible"></ImageView><LinearLayout android:orientation="vertical"
 		android:layout_height="fill_parent" android:id="@+id/lThound" android:layout_toRightOf="@+id/RelativeLayout01" android:layout_centerInParent="true" android:layout_width="270dip">
 
 		<TextView android:id="@+id/text1" android:textSize="20px"
-			android:textStyle="bold" android:layout_width="fill_parent"
-			android:marqueeRepeatLimit="marquee_forever"
-			android:ellipsize="marquee" android:maxLines="1" android:layout_height="fill_parent" android:layout_marginLeft="5dip"/>
+			android:textStyle="bold" android:marqueeRepeatLimit="marquee_forever"
+			android:ellipsize="marquee" android:maxLines="1" android:layout_height="fill_parent" android:layout_marginLeft="5dip" android:layout_width="fill_parent"/>
 
 		<TextView android:id="@+id/text2" android:textSize="14px"
 			android:textStyle="italic" android:layout_width="fill_parent"
@@ -32,9 +31,13 @@
 	
 </LinearLayout>
 
-	<TextView android:id="@+id/text2" android:layout_height="wrap_content" android:textSize="36px"
-		android:text="›" android:layout_width="wrap_content" android:layout_alignParentRight="true" android:layout_centerVertical="true" android:layout_marginRight="4dip"/>
+	<TextView android:layout_height="wrap_content" android:textSize="36px"
+		android:text="›" android:layout_width="wrap_content" android:layout_alignParentRight="true" android:layout_centerVertical="true" android:layout_marginRight="4dip" android:id="@+id/freccia"/>
 	
+
+
+
+
 
 
 

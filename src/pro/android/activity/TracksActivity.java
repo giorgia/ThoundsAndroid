@@ -181,7 +181,7 @@ public class TracksActivity extends CommonActivity{
 									isAllDownload = true;
 									Log.d("Tracks"," -------->isAllDownload =" +isAllDownload);
 									dismissDialog(DIALOG_RETRIEVING_TRACKS);
-									playTracks();
+									
 								}
 							}
 						}

@@ -10,16 +10,20 @@ import pro.android.R;
 import pro.android.activity.CommonActivity;
 import pro.android.activity.TracksActivity;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,11 +32,13 @@ import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 
-public class ThoundsList implements OnBufferingUpdateListener, OnItemClickListener, OnItemLongClickListener{
+public class ThoundsList implements OnBufferingUpdateListener,OnItemClickListener, OnItemLongClickListener{
 
 	private ListView listView;
 	private SimpleAdapter adapter;
@@ -42,8 +48,8 @@ public class ThoundsList implements OnBufferingUpdateListener, OnItemClickListen
 
 	private String mix_url = null;
 	private Player p;
-	private ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
-
+	private ArrayList<HashMap<String,String>> listThounds = new ArrayList<HashMap<String,String>>();
+	private HashMap<String,String> item = new HashMap<String,String>();
 	private MediaController mediaController;
 	private RelativeLayout anchorView;
 	private LinearLayout retrieving_bar;
@@ -58,7 +64,7 @@ public class ThoundsList implements OnBufferingUpdateListener, OnItemClickListen
 
 		listView = (ListView) activity.findViewById(R.id.list);
 		adapter = new SimpleAdapter(
-				activity,list,
+				activity,listThounds,
 				R.layout.thounds_item_list,
 				new String[] { "line1", "line2" },
 				new int[] { R.id.text1, R.id.text2 }
@@ -66,9 +72,8 @@ public class ThoundsList implements OnBufferingUpdateListener, OnItemClickListen
 		);
 
 		listView.setAdapter(adapter);
-		listView.setFocusableInTouchMode(true);
 		listView.setItemsCanFocus(true);
-
+		
 		retrieving_bar.setVisibility(View.VISIBLE);
 
 		anchorView = (RelativeLayout) activity.findViewById(R.id.listLayout);
@@ -77,67 +82,7 @@ public class ThoundsList implements OnBufferingUpdateListener, OnItemClickListen
 
 		listView.setOnItemClickListener(this);
 		listView.setOnItemLongClickListener(this);
-	}
-
-	private Runnable returnRes = new Runnable() {
-		public void run() {
-
-			for(int i=0; i < thounds.length; i++){
-				HashMap<String,String> item = new HashMap<String,String>();
-				try {
-					thound = thounds[i];
-
-					item.put("line1",thound.getTrack(0).getTitle());
-					item.put("line2",thound.getTrack(0).getUserName());
-
-					list.add( item );
-
-
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				retrieving_bar.setVisibility(View.INVISIBLE);
-
-				adapter.notifyDataSetChanged();
-			}
-
-		}
-	};
-
-
-	public void onItemClick(AdapterView<?> parent, View v, int position,
-			long id) {
-		if(imageLed != null) 
-			imageLed.setVisibility(View.INVISIBLE);
-		imageLed = (ImageView) (listView.getChildAt(position).findViewById(R.id.imgLed));
-		//this.position = position;
-		//View vParentPrev = v;
-		//vParent = (RelativeLayout)v;
-		//v.setBackgroundColor(Color.rgb(102, 194, 255));
-		//if(vParentPrev!=null) vParentPrev.setBackgroundColor(android.R.color.background_light);
-
-		listView.setItemChecked(position, true);
-		listView.setDrawingCacheEnabled(false); 
-		try {
-			if(p != null && p.isPlaying())
-				p.pause();
-			mix_url = thounds[position].getMixUrl();
-			p = new Player(mix_url);
-			p.getDefaulMediaPlayer().setOnBufferingUpdateListener(this);
-			p.bufferedAudio();
-
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-
-		mediaController.setMediaPlayer(p);
-		imageLed.setVisibility(View.VISIBLE);
+		//listView.setOnItemSelectedListener(this);
 		showMedia.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -159,6 +104,73 @@ public class ThoundsList implements OnBufferingUpdateListener, OnItemClickListen
 				//mediaController.show(p.getDuration());
 			}
 		});
+	}
+
+	private Runnable returnRes = new Runnable() {
+		public void run() {
+
+			for(int i=0; i < thounds.length; i++){
+				
+				try {
+					thound = thounds[i];
+
+					item.put("line1",thound.getTrack(0).getTitle());
+					item.put("line2",thound.getTrack(0).getUserName());
+					Log.d("thounds",thound.getTrack(0).getTitle()+" "+thound.getTrack(0).getUserName());
+					listThounds.add( item );
+					adapter.notifyDataSetChanged();
+					
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				retrieving_bar.setVisibility(View.INVISIBLE);
+
+			}
+			
+		}
+	};
+
+	
+
+	public void onItemClick(AdapterView<?> parent, View v, int position,
+			long id) {
+		
+//		if(imageLed != null) 
+//			imageLed.setVisibility(View.INVISIBLE);
+//		adapter.notifyDataSetChanged();
+//		imageLed = (ImageView) ((RelativeLayout)v).getChildAt(0);
+//		Log.d("thounds","imageLed: "+imageLed);
+//		Log.d("thounds","position: "+position);
+//		imageLed.setVisibility(View.VISIBLE);
+//		adapter.notifyDataSetChanged();
+
+		//this.position = position;
+		//View vParentPrev = v;
+		//vParent = (RelativeLayout)v;
+		listView.getChildAt(position).setBackgroundColor(Color.rgb(102, 194, 255));
+		//if(vParentPrev!=null) vParentPrev.setBackgroundColor(android.R.color.background_light);
+		try {
+			if(p != null && p.isPlaying())
+				p.pause();
+			mix_url = thounds[position].getMixUrl();
+			p = new Player(mix_url);
+			p.getDefaulMediaPlayer().setOnBufferingUpdateListener(this);
+			p.bufferedAudio();
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+		mediaController.setMediaPlayer(p);
+
+		
 
 	}
 
@@ -218,6 +230,37 @@ public class ThoundsList implements OnBufferingUpdateListener, OnItemClickListen
 
 		return false;
 	}
+
+	private class ThoundsAdapter extends ArrayAdapter<HashMap<String,String>> {
+
+		private ArrayList<HashMap<String,String>> items;
+
+		public ThoundsAdapter(Context context, int textViewResourceId, ArrayList<HashMap<String,String>> items) {
+			super(context, textViewResourceId, items);
+			this.items = items;
+		}
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.tracks_item_list, null);
+			}
+			HashMap<String,String> item = items.get(position);
+			if (item != null) {
+				TextView tt = (TextView) v.findViewById(R.id.text1);
+				TextView bt = (TextView) v.findViewById(R.id.text2);
+				
+				if (tt != null) {
+					tt.setText( item.get("line1"));                            }
+				if(bt != null){
+					bt.setText(item.get("line2"));
+				}
+				
+			}
+			return v;
+		}
+	}
+
 
 
 }
