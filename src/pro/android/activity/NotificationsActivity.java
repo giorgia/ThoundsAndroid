@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
+import org.thounds.thoundsapi.NotificationPair;
 import org.thounds.thoundsapi.NotificationsWrapper;
 import org.thounds.thoundsapi.RequestWrapper;
 import org.thounds.thoundsapi.ThoundsConnectionException;
@@ -50,7 +51,8 @@ public class NotificationsActivity extends CommonActivity {// implements OnBuffe
 	//JSONObject thound;
 	//JSONArray thounds = null;
 	//JSONObject thounds_collection;
-	UserWrapper [] userWrapper;
+	//UserWrapper [] userWrapper;
+	NotificationPair<UserWrapper> [] userWrapper;
 
 	boolean isPlaying = false;
 	boolean isPaused = false;
@@ -130,22 +132,24 @@ public class NotificationsActivity extends CommonActivity {// implements OnBuffe
 		}
 		
 		
-		try {
 		
-				userWrapper=  nw.getBandRequestList();
+		
+				try {
+					userWrapper=  nw.getBandRequestList();
+				
 			} catch (IllegalThoundsObjectException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		
 		
-		for(int i=0; i<userWrapper.length; i++){
+		for(int i=0; i<nw.getBandRequestListLength(); i++){
 			HashMap<String,String> item = new HashMap<String,String>();
 			try {
 				//=============DA SOSTITUIRE CON METODI API THOUNDS==============
 				//thound = thounds.getJSONObject(i);
-				item.put("line1",userWrapper[i].getName());
-				item.put("line2",userWrapper[i].getName());
+				item.put("line1",userWrapper[i].getNotificationObject().getName());
+				item.put("line2",userWrapper[i].getNotificationObject().getName());
 				//===============================================================
 
 				list.add( item );
@@ -159,6 +163,7 @@ public class NotificationsActivity extends CommonActivity {// implements OnBuffe
 			}
 		
 		}
+		
 	}
 
 	private Runnable returnRes = new Runnable() {
@@ -168,8 +173,8 @@ public class NotificationsActivity extends CommonActivity {// implements OnBuffe
 				try {
 					//=============DA SOSTITUIRE CON METODI API THOUNDS==============
 					//thound = thounds.getJSONObject(i);
-					item.put("line1",userWrapper[i].getName());
-					item.put("line2",userWrapper[i].getName());
+					item.put("line1",userWrapper[i].getNotificationObject().getName());
+					item.put("line2",userWrapper[i].getNotificationObject().getName());
 					//===============================================================
 
 					list.add( item );
@@ -186,7 +191,7 @@ public class NotificationsActivity extends CommonActivity {// implements OnBuffe
 		}
 	};
 
-	private void retrievedData()  {
+	/*private void retrievedData()  {
 		try {
 			NotificationsWrapper nw=	 RequestWrapper.loadNotifications();
 			userWrapper=  nw.getBandRequestList();
@@ -202,6 +207,7 @@ public class NotificationsActivity extends CommonActivity {// implements OnBuffe
 		runOnUiThread(returnRes);
 
 	}
+	*/
 	/*public void onClickButton(View v){
 		Log.d("Home", "CLICK PLAY");
 		LinearLayout vParentPrev = vParent;
@@ -326,7 +332,7 @@ public void onBufferingUpdate(MediaPlayer mp, int percent) {
 		try {
 			
 			//UserWrapper us=  RequestWrapper.acceptFriendship(tag);
-		    int idUser=  userWrapper[tag].getId();
+		    int idUser=  userWrapper[tag].getNotificationId();
 			//mettere Id che c'è nelle librerie nuove
 		    RequestWrapper.acceptFriendship(idUser);
 			Log.d("Evviva ha funzionato.....",String.valueOf(idUser));
@@ -347,7 +353,7 @@ public void onBufferingUpdate(MediaPlayer mp, int percent) {
 		ignore = (Button)v;
 		//Log.e("tag",(String) confirm.getTag());
 		int tag = Integer.parseInt(((String) confirm.getTag()).substring(6));
-		  int idUser=  userWrapper[tag].getId();
+		  int idUser=  userWrapper[tag].getNotificationId();
 		  try {
 			RequestWrapper.refuseFriendship(idUser);
 		} catch (ThoundsConnectionException e1) {
@@ -378,7 +384,7 @@ public void onBufferingUpdate(MediaPlayer mp, int percent) {
 				TextView bt = (TextView) v.findViewById(R.id.text2);
 				ImageView avatar = (ImageView) v.findViewById(R.id.ImageViewAvatar);
 				//LinearLayout lItem = (LinearLayout) v.findViewById(R.id.lThound);
-				avatar.setImageDrawable(new ImageFromUrl(null,userWrapper[position].getAvatarUrl(), "").getDrawable());
+				avatar.setImageDrawable(new ImageFromUrl(null,userWrapper[position].getNotificationObject().getAvatarUrl(), "").getDrawable());
 				if (tt != null) {
 					tt.setText( item.get("line1"));                            }
 				if(bt != null){

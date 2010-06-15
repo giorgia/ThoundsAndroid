@@ -64,10 +64,10 @@ public class NotificationService extends Service{
 				 if(bandRequest >0)
 				 {
 					 //recupero
-					UserWrapper [] ur=  nw.getBandRequestList();
-					if(ur.length>0)
+					int newusers=  nw.getBandRequestListLength();
+					if(newusers>0)
 					{
-						displayUserRequest(ur.length);
+						displayUserRequest(newusers);
 						
 					}
 				/*for(int i=0;i< ur.length;i++)
