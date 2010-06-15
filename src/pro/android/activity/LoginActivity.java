@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 
 import java.io.IOException;
 
+import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.UserWrapper;
+
 import pro.android.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -75,7 +78,7 @@ public class LoginActivity extends CommonActivity {
 					try {
 						showDialog(DIALOG_LOGIN);
 
-						if (comm.login(username, password))
+						if (RequestWrapper.login(username, password))//(//comm.login(username, password))
 						{
 							new Handler().postDelayed(new Runnable() {
 

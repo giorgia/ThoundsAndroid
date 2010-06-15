@@ -4,7 +4,19 @@
   android:layout_width="wrap_content"
   android:layout_height="wrap_content">
   
-  <TextView android:layout_width="wrap_content" android:layout_y="80dip" android:layout_height="wrap_content" android:id="@+id/TextView01" android:layout_x="50dip" android:text="PROFILE"></TextView>
+  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/TextView01" android:text="PROFILE" android:layout_x="0px" android:layout_y="0px"></TextView>
   
   
+
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_x="0px" android:layout_y="30px" android:text="Nome" android:id="@+id/TextViewLabelNome"></TextView>
+<ImageView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_x="457dip" android:id="@+id/ImageViewPhoto" android:layout_y="0px"></ImageView>
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/TextViewNome" android:layout_y="30px" android:layout_x="130px" android:text="Nome"></TextView>
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_x="0px" android:layout_y="70px" android:text="Email" android:id="@+id/TextViewLabelEmail"></TextView>
+<TextView android:text="@+id/TextView03" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="70px" android:layout_x="140px" android:id="@+id/TextViewEmail"></TextView>
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_x="0px" android:id="@+id/TextViewLabelCountry" android:text="Country" android:layout_y="150px"></TextView>
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_x="140px" android:text="Contry" android:id="@+id/TextViewCountry" android:layout_y="150px"></TextView>
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="110px" android:layout_x="0px" android:id="@+id/TextViewLabelCity" android:text="City"></TextView>
+<TextView android:text="@+id/TextView07" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_x="140px" android:layout_y="110px" android:id="@+id/TextViewCity"></TextView>
+<Button android:text="Confirm" android:id="@+id/ButtonConfirm" android:layout_x="70px" android:layout_y="220px" android:layout_height="50px" android:layout_width="120px"></Button>
+<Button android:id="@+id/ButtonIgnore" android:text="Ignore" android:layout_height="50px" android:layout_width="120px" android:layout_y="220px" android:layout_x="220px"></Button>
 </AbsoluteLayout>

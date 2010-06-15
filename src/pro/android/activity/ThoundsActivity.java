@@ -6,6 +6,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.ThoundsConnectionException;
+
 import pro.android.R;
 import pro.android.R.drawable;
 import pro.android.R.id;
@@ -48,15 +51,11 @@ public class ThoundsActivity extends CommonActivity {
 
 	NetworkInfo wifiInfo, mobileInfo;
 
-	
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		
-		
 		ImageView img = (ImageView) this.findViewById(R.id.ImageView01);
 		img.setOnClickListener(new OnClickListener() {
 
@@ -65,37 +64,49 @@ public class ThoundsActivity extends CommonActivity {
 				ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
 				wifiInfo = connectivity
-				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+						.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 				mobileInfo = connectivity
-				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+						.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-				//Aggiungere controllo  UNKNOWN
+				// Aggiungere controllo UNKNOWN
 
-				if (wifiInfo.getState() == NetworkInfo.State.DISCONNECTED && mobileInfo.getState() == NetworkInfo.State.DISCONNECTED) {
-					showDialog(DIALOG_ALERT_CONNECTION);				
+				if (wifiInfo.getState() == NetworkInfo.State.DISCONNECTED
+						&& mobileInfo.getState() == NetworkInfo.State.DISCONNECTED) {
+					showDialog(DIALOG_ALERT_CONNECTION);
 				} else {
 					showDialog(DIALOG_LOADING);
 				}
 				// =========CHECK IS LOGGED===================
 				// Restore preferences
-				SharedPreferences settings = getSharedPreferences( PREFS_NAME, 0);
+				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 				username = settings.getString("silentUsername", username);
 				password = settings.getString("silentPassword", password);
-			
+
 				Log.d("notification", "faccio il login");
-				if (comm.isLogged) {
+				if (RequestWrapper.isLogged()) {// if (comm.isLogged) {
 					nextIntent = new Intent(v.getContext(), HomeActivity.class);
 
-				} else if (comm.login(username, password)){
+				} else
+					try {
 
-					nextIntent = new Intent(v.getContext(), HomeActivity.class);
+						if (username!=null && password!=null && RequestWrapper.login(username, password)) // (comm.login(username,
+																		// password))
+						{
 
-				} else {
-					Log.e("SIGN_UP","Qui passaaaaaaaaaaaaaaaaaa");
-					nextIntent = new Intent(v.getContext(), LoginActivity.class);
-				
-				}
-				
+							nextIntent = new Intent(v.getContext(),
+									HomeActivity.class);
+
+						} else {
+							Log.e("SIGN_UP", "Qui passaaaaaaaaaaaaaaaaaa");
+							nextIntent = new Intent(v.getContext(),
+									LoginActivity.class);
+
+						}
+					} catch (ThoundsConnectionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 				// Waiting 2 sec for ProgressDialog displayed
 				new Handler().postDelayed(new Runnable() {
 
@@ -108,9 +119,6 @@ public class ThoundsActivity extends CommonActivity {
 
 		});
 	}
-
-	
-	
 
 	// =======NOTIFICHE==================================
 	public void notification() {

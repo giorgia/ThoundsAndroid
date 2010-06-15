@@ -17,6 +17,8 @@
 			android:screenOrientation="portrait"></activity>
 		<activity android:name=".activity.NotificationsActivity"
 			android:screenOrientation="portrait"></activity>
+			<activity android:name=".activity.NewThoundsNotificationActivity"
+			android:screenOrientation="portrait"></activity>
 		<activity android:name=".activity.ProfileActivity"
 			android:screenOrientation="portrait"></activity>
 		<activity android:name=".activity.SearchActivity"
