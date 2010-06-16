@@ -1,8 +1,10 @@
 package pro.android.activity;
 
 import org.thounds.thoundsapi.HomeWrapper;
+import org.thounds.thoundsapi.IllegalThoundsObjectException;
 import org.thounds.thoundsapi.RequestWrapper;
 import org.thounds.thoundsapi.ThoundWrapper;
+import org.thounds.thoundsapi.ThoundsConnectionException;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -69,27 +71,20 @@ public class HomeActivity extends CommonActivity{
 
 
 	private void retrievedData() {
-		try {
-			home = RequestWrapper.loadHome(1, 20);
-			list.setThound(home.getThoundsCollection().getThoundsList());
+		
+			try {
+				home = RequestWrapper.loadHome(1, 20);
+				list.setThound(home.getThoundsCollection().getThoundsList());
+			} catch (ThoundsConnectionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalThoundsObjectException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			//showDialog(DIALOG_ALERT_CONNECTION);
-			e.printStackTrace();
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 
 		runOnUiThread(list.getReturnRes());
 

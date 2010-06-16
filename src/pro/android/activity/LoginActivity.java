@@ -2,6 +2,7 @@ package pro.android.activity;
 
 
 import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.ThoundsConnectionException;
 
 import pro.android.R;
 import android.app.AlertDialog;
@@ -51,9 +52,14 @@ public class LoginActivity extends CommonActivity {
 						public void run() {
 
 
-							if (RequestWrapper.login(username, password)) 
-				
-								nextIntent = new Intent(viewParam.getContext(), HomeActivity.class);
+							try {
+								if (RequestWrapper.login(username, password)) 
+
+									nextIntent = new Intent(viewParam.getContext(), HomeActivity.class);
+							} catch (ThoundsConnectionException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							
 
 							runOnUiThread(returnRes);

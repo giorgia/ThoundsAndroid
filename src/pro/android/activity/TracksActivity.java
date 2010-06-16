@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.json.JSONException;
+import org.thounds.thoundsapi.IllegalThoundsObjectException;
 import org.thounds.thoundsapi.ThoundWrapper;
 import org.thounds.thoundsapi.TrackWrapper;
 
@@ -81,7 +82,7 @@ public class TracksActivity extends CommonActivity{
 			//if(tracks[0].getUserAvatarUrl() != null)
 			//	cover.setImageDrawable(new ImageFromUrl(this,tracks[0].getCover()).getDrawable());
 
-		} catch (JSONException e) {
+		} catch (IllegalThoundsObjectException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -112,9 +113,6 @@ public class TracksActivity extends CommonActivity{
 
 				mAdapter.notifyDataSetChanged();
 
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

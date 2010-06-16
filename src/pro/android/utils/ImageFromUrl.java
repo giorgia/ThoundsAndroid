@@ -14,7 +14,7 @@ public class ImageFromUrl {
 	public Drawable getDrawable() {
 		return drawable;
 	}
-	public ImageFromUrl(Context ctx, String url) {
+	public ImageFromUrl(String url) {
 		try {
 			InputStream is = (InputStream) this.fetch(url);
 			drawable = Drawable.createFromStream(is, "src");

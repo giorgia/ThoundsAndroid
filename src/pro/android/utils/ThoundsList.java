@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONException;
+import org.thounds.thoundsapi.IllegalThoundsObjectException;
 import org.thounds.thoundsapi.ThoundWrapper;
 
 import pro.android.R;
@@ -65,7 +66,7 @@ public class ThoundsList implements OnBufferingUpdateListener,OnItemClickListene
 		listView = (ListView) activity.findViewById(R.id.list);
 		adapter = new SimpleAdapter(
 				activity,listThounds,
-				R.layout.thounds_item_list,
+				R.layout.thound_item_list,
 				new String[] { "line1", "line2" },
 				new int[] { R.id.text1, R.id.text2 }
 
@@ -110,17 +111,16 @@ public class ThoundsList implements OnBufferingUpdateListener,OnItemClickListene
 		public void run() {
 
 			for(int i=0; i < thounds.length; i++){
-				
+				item = new HashMap<String,String>();
 				try {
 					thound = thounds[i];
 
 					item.put("line1",thound.getTrack(0).getTitle());
 					item.put("line2",thound.getTrack(0).getUserName());
-					Log.d("thounds",thound.getTrack(0).getTitle()+" "+thound.getTrack(0).getUserName());
 					listThounds.add( item );
 					adapter.notifyDataSetChanged();
 					
-				} catch (JSONException e) {
+				} catch (IllegalThoundsObjectException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

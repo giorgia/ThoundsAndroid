@@ -44,7 +44,7 @@
 				<LinearLayout android:id="@+id/LinearLayout02" android:layout_toRightOf="@+id/LinearLayout01"
 					android:background="@layout/shape" android:layout_margin="10dip" android:layout_width="200dip"
 					android:layout_height="100dip" android:orientation="vertical">
-					<include android:id="@+id/include02" android:layout_width="wrap_content" layout="@layout/thounds_item_list"
+					<include android:id="@+id/include02" android:layout_width="wrap_content" layout="@layout/thound_item_list"
 						android:layout_height="50dip"></include>
 
 

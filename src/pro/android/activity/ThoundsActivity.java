@@ -3,6 +3,7 @@ package pro.android.activity;
 import java.net.UnknownHostException;
 
 import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.ThoundsConnectionException;
 
 import pro.android.R;
 
@@ -56,10 +57,15 @@ public class ThoundsActivity extends CommonActivity {
 							password = settings.getString("silentPassword", password);
 
 							
-							if (username != null && password!= null && RequestWrapper.login(username, password)){	
-								nextIntent = new Intent(v.getContext(), HomeActivity.class);
-							} else {
-								nextIntent = new Intent(v.getContext(), LoginActivity.class);
+							try {
+								if (username != null && password!= null && RequestWrapper.login(username, password)){	
+									nextIntent = new Intent(v.getContext(), HomeActivity.class);
+								} else {
+									nextIntent = new Intent(v.getContext(), LoginActivity.class);
+								}
+							} catch (ThoundsConnectionException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
 							
 
