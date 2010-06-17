@@ -55,19 +55,22 @@ public class CommonActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if(currentActivity != item.getItemId())
+	
 			switch (item.getItemId()) {
 
 			case R.id.home:
-				item.setIntent(new Intent(this, HomeActivity.class));
+				if(currentActivity != R.id.home)
+					item.setIntent(new Intent(this, HomeActivity.class));
 				break;
 			case R.id.notifications:
 				item.setIntent(new Intent(this, NotificationsActivity.class));
 				break;
 			case R.id.record:
-				item.setIntent(new Intent(this, RecordActivity.class));
+				if(currentActivity != R.id.record)
+					item.setIntent(new Intent(this, RecordActivity.class));
 				break;
 			case R.id.profile:
+				ProfileActivity.userId = -1;
 				item.setIntent(new Intent(this, ProfileActivity.class));
 				break;
 			case R.id.search:
@@ -85,12 +88,7 @@ public class CommonActivity extends Activity {
 			mDialog1.setMessage("Loading. Please wait...");
 			mDialog1.setIndeterminate(true);
 			mDialog1.setCancelable(true);
-			mDialog1
-			.setOnDismissListener(new DialogInterface.OnDismissListener() {
-				public void onDismiss(DialogInterface dialog) {
-					startActivity(nextIntent);
-				}
-			});
+
 			return mDialog1;
 		}
 		case DIALOG_ALERT_CONNECTION: {

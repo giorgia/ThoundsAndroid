@@ -39,10 +39,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class ThoundsList implements OnBufferingUpdateListener,OnItemClickListener, OnItemLongClickListener{
+public class ThoundsList implements OnBufferingUpdateListener{
 
 	private ListView listView;
-	private SimpleAdapter adapter;
+	private ThoundsAdapter adapter;
 	private Activity activity;
 	private ThoundWrapper[] thounds;
 	private ThoundWrapper thound;
@@ -64,29 +64,28 @@ public class ThoundsList implements OnBufferingUpdateListener,OnItemClickListene
 		retrieving_bar = (LinearLayout) activity.findViewById(R.id.retrieving_data);
 
 		listView = (ListView) activity.findViewById(R.id.list);
-		adapter = new SimpleAdapter(
-				activity,listThounds,
+		adapter = new ThoundsAdapter(
+				activity, 
 				R.layout.thound_item_list,
-				new String[] { "line1", "line2" },
-				new int[] { R.id.text1, R.id.text2 }
-
+				listThounds
 		);
 
 		listView.setAdapter(adapter);
 		listView.setItemsCanFocus(true);
-		
+
 		retrieving_bar.setVisibility(View.VISIBLE);
 
 		anchorView = (RelativeLayout) activity.findViewById(R.id.listLayout);
 		mediaController = new MediaController(activity);
 		mediaController.setAnchorView(anchorView);
 
-		listView.setOnItemClickListener(this);
-		listView.setOnItemLongClickListener(this);
+		//listView.setOnItemClickListener(this);
+		//listView.setOnItemLongClickListener(this);
 		//listView.setOnItemSelectedListener(this);
 		showMedia.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
+				if (p != null)
 				mediaController.show(p.getDuration());
 			}
 		});
@@ -119,38 +118,30 @@ public class ThoundsList implements OnBufferingUpdateListener,OnItemClickListene
 					item.put("line2",thound.getTrack(0).getUserName());
 					listThounds.add( item );
 					adapter.notifyDataSetChanged();
-					
+
 				} catch (IllegalThoundsObjectException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				retrieving_bar.setVisibility(View.INVISIBLE);
 
 			}
-			
+
 		}
 	};
 
-	
 
-	public void onItemClick(AdapterView<?> parent, View v, int position,
-			long id) {
-		
-//		if(imageLed != null) 
-//			imageLed.setVisibility(View.INVISIBLE);
-//		adapter.notifyDataSetChanged();
-//		imageLed = (ImageView) ((RelativeLayout)v).getChildAt(0);
-//		Log.d("thounds","imageLed: "+imageLed);
-//		Log.d("thounds","position: "+position);
-//		imageLed.setVisibility(View.VISIBLE);
-//		adapter.notifyDataSetChanged();
 
-		//this.position = position;
-		//View vParentPrev = v;
-		//vParent = (RelativeLayout)v;
-		listView.getChildAt(position).setBackgroundColor(Color.rgb(102, 194, 255));
-		//if(vParentPrev!=null) vParentPrev.setBackgroundColor(android.R.color.background_light);
+	public void onItemClick(View v) {
+
+		if(imageLed != null) 
+			imageLed.setVisibility(View.INVISIBLE);
+		imageLed = (ImageView) ((RelativeLayout)v).getChildAt(0);
+		imageLed.setVisibility(View.VISIBLE);
+
+		int position = (Integer)v.getTag();
+
 		try {
 			if(p != null && p.isPlaying())
 				p.pause();
@@ -170,7 +161,7 @@ public class ThoundsList implements OnBufferingUpdateListener,OnItemClickListene
 
 		mediaController.setMediaPlayer(p);
 
-		
+
 
 	}
 
@@ -207,9 +198,12 @@ public class ThoundsList implements OnBufferingUpdateListener,OnItemClickListene
 		this.thounds = thounds;
 	}
 
-
-	public boolean onItemLongClick(AdapterView<?> arg0, View v, int position,
-			long arg3) {
+	//
+	//	public boolean onItemLongClick(AdapterView<?> arg0, View v, int position,
+	//			long arg3) {
+	//	
+	public void onClickArrow(View v){
+		int position = (Integer)v.getTag();
 		CommonActivity.obj = thounds[position];
 
 		try {
@@ -228,7 +222,7 @@ public class ThoundsList implements OnBufferingUpdateListener,OnItemClickListene
 
 
 
-		return false;
+		//return false;
 	}
 
 	private class ThoundsAdapter extends ArrayAdapter<HashMap<String,String>> {
@@ -243,19 +237,26 @@ public class ThoundsList implements OnBufferingUpdateListener,OnItemClickListene
 			View v = convertView;
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.tracks_item_list, null);
+				v = vi.inflate(R.layout.thound_item_list, null);
 			}
 			HashMap<String,String> item = items.get(position);
 			if (item != null) {
 				TextView tt = (TextView) v.findViewById(R.id.text1);
 				TextView bt = (TextView) v.findViewById(R.id.text2);
-				
+				TextView at = (TextView) v.findViewById(R.id.arrow);
+								
+
 				if (tt != null) {
-					tt.setText( item.get("line1"));                            }
+					tt.setText( item.get("line1"));                       
+					v.setTag(position);
+				}
 				if(bt != null){
 					bt.setText(item.get("line2"));
 				}
-				
+				if(at != null){
+					at.setTag(position);
+				}
+
 			}
 			return v;
 		}

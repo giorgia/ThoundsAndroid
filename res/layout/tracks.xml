@@ -24,7 +24,7 @@
 
 	</RelativeLayout>
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="fill_parent" android:layout_height="280dip">
+		android:layout_width="fill_parent" android:layout_height="300dip">
 		<ListView android:id="@+id/list_tracks"
 			android:layoutAnimation="@anim/layout_bottom_to_top_slide"
 			android:layout_height="wrap_content" android:layout_width="wrap_content"></ListView>
@@ -38,19 +38,7 @@
 
 		
 		
-		<LinearLayout android:id="@+id/TracksDownloading" android:layout_centerHorizontal="true" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="30dip">
-			<ProgressBar android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/ProgressBarDownloading" style="?android:attr/progressBarStyleSmall" android:layout_gravity="center"></ProgressBar>
-			<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/TextViewDownloading" android:text="Downloading..." android:gravity="center" android:layout_gravity="center"></TextView>
-			</LinearLayout><LinearLayout android:orientation="horizontal" android:gravity="center" android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/TracksProgress" android:visibility="visible">
-
-
-			<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/timePlay1" android:text="00:00" android:textColor="@android:color/white" android:layout_centerVertical="true"></TextView>
-
-			<SeekBar android:id="@+id/SeekBarTracks" android:paddingTop="10dip" android:paddingBottom="10dip" android:layout_toRightOf="@+id/timePlay1" android:layout_centerInParent="true" android:layout_height="wrap_content" android:layout_margin="3dip"  android:layout_width="233dip"></SeekBar>
-			<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/timeToPlay1" android:text="-00:00" android:textColor="@android:color/white" android:layout_toRightOf="@+id/SeekBarHome"></TextView>
-		
-
-			</LinearLayout><LinearLayout android:orientation="horizontal" android:gravity="center" android:layout_alignParentBottom="true" android:layout_width="fill_parent" android:layout_height="50dip" android:id="@+id/TracksCommand">
+		<SeekBar android:id="@+id/SeekBarTracks" android:paddingTop="10dip" android:paddingBottom="10dip" android:layout_toRightOf="@+id/timePlay1" android:layout_centerInParent="true" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_alignParentTop="true" android:layout_margin="5dip"></SeekBar><LinearLayout android:orientation="horizontal" android:gravity="center" android:layout_alignParentBottom="true" android:layout_width="fill_parent" android:id="@+id/TracksCommand" android:layout_height="40dip" android:layout_marginBottom="5dip">
 
 			<Button android:layout_width="wrap_content" style="?android:attr/buttonStyleSmall" android:text="   PLAY   " android:layout_height="40dip" android:id="@+id/PlayTracks"></Button>
 			<Button android:id="@+id/Button02" android:layout_width="wrap_content" style="?android:attr/buttonStyleSmall" android:text=" RECORD " android:layout_height="40dip"></Button>

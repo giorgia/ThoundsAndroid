@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,6 +50,7 @@ public class ThoundsActivity extends CommonActivity {
 
 					Runnable run = new Runnable(){
 						public void run() {
+							Looper.prepare();
 							// =========CHECK IS LOGGED===================
 							// Restore preferences
 							SharedPreferences settings = getSharedPreferences(
@@ -59,12 +61,15 @@ public class ThoundsActivity extends CommonActivity {
 							
 							try {
 								if (username != null && password!= null && RequestWrapper.login(username, password)){	
+									isLogged = true;
 									nextIntent = new Intent(v.getContext(), HomeActivity.class);
 								} else {
 									nextIntent = new Intent(v.getContext(), LoginActivity.class);
 								}
 							} catch (ThoundsConnectionException e) {
-								// TODO Auto-generated catch block
+								isLogged = false;
+								dismissDialog(DIALOG_LOADING);
+								
 								e.printStackTrace();
 							}
 							
@@ -84,6 +89,10 @@ public class ThoundsActivity extends CommonActivity {
 	private Runnable returnRes = new Runnable() {
 		public void run() {
 			dismissDialog(DIALOG_LOADING);
+			if(isLogged)
+				startActivity(nextIntent);
+			else
+				showDialog(DIALOG_ALERT_CONNECTION);
 		}
 
 	};

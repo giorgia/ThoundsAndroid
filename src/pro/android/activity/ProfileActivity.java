@@ -48,16 +48,17 @@ import android.widget.ToggleButton;
 import android.widget.AdapterView.OnItemClickListener;
 
 
-public class ProfileActivity extends CommonActivity implements OnItemClickListener {
+public class ProfileActivity extends CommonActivity{
 
 	ThoundsList list;
-	int userId;
+	static int userId;
 	UserWrapper user;
 	UserWrapper friend;
 	BandWrapper band;
 	ThoundWrapper thounds;
 	Player p;
 	ProgressBar seek;
+	protected int progress;
 	ListView contactsList;
 	ContactsAdapter sAdapter;
 	private ArrayList<HashMap<String,Object>> arrayList = new ArrayList<HashMap<String,Object>>();
@@ -78,7 +79,20 @@ public class ProfileActivity extends CommonActivity implements OnItemClickListen
 		sAdapter = new ContactsAdapter(this, R.layout.contacts_item_list, arrayList);
 		contactsList.setAdapter(sAdapter);
 
-		contactsList.setOnItemClickListener(this);
+		contactsList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+
+				nextIntent = new Intent(arg1.getContext(), ProfileActivity.class);
+				try {
+					nextIntent.putExtra("userId", band.getFriend(arg2).getId());
+				} catch (IllegalThoundsObjectException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				startActivity(nextIntent);
+		};
+				
+		});
 
 		final ScrollView lInfo = (ScrollView) findViewById(R.id.scrollInfo);
 		final LinearLayout lLibrary = (LinearLayout) findViewById(R.id.lLibrary);
@@ -149,7 +163,6 @@ public class ProfileActivity extends CommonActivity implements OnItemClickListen
 				Runnable run = new Runnable(){
 					public void run() {
 						retrievedContacts();
-
 					}			
 				};
 				Thread thread =  new Thread(run, "retrievedContacts");
@@ -160,7 +173,7 @@ public class ProfileActivity extends CommonActivity implements OnItemClickListen
 		});
 
 
-
+		
 		try {
 			if(userId == -1)
 				user = RequestWrapper.loadUserProfile();
@@ -181,7 +194,7 @@ public class ProfileActivity extends CommonActivity implements OnItemClickListen
 		TextView name = (TextView) findViewById(R.id.txtName);
 		TextView country = (TextView) findViewById(R.id.txtCountry);
 		TextView site = (TextView) findViewById(R.id.txtSite);
-		//TextView blog = (TextView) findViewById(R.id.txtBolg);
+		TextView blog = (TextView) findViewById(R.id.txtBolg);
 		TextView tags = (TextView) findViewById(R.id.txtTags);
 		TextView about = (TextView) findViewById(R.id.txtAbout);
 
@@ -189,9 +202,9 @@ public class ProfileActivity extends CommonActivity implements OnItemClickListen
 			avatar.setImageDrawable(new ImageFromUrl(user.getAvatarUrl()).getDrawable());
 		name.setText(user.getName());
 		country.setText(user.getCountry()+", "+user.getCity());
-		site.setText(user.getSiteUrl()!=null?user.getSiteUrl():"");
-		//blog.setText(user.getBlog());
-		about.setText(user.getAbout()!=null?user.getAbout():"");
+		site.setText(user.getSiteUrl()!=null?user.getSiteUrl():"--");
+		//blog.setText(user.getBlog()!=null?user.getBlog():"--");
+		about.setText(user.getAbout()!=null?user.getAbout():"--");
 		if( user.getTagList() != null){
 			String[] tagList = user.getTagList();
 			String tag ="";
@@ -206,8 +219,8 @@ public class ProfileActivity extends CommonActivity implements OnItemClickListen
 		try {
 			th = user.getDefaultThound();
 
-			//	ImageButton playDef = (ImageButton) findViewById(R.id.btnPlayThound);
-			//	playDef.setTag("default");
+			ImageButton playDef = (ImageButton) findViewById(R.id.playDefault);
+
 			if(th!=null){
 
 				TextView line1 = (TextView) findViewById(R.id.text1);
@@ -215,7 +228,7 @@ public class ProfileActivity extends CommonActivity implements OnItemClickListen
 
 
 				line1.setText(th.getTrack(0).getTitle());
-				line2.setText("created at");
+				line2.setText(th.getTrack(0).getCreatedAt());
 			}
 		} catch (IllegalThoundsObjectException e) {
 			// TODO Auto-generated catch block
@@ -284,45 +297,53 @@ public class ProfileActivity extends CommonActivity implements OnItemClickListen
 					e.printStackTrace();
 				}
 
-				
+
 			}
 			dismissDialog(DIALOG_RETRIEVING_THOUNDS);
 
 		}
 	};
 	public void onClickButton(View v){
-		if(v.getTag().equals("default")){
-			Log.d("Profile", "play default");
-			try {
-				if(p == null || p.getCurrentState() != Player.STATE_PLAYING){
-					//	p = new Player(user.getDefaultThound().getMixUrl(), seek);
-					((ImageButton) v).setImageResource(android.R.drawable.ic_media_pause);
-					//	p.playAudio();
-				}else{
-					((ImageButton) v).setImageResource(android.R.drawable.ic_media_play);
-					//	p.pauseAudio();
-				}
-				//			} catch (JSONException e) {
-				//				// TODO Auto-generated catch block
-				//				e.printStackTrace();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}//else
-		//list.onClickButton(v);
-	}
 
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-
-		nextIntent = new Intent(arg1.getContext(), ProfileActivity.class);
+		Log.d("Profile", "play default");
 		try {
-			nextIntent.putExtra("userId", band.getFriend(arg2).getId());
-		} catch (IllegalThoundsObjectException e) {
+			if(p == null || !p.isPlaying()){
+				p = new Player(user.getDefaultThound().getMixUrl());
+				p.bufferedAudio();
+				((ImageButton) v).setImageResource(android.R.drawable.ic_media_pause);
+				p.start();
+				progressUpdater();
+			}else{
+				((ImageButton) v).setImageResource(android.R.drawable.ic_media_play);
+				p.pause();
+			}
+
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		startActivity(nextIntent);
+	}
+
+	public void progressUpdater() {
+		new Thread(new Runnable() {
+			public void run() {
+				seek.setMax((int)p.getDuration()/1000);
+
+				while (p.isPlaying() && progress < seek.getMax()) {
+					progress = p.getCurrentPosition()/1000;
+					seek.setProgress(progress);
+
+				}
+			}
+
+		}).start();
+	}
+	
+	public void onClickArrow(View v){
+		list.onClickArrow(v);
+	}
+	public void onItemClick(View v){
+		list.onItemClick(v);
 	}
 
 	private class ContactsAdapter extends ArrayAdapter<HashMap<String,Object>> {
@@ -355,7 +376,8 @@ public class ProfileActivity extends CommonActivity implements OnItemClickListen
 
 			}
 
-		return v;
+			return v;
+		}
 	}
-}
+
 }

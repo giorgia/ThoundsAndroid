@@ -89,17 +89,12 @@ public class HomeActivity extends CommonActivity{
 		runOnUiThread(list.getReturnRes());
 
 	}
-//	public void onClickButton(View v){
-//		list.onClickButton(v);
-//	}
-//	public void onClickItem(View v){
-//		list.onClickItem(v);
-//	}
-
-	@Override
-	public void onPause(){
-		super.onPause();
-		this.finish();
+	public void onClickArrow(View v){
+		list.onClickArrow(v);
 	}
+	public void onItemClick(View v){
+		list.onItemClick(v);
+	}
+
 }
 
