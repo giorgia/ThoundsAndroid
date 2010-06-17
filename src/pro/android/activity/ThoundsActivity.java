@@ -40,11 +40,11 @@ public class ThoundsActivity extends CommonActivity {
 
 				// ========= CHECK CONNECTION ===================
 				ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
+ 
 				wifiInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 				mobileInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-				if (!wifiInfo.isConnectedOrConnecting() && !mobileInfo.isConnectedOrConnecting()) {
+				if (!wifiInfo.isConnected() && !mobileInfo.isConnected()) {
 					showDialog(DIALOG_ALERT_CONNECTION);				
 				} else {
 
@@ -61,13 +61,13 @@ public class ThoundsActivity extends CommonActivity {
 							
 							try {
 								if (username != null && password!= null && RequestWrapper.login(username, password)){	
-									isLogged = true;
 									nextIntent = new Intent(v.getContext(), HomeActivity.class);
 								} else {
+									
 									nextIntent = new Intent(v.getContext(), LoginActivity.class);
 								}
 							} catch (ThoundsConnectionException e) {
-								isLogged = false;
+								connectionError = true;
 								dismissDialog(DIALOG_LOADING);
 								
 								e.printStackTrace();
@@ -89,10 +89,11 @@ public class ThoundsActivity extends CommonActivity {
 	private Runnable returnRes = new Runnable() {
 		public void run() {
 			dismissDialog(DIALOG_LOADING);
-			if(isLogged)
-				startActivity(nextIntent);
-			else
+		
+			if(connectionError)
 				showDialog(DIALOG_ALERT_CONNECTION);
+			else
+				startActivity(nextIntent);
 		}
 
 	};

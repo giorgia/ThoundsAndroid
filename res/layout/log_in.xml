@@ -3,9 +3,6 @@
 	android:orientation="vertical" android:layout_gravity="center_horizontal"
 	android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="@color/celeste">
 
-
-
-
 	<RelativeLayout android:gravity="center_vertical|center_horizontal"
 		android:layout_centerInParent="true" android:layout_width="wrap_content" android:layout_alignParentTop="true" android:id="@+id/lLogin" android:layout_height="wrap_content" android:layout_margin="8dip" android:padding="8dip" style="@style/shadow">
 		<EditText android:layout_height="wrap_content"
@@ -13,8 +10,6 @@
 			android:id="@+id/txt_username"
 			android:maxLines="1" android:clickable="true" android:textSize="8pt" android:inputType="textEmailAddress"
 			android:text="e-mail" android:layout_width="280px" android:onClick="onClickUsername"/>
-
-
 
 
 		<EditText android:layout_height="wrap_content"
@@ -41,5 +36,5 @@
 		
 	</RelativeLayout>
 
-<LinearLayout android:layout_height="wrap_content" android:layout_toRightOf="@+id/Button02" android:id="@+id/LinearLayout01" android:layout_width="wrap_content" android:layout_below="@+id/lLogin" android:layout_centerInParent="true"><Button android:layout_height="wrap_content" android:id="@+id/Button01" android:text="Sign Up!" android:layout_below="@+id/lLogin" android:layout_width="150dip"></Button><Button android:layout_height="wrap_content" android:id="@+id/Button02" android:layout_toRightOf="@+id/Button01" android:layout_below="@+id/lLogin" android:layout_width="150dip" android:text="More info..."></Button></LinearLayout>
+<LinearLayout android:layout_height="wrap_content" android:layout_toRightOf="@+id/Button02" android:id="@+id/LinearLayout01" android:layout_width="wrap_content" android:layout_below="@+id/lLogin" android:layout_centerInParent="true"><Button android:layout_height="wrap_content" android:text="Sign Up!" android:layout_below="@+id/lLogin" android:layout_width="150dip" android:id="@+id/btn_sign_up"></Button><Button android:layout_height="wrap_content" android:id="@+id/Button02" android:layout_toRightOf="@+id/Button01" android:layout_below="@+id/lLogin" android:layout_width="150dip" android:text="More info..."></Button></LinearLayout>
 </RelativeLayout> 

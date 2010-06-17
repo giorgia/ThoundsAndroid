@@ -34,6 +34,15 @@ public class LoginActivity extends CommonActivity {
 		usernameEditText = (EditText) findViewById(R.id.txt_username);
 		passwordEditText = (EditText) findViewById(R.id.txt_password);
 		Button launch = (Button) findViewById(R.id.login_button);
+		Button signup = (Button) findViewById(R.id.btn_sign_up);
+		
+		// Click on signup button
+		signup.setOnClickListener(new OnClickListener() {
+			public void onClick(final View viewParam) {
+				nextIntent = new Intent(viewParam.getContext(), SignUpActivity.class);
+				startActivity(nextIntent);
+			}
+		});
 
 		// Click on login button
 		launch.setOnClickListener(new OnClickListener() {
@@ -50,14 +59,14 @@ public class LoginActivity extends CommonActivity {
 
 					Runnable run = new Runnable(){
 						public void run() {
-
-
 							try {
 								if (RequestWrapper.login(username, password)) 
 
 									nextIntent = new Intent(viewParam.getContext(), HomeActivity.class);
 							} catch (ThoundsConnectionException e) {
-								// TODO Auto-generated catch block
+								connectionError = true;
+								dismissDialog(DIALOG_LOGIN);
+								showDialog(DIALOG_ALERT_CONNECTION);
 								e.printStackTrace();
 							}
 							
@@ -77,7 +86,7 @@ public class LoginActivity extends CommonActivity {
 		public void run() {
 			if(RequestWrapper.isLogged()){
 				dismissDialog(DIALOG_LOGIN);
-
+				startActivity(nextIntent);
 			} else {
 				dismissDialog(DIALOG_LOGIN);
 				showDialog(DIALOG_ALERT_LOGIN);
@@ -113,13 +122,7 @@ public class LoginActivity extends CommonActivity {
 			mDialog1.setMessage("Please wait...");
 			mDialog1.setIndeterminate(true);
 			mDialog1.setCancelable(true);
-			mDialog1
-			.setOnDismissListener(new DialogInterface.OnDismissListener() {
-				public void onDismiss(DialogInterface dialog) {
-					if (nextIntent != null)
-						startActivity(nextIntent);
-				}
-			});
+			
 			return mDialog1;
 		}
 		case DIALOG_ALERT_LOGIN: {

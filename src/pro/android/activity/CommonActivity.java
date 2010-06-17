@@ -27,6 +27,7 @@ public class CommonActivity extends Activity {
 	static final int DIALOG_RETRIEVING_TRACKS = 5;
 
 	public static boolean isLogged = false;
+	public static boolean connectionError = false;
 
 	public static Intent nextIntent = null;
 	public int currentActivity;
