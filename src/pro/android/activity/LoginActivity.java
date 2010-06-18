@@ -35,7 +35,7 @@ public class LoginActivity extends CommonActivity {
 		passwordEditText = (EditText) findViewById(R.id.txt_password);
 		Button launch = (Button) findViewById(R.id.login_button);
 		Button signup = (Button) findViewById(R.id.btn_sign_up);
-		
+
 		// Click on signup button
 		signup.setOnClickListener(new OnClickListener() {
 			public void onClick(final View viewParam) {
@@ -52,31 +52,32 @@ public class LoginActivity extends CommonActivity {
 				username = usernameEditText.getText().toString();
 				password = passwordEditText.getText().toString();
 				Log.d("login", username+"  "+password);
-				
+
 				if (username == null || password == null) {
 					showDialog(DIALOG_ALERT_LOGIN);
 				} else {
-
+					showDialog(DIALOG_LOGIN);
 					Runnable run = new Runnable(){
 						public void run() {
 							try {
-								if (RequestWrapper.login(username, password)) 
-
+								if (RequestWrapper.login(username, password)) {
+									Log.d("login", "dopo login");
 									nextIntent = new Intent(viewParam.getContext(), HomeActivity.class);
+								}
 							} catch (ThoundsConnectionException e) {
 								connectionError = true;
 								dismissDialog(DIALOG_LOGIN);
 								showDialog(DIALOG_ALERT_CONNECTION);
 								e.printStackTrace();
 							}
-							
+
 
 							runOnUiThread(returnRes);
 						}			
 					};
 					Thread thread =  new Thread(null, run, "Login");
 					thread.start();
-					showDialog(DIALOG_LOGIN);
+
 				}
 			}
 		});
@@ -85,6 +86,7 @@ public class LoginActivity extends CommonActivity {
 	private Runnable returnRes = new Runnable() {
 		public void run() {
 			if(RequestWrapper.isLogged()){
+				Log.d("login", ""+RequestWrapper.isLogged());
 				dismissDialog(DIALOG_LOGIN);
 				startActivity(nextIntent);
 			} else {
@@ -122,7 +124,7 @@ public class LoginActivity extends CommonActivity {
 			mDialog1.setMessage("Please wait...");
 			mDialog1.setIndeterminate(true);
 			mDialog1.setCancelable(true);
-			
+
 			return mDialog1;
 		}
 		case DIALOG_ALERT_LOGIN: {

@@ -1,6 +1,7 @@
 package pro.android.activity;
 
 import org.json.JSONStringer;
+import org.thounds.thoundsapi.RequestWrapper;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -81,7 +82,7 @@ public class SignUpActivity extends CommonActivity {
 					Log.e("json-------->",myString);
 
 					//OLD::s= comm.signUp(myString);
-					//RequestWrapper.registrateUserTest(user, email, country, city, tags);
+					RequestWrapper.registrateUser(user, email, country, city, tags);
 					showDialog(DIALOG_RESULT_SIGNUP);
 				}
 				catch(Exception e)

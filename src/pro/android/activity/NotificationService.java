@@ -1,12 +1,15 @@
 package pro.android.activity;
 
+import org.json.JSONException;
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
 
-import org.thounds.thoundsapi.NotificationPair;
+
 import org.thounds.thoundsapi.NotificationsWrapper;
 import org.thounds.thoundsapi.RequestWrapper;
 import org.thounds.thoundsapi.ThoundsConnectionException;
 import org.thounds.thoundsapi.UserWrapper;
+
+import pro.android.utils.ImageFromUrl;
 
 import android.R;
 import android.app.Notification;
@@ -16,8 +19,11 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.ImageView;
+
 
 public class NotificationService extends Service{
 
@@ -58,13 +64,26 @@ public class NotificationService extends Service{
 					if(bandRequest >0)
 					{
 						//recupero
-						NotificationPair<UserWrapper>[] ur= nw.getBandRequestList();
-						if(ur.length>0)
+						int newusers= nw.getBandRequestListLength();
+						if(newusers>0)
 						{
-							displayUserRequest(ur.length);
+							displayUserRequest(newusers);
 
 						}
-						
+						/*for(int i=0;i< ur.length;i++)
+{
+Log.e("NOTIFICAAAAAAAAAAAAAa", ur[i].getName());//.getMail());
+Log.e("NOtification", ur[i].getName());
+//displayUserRequest(ur[i].getName());
+displayUserRequest(ur[i]);
+//cover  una image text
+//cover.setImageDrawable(new ImageFromUrl(this,jsTracks.getJSONObject(0).getString("cover"), ""+jsTracks.getJSONObject(0).getInt("id")).getDrawable());
+//ImageFromUrl urlimage=new ImageFromUrl(ctx, url, saveFilename)
+ur[i].getSiteUrl();
+}*/
+						//RequestWrapper.acceptFriendship(friendshipId);
+						//RequestWrapper.refuseFriendship(friendshipId)
+
 						Log.e("NOTIFICAAAAAAAAAAAAAa", "FINE");
 					}
 
@@ -75,7 +94,8 @@ public class NotificationService extends Service{
 
 
 					Thread.sleep(10000);
-					
+					// RequestWrapper.getNotifications();
+					// displayNotificationMessage("ciao mondo");
 				}
 
 
@@ -108,10 +128,36 @@ public class NotificationService extends Service{
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-	
+	/*private void displayNotificationMessage(String message)
+{
+Notification notification=new Notification(R.drawable.edit_text,message,System.currentTimeMillis());
+Context context = getApplicationContext();
+CharSequence contentTitle = "Titolo della mia notifica";
+CharSequence contentText = "Testo della mia notifica";
+Intent notificationIntent = new Intent(this, TutorialNotification.class);
+PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+notification.defaults |= Notification.DEFAULT_SOUND; //Suona
+notification.defaults |= Notification.DEFAULT_LIGHTS; //LED
+notification.defaults |= Notification.DEFAULT_VIBRATE; //Vibra
+notificationMgr.notify(NOTIFICATION_ID, notification);
+// NOTIFICATION_ID++;
+// Notification notification = new Notification(R.drawable.note,
+//message,System.currentTimeMillis());
+//PendingIntent contentIntent =
+//PendingIntent.getActivity(this, 0,new Intent(this, MainActivity.class), 0);
+// notification.setLatestEventInfo(this, "Background Service",message,
+//contentIntent);
+// notificationMgr.notify(R.string.app_notification_id, notification);
+}
+	 */
+
+
 
 	private void displayUserRequest (int numRequest)//(String message)
 	{
+		// ImageFromUrl ifu=new ImageFromUrl(this,uw.getSiteUrl(),uw.getName());
+		//android.R.drawable.
 		try
 		{
 			//Notification notification = new Notification(R.drawable.ic_dialog_alert, uw.getName(),System.currentTimeMillis());
@@ -209,5 +255,4 @@ public class NotificationService extends Service{
 
 
 }
-
 

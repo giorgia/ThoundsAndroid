@@ -1,5 +1,6 @@
 package pro.android.activity;
 
+import org.thounds.thoundsapi.RequestWrapper;
 import org.thounds.thoundsapi.ThoundWrapper;
 
 import pro.android.R;
@@ -42,8 +43,7 @@ public class CommonActivity extends Activity {
 
 	
 	public void logout() {
-		isLogged = false;
-
+		RequestWrapper.logout();
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 
