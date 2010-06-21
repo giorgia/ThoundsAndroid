@@ -16,7 +16,9 @@ import org.json.JSONObject;
 
 import pro.android.R;
 import pro.android.utils.ThoundsList;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -32,6 +34,7 @@ public class HomeActivity extends CommonActivity{
 	JSONObject thound;
 	JSONObject thounds_collection;
 	JSONObject json;
+	private boolean runningNotificationService=false; 
 
 
 	@Override
@@ -39,6 +42,7 @@ public class HomeActivity extends CommonActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 		currentActivity = R.id.home;
+	
 		Button logout = (Button) findViewById(R.id.btnLogout);
 		logout.setOnClickListener(new OnClickListener() {
 
@@ -56,6 +60,7 @@ public class HomeActivity extends CommonActivity{
 		});
 
 
+		
 		list = new ThoundsList(this);
 
 		Runnable run = new Runnable(){
@@ -65,12 +70,25 @@ public class HomeActivity extends CommonActivity{
 		};
 		Thread thread =  new Thread(run, "retrievedData");
 		thread.start();
-
+		
+		StartNotification();
 
 	}
+	
+	//Start Notification Service
+	public synchronized void StartNotification()
+	{
+		  Log.e("notification", "qui arriva e poi eccezione");
+		if(runningNotificationService==false)
+		{
+	    Log.e("notification", "start service su Thounds ACtivity");
+	    runningNotificationService=true;
+		startService(new Intent(HomeActivity.this, NotificationService.class));
+		
+		}
+	}
 
-
-	private void retrievedData() {
+	private synchronized void retrievedData() {
 		
 			try {
 				home = RequestWrapper.loadHome(1, 20);

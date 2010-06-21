@@ -33,8 +33,7 @@ public class NotificationService extends Service{
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		notificationMgr =(NotificationManager)getSystemService(
-				NOTIFICATION_SERVICE);
+		notificationMgr =(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		Log.e("NOtification", "creato il serviio");
 		// displayNotificationMessage("starting Background Service");
 		Thread thr = new Thread(null, new ServiceWorker(), "NotificationService");
@@ -76,7 +75,7 @@ Log.e("NOTIFICAAAAAAAAAAAAAa", ur[i].getName());//.getMail());
 Log.e("NOtification", ur[i].getName());
 //displayUserRequest(ur[i].getName());
 displayUserRequest(ur[i]);
-//cover  una image text
+//cover ï¿½ una image text
 //cover.setImageDrawable(new ImageFromUrl(this,jsTracks.getJSONObject(0).getString("cover"), ""+jsTracks.getJSONObject(0).getInt("id")).getDrawable());
 //ImageFromUrl urlimage=new ImageFromUrl(ctx, url, saveFilename)
 ur[i].getSiteUrl();
@@ -86,10 +85,10 @@ ur[i].getSiteUrl();
 
 						Log.e("NOTIFICAAAAAAAAAAAAAa", "FINE");
 					}
-
-					if(nw.getNewThoundsListLength()>0)
+        int newThounds=nw.getNewThoundsListLength();
+					if(newThounds>0)
 					{
-
+						displayNewThounds(newThounds);
 					}
 
 
@@ -117,7 +116,7 @@ ur[i].getSiteUrl();
 	@Override
 	public void onDestroy()
 	{
-		displayNotificationMessage("stopping Background Service");
+		//displayNotificationMessage("stopping Background Service");
 		super.onDestroy();
 	}
 	@Override
@@ -128,29 +127,7 @@ ur[i].getSiteUrl();
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-	/*private void displayNotificationMessage(String message)
-{
-Notification notification=new Notification(R.drawable.edit_text,message,System.currentTimeMillis());
-Context context = getApplicationContext();
-CharSequence contentTitle = "Titolo della mia notifica";
-CharSequence contentText = "Testo della mia notifica";
-Intent notificationIntent = new Intent(this, TutorialNotification.class);
-PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-notification.defaults |= Notification.DEFAULT_SOUND; //Suona
-notification.defaults |= Notification.DEFAULT_LIGHTS; //LED
-notification.defaults |= Notification.DEFAULT_VIBRATE; //Vibra
-notificationMgr.notify(NOTIFICATION_ID, notification);
-// NOTIFICATION_ID++;
-// Notification notification = new Notification(R.drawable.note,
-//message,System.currentTimeMillis());
-//PendingIntent contentIntent =
-//PendingIntent.getActivity(this, 0,new Intent(this, MainActivity.class), 0);
-// notification.setLatestEventInfo(this, "Background Service",message,
-//contentIntent);
-// notificationMgr.notify(R.string.app_notification_id, notification);
-}
-	 */
+	
 
 
 
@@ -197,10 +174,10 @@ notificationMgr.notify(NOTIFICATION_ID, notification);
 		try
 		{
 			//Notification notification = new Notification(R.drawable.ic_dialog_alert, uw.getName(),System.currentTimeMillis());
-			Notification notification = new Notification(R.drawable.ic_media_play, "Richiesta di amicizia",System.currentTimeMillis());
+			Notification notification = new Notification(R.drawable.ic_media_play, "Aggiunto un nuovo thounds",System.currentTimeMillis());
 			Context context = getApplicationContext();
 			CharSequence contentTitle = "Nuove Richiesta di amicizia";
-			CharSequence contentText = "Hai "+String.valueOf(numRequest)+" nuove richieste di amicizia";
+			CharSequence contentText = "Hai "+String.valueOf(numRequest)+" notifiche di aggiunta thounds";
 			notification.defaults |= Notification.DEFAULT_SOUND; //Suona
 			notification.defaults |= Notification.DEFAULT_LIGHTS; //LED
 			notification.defaults |= Notification.DEFAULT_VIBRATE; //Vibra
@@ -210,12 +187,12 @@ notificationMgr.notify(NOTIFICATION_ID, notification);
 
 			Intent contentIntent = new Intent().setComponent(comp);
 			// PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,contentIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
-			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,new Intent(this, NotificationsActivity.class), Intent.FLAG_ACTIVITY_NEW_TASK);
+			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,new Intent(this, NewThoundsNotificationActivity.class), Intent.FLAG_ACTIVITY_NEW_TASK);
 
 			// notification.
 			//PendingIntent contentIntent = PendingIntent.getActivity(this, 0,new Intent(this, LoginActivity.class), 0);
 			Log.d("Invio notification","Vado su profile");
-			notification.setLatestEventInfo(this, "Hai "+String.valueOf(numRequest)+" nuove richieste di amicizia","Scopri chi vuole diventare tuo amico", pendingIntent);//contentIntent);
+			notification.setLatestEventInfo(this, "Hai "+String.valueOf(numRequest)+" nuove thounds","Ascolta la traccia ", pendingIntent);//contentIntent);
 			notificationMgr.notify(0, notification);
 		}
 		catch(Exception e)
@@ -227,7 +204,7 @@ notificationMgr.notify(NOTIFICATION_ID, notification);
 	}
 
 
-	private void displayNotificationMessage(String message)
+	/*private void displayNotificationMessage(String message)
 	{
 		Log.e("NOtification", "su send message entra");
 		Notification notification = new Notification(R.drawable.ic_dialog_alert, message,System.currentTimeMillis());
@@ -246,7 +223,7 @@ notificationMgr.notify(NOTIFICATION_ID, notification);
 		//PendingIntent contentIntent = PendingIntent.getActivity(this, 0,new Intent(this, LoginActivity.class), 0);
 		notification.setLatestEventInfo(this, "Background Service",message, pendingIntent);//contentIntent);
 		notificationMgr.notify(0, notification);
-	}
+	}*/
 
 	public void stop()
 	{

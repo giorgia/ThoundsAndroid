@@ -26,6 +26,7 @@ public class CommonActivity extends Activity {
 	static final int DIALOG_ALERT_LOGIN = 3;
 	static final int DIALOG_RETRIEVING_THOUNDS = 4;
 	static final int DIALOG_RETRIEVING_TRACKS = 5;
+	static final int DIALOG_ADD_USER = 6;
 
 	public static boolean isLogged = false;
 	public static boolean connectionError = false;
@@ -108,6 +109,24 @@ public class CommonActivity extends Activity {
 
 			return builder.create();
 		}
+		case DIALOG_ADD_USER: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Information").setMessage("User added successfully")
+			.setCancelable(false).setIcon(
+					android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							finish();
+							dialog.cancel();
+						}
+					});
+
+			return builder.create();
+		}
+		
+		
 		case DIALOG_RETRIEVING_THOUNDS: {
 			ProgressDialog progressDialog = new ProgressDialog(this);
 			progressDialog.setTitle("Please wait...");

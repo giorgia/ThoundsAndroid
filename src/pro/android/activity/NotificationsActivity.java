@@ -148,17 +148,26 @@ public class NotificationsActivity extends CommonActivity {
 
 		int tag = (Integer)confirm.getTag();
 
-		Log.d("il numero cliccato è",String.valueOf(tag));
+		Log.d("il numero cliccato ÔøΩ",String.valueOf(tag));
 		try {
 
 			//UserWrapper us= RequestWrapper.acceptFriendship(tag);
 			int idNotif= userWrapper[tag].getNotificationId(); 
-			//mettere Id che c'è nelle librerie nuove
+			//mettere Id che c'ÔøΩ nelle librerie nuove
 			boolean ris = RequestWrapper.acceptFriendship(idNotif);
 			if(ris)
+			{
 				Log.d("Evviva ha funzionato.....",String.valueOf(idNotif));
+				showDialog(DIALOG_ADD_USER);
+				//nextIntent = new Intent(v.getContext(), HomeActivity.class);
+				//startActivity(nextIntent);
+			}
 			else
-				Log.d("NOoooo funzionato.....",String.valueOf(idNotif));
+			{
+				Log.d("NOoooo non ha funzionato.....",String.valueOf(idNotif));
+				//nextIntent = new Intent(v.getContext(), HomeActivity.class);
+				//startActivity(nextIntent);
+			}
 
 		} catch (ThoundsConnectionException e) {
 			// TODO Auto-generated catch block
