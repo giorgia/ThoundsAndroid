@@ -13,9 +13,12 @@
 		</LinearLayout>
 		<ListView android:layout_width="wrap_content" android:clickable="true" android:layout_height="wrap_content"
 			android:choiceMode="singleChoice" android:focusableInTouchMode="true" android:transcriptMode="alwaysScroll"
-			android:headerDividersEnabled="true" android:id="@+id/listRequest"></ListView><!--
-						<TextView android:layout_height="fill_parent" android:layout_width="fill_parent" android:gravity="center" android:text="No notifications yet" android:textStyle="bold" android:textSize="36dip" android:id="@+id/txt_no_notifications"></TextView>
-			
+			android:headerDividersEnabled="true" android:id="@+id/listRequest"></ListView>
+<!--<TextView
+    android:id="@+id/android:empty"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:text="No notifications yet"/>			
 	--></RelativeLayout>
 
 

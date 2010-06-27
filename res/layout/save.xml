@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical" android:background="@color/white_smoke">
+<RelativeLayout android:id="@+id/RelativeLayout01" android:background="@layout/shape" android:padding="10dip" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_marginTop="20dip" android:layout_marginLeft="10dip" android:layout_marginRight="10dip" android:layout_marginBottom="10dip">
+<EditText android:text="Thound title" android:textSize="20dip" android:layout_width="fill_parent" android:layout_margin="5dip" android:background="@android:color/background_light" android:layout_height="40dip" android:textColor="@android:color/darker_gray" android:id="@+id/txt_thound_title"></EditText>
+
+<ImageView android:id="@+id/ImageView01" android:src="@android:drawable/divider_horizontal_bright" android:layout_width="fill_parent" android:layout_height="5dip" android:layout_below="@+id/txt_thound_title"></ImageView>
+
+<EditText android:layout_toLeftOf="@+id/TextView01" android:id="@+id/txt_thound_tags" android:layout_margin="5dip" android:textSize="20dip" android:text="Tags separated by spaces" android:layout_width="fill_parent" android:layout_height="50dip" android:background="@android:color/background_light" android:textColor="@android:color/darker_gray" android:layout_below="@+id/txt_thound_title"></EditText>
+
+
+</RelativeLayout>
+
+<RadioGroup android:id="@+id/RadioGroup01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="@layout/shape" android:orientation="horizontal" android:layout_margin="10dip" android:gravity="center"><RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Public" android:id="@+id/rdb_public" android:layout_margin="5dip" android:textColor="@android:color/black" android:checked="false"></RadioButton><RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="false" android:id="@+id/rdb_contacts" android:text="Contacts" android:layout_margin="5dip" android:textColor="@android:color/black"></RadioButton><RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="false" android:text="Private" android:id="@+id/rdb_private" android:layout_margin="5dip" android:textColor="@android:color/black"></RadioButton></RadioGroup>
+
+
+
+
+
+
+
+<RelativeLayout android:id="@+id/RelativeLayout02" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_margin="10dip" android:background="@layout/shape"><CheckBox android:layout_height="wrap_content" android:layout_margin="10dip" android:textColor="@color/black" android:id="@+id/chk_location" android:text="Enable location" android:layout_width="wrap_content"></CheckBox><ProgressBar android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_alignParentRight="true" android:layout_margin="10dip" android:visibility="invisible" android:id="@+id/prg_locating"></ProgressBar>
+</RelativeLayout>
+<LinearLayout android:id="@+id/LinearLayout01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:background="@layout/shape" android:layout_margin="10dip" android:padding="10dip" android:gravity="center">
+<ImageButton android:src="@android:drawable/ic_menu_camera" android:id="@+id/btn_camera" android:background="@drawable/polaroid" android:layout_height="90dip" android:layout_width="90dip"></ImageButton>
+<ImageButton android:src="@android:drawable/ic_delete" android:id="@+id/btn_cancel" android:layout_height="60dip" android:layout_width="60dip" android:layout_marginLeft="40dip" android:layout_gravity="bottom"></ImageButton>
+<ImageButton android:layout_width="90dip" android:src="@android:drawable/ic_menu_save" android:layout_height="60dip" android:id="@+id/btn_save" android:layout_gravity="bottom"></ImageButton>
+</LinearLayout>
+
+
+
+
+
+
+</LinearLayout>
