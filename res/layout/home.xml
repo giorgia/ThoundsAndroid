@@ -11,13 +11,25 @@
 			android:textStyle="bold" android:layout_height="wrap_content"
 			android:id="@+id/TextView01" android:layout_x="120dip"
 			android:layout_y="10dip" android:layout_centerInParent="true"
-			android:textSize="30px" android:shadowColor="@android:color/black" android:shadowDx="1.2" android:shadowDy="1.2" android:soundEffectsEnabled="true" android:includeFontPadding="true" android:shadowRadius="3" android:padding="3dip" android:textColor="@color/white_smoke" android:text="thounds"></TextView>
+			android:textSize="30px" android:shadowColor="@android:color/black"
+			android:shadowDx="1.2" android:shadowDy="1.2"
+			android:soundEffectsEnabled="true" android:includeFontPadding="true"
+			android:shadowRadius="3" android:padding="3dip" android:textColor="@color/white_smoke"
+			android:text="thounds"></TextView>
 
-		<Button android:text="Logout" android:layout_marginLeft="5dip" android:layout_centerVertical="true" android:id="@+id/btnLogout" android:background="@layout/shape_blue" android:textColor="@android:color/white" android:shadowColor="@android:color/black" android:shadowDx="1.2" android:shadowDy="1.2" android:shadowRadius="1.2" android:layout_width="wrap_content" android:layout_height="45dip"></Button>
+		<Button android:text="Logout" android:layout_marginLeft="5dip"
+			android:layout_centerVertical="true" android:id="@+id/btnLogout"
+			android:background="@layout/shape_blue" android:textColor="@android:color/white"
+			android:shadowColor="@android:color/black" android:shadowDx="1.2"
+			android:shadowDy="1.2" android:shadowRadius="1.2"
+			android:layout_width="wrap_content" android:layout_height="45dip"></Button>
 
 
-		<ImageButton android:src="@android:drawable/ic_popup_sync" android:layout_alignParentRight="true" android:layout_height="wrap_content"
-			android:id="@+id/btnReload" android:background="@layout/shape_blue" android:layout_centerVertical="true" android:layout_marginRight="5dip" android:layout_width="50dip"></ImageButton>
+		<ImageButton android:src="@android:drawable/ic_popup_sync"
+			android:layout_alignParentRight="true" android:layout_height="wrap_content"
+			android:id="@+id/btnReload" android:background="@layout/shape_blue"
+			android:layout_centerVertical="true" android:layout_marginRight="5dip"
+			android:layout_width="50dip"></ImageButton>
 
 
 
@@ -25,7 +37,9 @@
 
 	<LinearLayout android:id="@+id/LinearLayout01"
 		android:layout_height="fill_parent" android:layout_width="fill_parent">
-		
-		<include android:id="@+id/include01" layout="@layout/thounds_list" android:layout_height="fill_parent" android:layout_width="fill_parent"></include></LinearLayout>
+
+		<include android:id="@+id/include01" layout="@layout/thounds_list"
+			android:layout_height="fill_parent" android:layout_width="fill_parent"></include>
+	</LinearLayout>
 
 </LinearLayout>

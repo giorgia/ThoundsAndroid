@@ -74,7 +74,9 @@ public class NewThoundsNotificationActivity extends CommonActivity{
 		NotificationsWrapper nw;
 		try {
 			nw = RequestWrapper.loadNotifications();
-			thounds=nw.getNewThoundsList();
+			
+				thounds=nw.getNewThoundsList();
+			
 			list.setThound(thounds);
 			
 		} catch (ThoundsConnectionException e) {

@@ -92,7 +92,9 @@ public class HomeActivity extends CommonActivity{
 		
 			try {
 				home = RequestWrapper.loadHome(1, 20);
-				list.setThound(home.getThoundsCollection().getThoundsList());
+			
+					list.setThound(home.getThoundsCollection().getThoundsList());
+			
 			} catch (ThoundsConnectionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

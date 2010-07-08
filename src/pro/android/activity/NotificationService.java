@@ -58,12 +58,18 @@ public class NotificationService extends Service{
 
 					NotificationsWrapper nw= RequestWrapper.loadNotifications();
 					//vedere richieste amicizia
-					int bandRequest= nw.getBandRequestListLength();
+					int bandRequest=-1;
+					
+						bandRequest = nw.getBandRequestListLength();
+					
 
 					if(bandRequest >0)
 					{
 						//recupero
-						int newusers= nw.getBandRequestListLength();
+						int newusers=-1;
+						
+							newusers = nw.getBandRequestListLength();
+						
 						if(newusers>0)
 						{
 							displayUserRequest(newusers);
@@ -85,7 +91,10 @@ ur[i].getSiteUrl();
 
 						Log.e("NOTIFICAAAAAAAAAAAAAa", "FINE");
 					}
-        int newThounds=nw.getNewThoundsListLength();
+        int newThounds=-1;
+	
+			newThounds = nw.getNewThoundsListLength();
+		
 					if(newThounds>0)
 					{
 						displayNewThounds(newThounds);

@@ -1,6 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<AbsoluteLayout android:id="@+id/AbsoluteLayout01" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
 
-<TextView android:layout_width="wrap_content" android:layout_y="80dip" android:layout_height="wrap_content" android:id="@+id/TextView01" android:layout_x="50dip" android:text="SEARCH"></TextView>
-</AbsoluteLayout>
+<LinearLayout android:id="@+id/LinearLayout01"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="320dip">
+	<AbsoluteLayout android:orientation="horizontal" android:id="@+id/AbsoluteLayout01" android:layout_width="320dip" android:layout_height="450dip"><AbsoluteLayout android:id="@+id/AbsoluteLayout02" android:layout_height="75dip" android:layout_width="320dip" android:background="@drawable/gradient"><EditText android:layout_height="50dip" android:id="@+id/EditTextSearch" android:layout_width="230dip"></EditText><Button android:id="@+id/Button01" android:text="Search" android:onClick="onClickSearch" android:layout_x="231dip" android:layout_height="wrap_content" android:layout_width="80dip"></Button><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="50dip" android:text="es: Tony manero." android:id="@+id/Text1"></TextView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="50dip" android:layout_x="180dip" android:text="&lt;&lt;" android:clickable="true" android:onClick="onClickPreviousPage" android:id="@+id/TextViewPreviusPage"></TextView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="50dip" android:text="&gt;&gt;" android:onClick="onClickNextPage" android:clickable="true" android:id="@+id/TextViewNextPage" android:layout_x="275dip"></TextView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="50dip" android:layout_x="200dip" android:id="@+id/TextViewPagdi" android:text="Page 0 of 0"></TextView></AbsoluteLayout>
+		
+		
+		
+		
+		
+		
+	<LinearLayout android:id="@+id/LinearLayout02" android:layout_y="76dip" android:layout_height="wrap_content" android:layout_width="320dip"><include android:id="@+id/include01" layout="@layout/request_list" android:layout_height="fill_parent" android:layout_width="fill_parent"></include>
+</LinearLayout></AbsoluteLayout>
+	
+	
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+</LinearLayout>
