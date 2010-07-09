@@ -71,7 +71,7 @@ public class TracksActivity extends CommonActivity{
 
 			thoundTitle.setText(tracks[0].getTitle());
 
-			if(tracks[0].getCover() != null)
+			if(tracks[0].getCover().equals(null))
 				cover.setImageDrawable(new ImageFromUrl(tracks[0].getCover()).getDrawable());
 
 		} catch (IllegalThoundsObjectException e) {
@@ -98,7 +98,7 @@ public class TracksActivity extends CommonActivity{
 				p.setData(track.getUri(), track.getOffset(), i);
 
 				item.put("line1",track.getUserName());
-				item.put("line2", track.getCreatedAt());
+				item.put("line2",track.getCreatedAt().substring(0, 10)+" at "+track.getCreatedAt().substring(11, 16));
 
 				list.add( item );
 
@@ -180,7 +180,7 @@ public class TracksActivity extends CommonActivity{
 		}
 	};
 
-	private void playTracks() {
+	public void playTracks() {
 		if(isAllDownload){
 			Log.d("Tracks"," playTracks CALL");
 			for(int i =0; i < p.size(); i++){
@@ -194,7 +194,7 @@ public class TracksActivity extends CommonActivity{
 		}
 	}
 
-	private void pauseTracks() {
+	public void pauseTracks() {
 		for(int i =0; i < p.size(); i++){
 			try {
 				p.pause(i);

@@ -18,7 +18,7 @@
 		-->
 		<activity android:name=".activity.TracksActivity" android:screenOrientation="portrait"
 			android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
-		<activity android:name=".activity.RecordActivity" android:screenOrientation="portrait"></activity>
+		<activity android:name=".activity.RecordActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar"></activity>
 			<activity android:name=".activity.SaveActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
 		<activity android:name=".activity.NotificationsActivity" android:screenOrientation="portrait"></activity>
 		<activity android:name=".activity.ProfileActivity" android:screenOrientation="portrait"

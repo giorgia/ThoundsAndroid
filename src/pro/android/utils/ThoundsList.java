@@ -26,6 +26,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -115,7 +116,8 @@ public class ThoundsList implements OnBufferingUpdateListener{
 					thound = thounds[i];
 
 					item.put("line1",thound.getTrack(0).getTitle());
-					item.put("line2",thound.getTrack(0).getUserName());
+					int numTracks = thound.getTrackListLength();
+					item.put("line2",thound.getTrack(0).getUserName() +"    +"+numTracks+(numTracks==1?" track":" tracks"));
 					listThounds.add( item );
 					adapter.notifyDataSetChanged();
 
@@ -224,6 +226,7 @@ public class ThoundsList implements OnBufferingUpdateListener{
 
 		//return false;
 	}
+	
 
 	private class ThoundsAdapter extends ArrayAdapter<HashMap<String,String>> {
 
@@ -243,7 +246,7 @@ public class ThoundsList implements OnBufferingUpdateListener{
 			if (item != null) {
 				TextView tt = (TextView) v.findViewById(R.id.text1);
 				TextView bt = (TextView) v.findViewById(R.id.text2);
-				TextView at = (TextView) v.findViewById(R.id.arrow);
+				ImageButton at = (ImageButton) v.findViewById(R.id.arrow);
 								
 
 				if (tt != null) {

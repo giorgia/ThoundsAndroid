@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:background="@color/dark_grey"
-	android:layout_height="fill_parent" android:layout_width="fill_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent" android:layout_width="fill_parent" android:background="@drawable/dark_background">
 
 	
 
@@ -9,9 +8,9 @@
 		
 
 
-	<TextView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/txt_countdown" android:soundEffectsEnabled="true" android:gravity="center" android:shadowColor="@android:color/black" android:textColor="@android:color/white" android:visibility="invisible" android:shadowDx="2.2" android:shadowDy="2.2" android:shadowRadius="2.2" android:textSize="200dip" android:background="@color/dark_grey"></TextView><RelativeLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/ProgressBarLayout" android:visibility="visible" android:layout_margin="10dip" android:padding="10dip">
+	<TextView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/txt_countdown" android:soundEffectsEnabled="true" android:gravity="center" android:shadowColor="@android:color/black" android:textColor="@android:color/white" android:visibility="invisible" android:shadowDx="2.2" android:shadowDy="2.2" android:shadowRadius="2.2" android:textSize="200dip" android:background="@drawable/dark_background"></TextView><RelativeLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/ProgressBarLayout" android:visibility="visible" android:layout_margin="10dip" android:padding="10dip">
 		<LinearLayout android:layout_width="wrap_content" android:layout_toLeftOf="@+id/DigitalClock01" android:id="@+id/LinearLayout02" android:layout_height="wrap_content" android:layout_above="@+id/ImageView02" android:layout_centerHorizontal="true" android:gravity="center"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/red_off_32" android:id="@+id/img_led_rec"></ImageView>
-		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="45dip" android:layout_above="@+id/MetronomeLayout" android:layout_centerHorizontal="true" android:background="@layout/shape_dark" android:layout_margin="10dip" android:padding="5dip" android:textColor="#FF0000" android:id="@+id/txt_timer" android:text="00:00:000"></TextView>
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="45dip" android:layout_above="@+id/MetronomeLayout" android:layout_centerHorizontal="true" android:background="@layout/shape_dark" android:layout_margin="10dip" android:padding="5dip" android:textColor="#FF0000" android:id="@+id/txt_timer" android:text="00:00:000" android:shadowColor="#c11000" android:shadowDx="1.2" android:shadowDy="1.2" android:shadowRadius="1.2"></TextView>
 		
 		</LinearLayout><SeekBar android:id="@+id/SeekBar01" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:layout_width="260dip" android:layout_below="@+id/LinearLayout02"></SeekBar>
 
@@ -45,15 +44,12 @@
 	<LinearLayout android:id="@+id/RecLayout" android:orientation="vertical"
 		android:visibility="visible" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_alignParentBottom="true" android:layout_centerHorizontal="true" android:layout_marginBottom="20dip" android:layout_marginTop="20dip" android:gravity="center">
 
-		<ImageView android:id="@+id/ImageView01" android:src="@android:drawable/divider_horizontal_dark" android:layout_height="5dip" android:layout_centerHorizontal="true" android:layout_width="260dip" android:layout_above="@+id/RecLayout"></ImageView><TextView android:layout_width="wrap_content"
+		<ImageView android:id="@+id/ImageView01" android:layout_height="5dip" android:layout_centerHorizontal="true" android:layout_width="260dip" android:layout_above="@+id/RecLayout" android:src="@android:drawable/divider_horizontal_dark"></ImageView><TextView android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/TextView02"
 			android:text="Put your headphones on and press rec "
 			android:layout_x="35dip" android:layout_y="290dip"></TextView>
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/btnRec"
-			android:minWidth="200dip" android:minHeight="60dip"
-			android:layout_marginTop="10dip"
-			android:background="@drawable/btn_record"></Button>
+		<ImageButton android:id="@+id/btnRec"
+			android:layout_marginTop="10dip" android:layout_height="60dip" android:layout_width="260dip" android:src="@drawable/jog_tab_target_red"></ImageButton>
 	
 </LinearLayout>
 	

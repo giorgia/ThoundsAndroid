@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.thounds.thoundsapi.BandWrapper;
@@ -215,20 +218,17 @@ public class ProfileActivity extends CommonActivity{
 			tags.setText(tag);
 		}
 
-		ThoundWrapper th = null;
 		try {
-			th = user.getDefaultThound();
-
+			obj = user.getDefaultThound();
 			ImageButton playDef = (ImageButton) findViewById(R.id.playDefault);
 
-			if(th!=null){
+			if(obj!=null){
 
-				TextView line1 = (TextView) findViewById(R.id.text1);
-				TextView line2 = (TextView) findViewById(R.id.text2);
-
-
-				line1.setText(th.getTrack(0).getTitle());
-				line2.setText(th.getTrack(0).getCreatedAt());
+				TextView line1 = (TextView) findViewById(R.id.txt_def_title);
+				TextView line2 = (TextView) findViewById(R.id.txt_def_date);
+				
+				line1.setText(obj.getTrack(0).getTitle());
+				line2.setText(obj.getTrack(0).getCreatedAt().subSequence(0, 10)+" at "+obj.getTrack(0).getCreatedAt().substring(11, 16));
 			}
 		} catch (IllegalThoundsObjectException e) {
 			// TODO Auto-generated catch block
@@ -339,6 +339,10 @@ public class ProfileActivity extends CommonActivity{
 		}).start();
 	}
 	
+	public void onClickDefaultArrow(View v){
+		CommonActivity.nextIntent = new Intent(v.getContext(), TracksActivity.class);
+		startActivity(CommonActivity.nextIntent);
+	}
 	public void onClickArrow(View v){
 		list.onClickArrow(v);
 	}

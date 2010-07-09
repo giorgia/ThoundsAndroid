@@ -3,20 +3,17 @@
 	android:layout_height="fill_parent" android:layout_width="fill_parent"
 	android:orientation="vertical">
 	<RelativeLayout android:layout_width="fill_parent"
-		android:layout_height="60dip" android:background="@drawable/gradient">
+		android:background="@drawable/gradient" android:layout_height="70dip">
 
-		<ImageView android:id="@+id/cover" android:src="@drawable/no_cover"
-			android:scaleType="centerCrop" android:layout_height="55dip"
-			android:layout_width="55dip" android:layout_centerVertical="true"
-			android:background="@android:color/darker_gray" android:padding="3dip"
-			android:layout_alignParentRight="true" android:layout_margin="3dip" />
+		<ImageView android:id="@+id/cover" android:layout_centerVertical="true"
+			android:layout_alignParentRight="true" android:background="@android:drawable/picture_frame" android:scaleType="fitXY" android:layout_height="80dip" android:layout_width="80dip" android:src="@drawable/ic_volume"/>
 		<TextView android:textStyle="bold" android:layout_height="wrap_content"
-			android:id="@+id/ThoundTitle" android:textSize="18px" android:layout_marginLeft="5dip"
+			android:id="@+id/ThoundTitle" android:layout_marginLeft="5dip"
 			android:layout_centerVertical="true" android:maxLines="1"
 			android:ellipsize="marquee" android:marqueeRepeatLimit="marquee_forever"
 			android:scrollHorizontally="true" android:focusable="true"
 			android:selectAllOnFocus="true" android:focusableInTouchMode="true"
-			android:text="Thound Title" android:layout_width="250dip" android:textColor="@color/white_smoke" android:shadowColor="@android:color/black" android:shadowDx="1.2" android:shadowDy="1.2" android:shadowRadius="1.2"></TextView>
+			android:text="Thound Title" android:layout_width="250dip" android:textColor="@color/white_smoke" android:shadowColor="@android:color/black" android:shadowDx="1.2" android:shadowDy="1.2" android:shadowRadius="1.2" android:textSize="22px"></TextView>
 
 
 
@@ -24,7 +21,7 @@
 
 	</RelativeLayout>
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="fill_parent" android:layout_height="300dip">
+		android:layout_width="fill_parent" android:layout_height="290dip">
 		<ListView android:id="@+id/list_tracks"
 			android:layoutAnimation="@anim/layout_bottom_to_top_slide"
 			android:layout_height="wrap_content" android:layout_width="wrap_content"></ListView>
@@ -32,7 +29,7 @@
 
 	<RelativeLayout android:orientation="vertical"
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent" android:background="@drawable/gradient_reverse">
+		android:layout_height="fill_parent" android:background="@android:drawable/bottom_bar">
 
 		
 

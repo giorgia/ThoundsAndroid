@@ -31,6 +31,7 @@ public class RecordActivity extends CommonActivity {
 
 	public static String PATH= Environment.getExternalStorageDirectory().getAbsolutePath() +"/thounds/test.3gp";
 	private MediaRecorder recorder;
+	private MediaPlayer mp;
 
 	private RelativeLayout lTimer;
 	private RelativeLayout lMetronome;
@@ -63,13 +64,13 @@ public class RecordActivity extends CommonActivity {
 		led = (ImageView) findViewById(R.id.img_led_rec);
 
 		//RECORD
-		final Button btnRec = (Button) this.findViewById(R.id.btnRec);
+		final ImageButton btnRec = (ImageButton) this.findViewById(R.id.btnRec);
 		btnRec.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
 				if(!isRecording){
 					isRecording = true;
-					btnRec.setBackgroundResource(R.drawable.btn_stop);
+					btnRec.setImageResource(R.drawable.btn_square_overlay_disabled);
 					countDown();
 
 				}else{
@@ -77,6 +78,7 @@ public class RecordActivity extends CommonActivity {
 					lRec.setVisibility(View.INVISIBLE);
 					lMedia.setVisibility(View.VISIBLE);
 					stopRecord();
+					setMediaPlayer();
 				}
 
 
@@ -90,22 +92,6 @@ public class RecordActivity extends CommonActivity {
 		play.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v) {
-
-				MediaPlayer mp = new MediaPlayer();
-				try {
-					mp.setDataSource(PATH);
-					mp.prepare();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalStateException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
 				mp.start();
 
 			}
@@ -131,6 +117,7 @@ public class RecordActivity extends CommonActivity {
 			{
 				public void onClick(View v) {
 					nextIntent = new Intent(v.getContext(), SaveActivity.class);
+					nextIntent.putExtra("duration", mp.getDuration());
 					startActivity(nextIntent);
 					finish();				}
 			});
@@ -171,6 +158,22 @@ public class RecordActivity extends CommonActivity {
 		recorder.reset();   // You can reuse the object by going back to setAudioSource() step
 		recorder.release(); // Now the object cannot be reused
 
+	}
+	private void setMediaPlayer(){
+		mp = new MediaPlayer();
+		try {
+			mp.setDataSource(PATH);
+			mp.prepare();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	private void countDown(){
 		new CountDownTimer(4000, 1000) {

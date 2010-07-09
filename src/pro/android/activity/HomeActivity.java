@@ -1,22 +1,16 @@
 package pro.android.activity;
 
+import org.json.JSONObject;
 import org.thounds.thoundsapi.HomeWrapper;
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
 import org.thounds.thoundsapi.RequestWrapper;
 import org.thounds.thoundsapi.ThoundWrapper;
 import org.thounds.thoundsapi.ThoundsConnectionException;
 
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.URISyntaxException;
-
-import org.apache.http.client.ClientProtocolException;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import pro.android.R;
 import pro.android.utils.ThoundsList;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -29,10 +23,8 @@ public class HomeActivity extends CommonActivity{
 	HomeWrapper home;
 	ThoundWrapper thounds;
 
-	JSONObject thound;
-	JSONObject thounds_collection;
-	JSONObject json;
-
+	Thread thread;
+	Runnable run;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -51,22 +43,17 @@ public class HomeActivity extends CommonActivity{
 		reload.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-
+				 reload();
 			}
 		});
-
-
-		list = new ThoundsList(this);
-
-		Runnable run = new Runnable(){
+		
+		 run = new Runnable(){
 			public void run() {
 				retrievedData();     	
 			}			
 		};
-		Thread thread =  new Thread(run, "retrievedData");
-		thread.start();
-
-
+		reload();
+		
 	}
 
 
@@ -84,10 +71,13 @@ public class HomeActivity extends CommonActivity{
 			}
 			
 
-		
-
 		runOnUiThread(list.getReturnRes());
 
+	}
+	public void reload(){
+		list = new ThoundsList(this);
+		thread =  new Thread(run, "retrievedData");
+		thread.start();
 	}
 	public void onClickArrow(View v){
 		list.onClickArrow(v);
@@ -96,5 +86,30 @@ public class HomeActivity extends CommonActivity{
 		list.onItemClick(v);
 	}
 
+	@Override
+	public void onRestart(){
+		super.onRestart();
+		reload();
+		Log.d("HOME","RESTART");
+	}
+
+	@Override
+	public void onResume(){
+		super.onResume();
+		//reload();
+		Log.d("HOME","RESUME");
+	}
+	@Override
+	public void onStart(){
+		super.onStart();
+		//reload();
+		Log.d("HOME","START");
+	}
+	@Override
+	public void onStop(){
+		super.onStop();
+		//reload();
+		Log.d("HOME","STOP");
+	}
 }
 
