@@ -87,6 +87,7 @@ public class ProfileActivity extends CommonActivity{
 					nextIntent.putExtra("userId", band.getFriend(arg2).getId());
 				} catch (IllegalThoundsObjectException e) {
 					// TODO Auto-generated catch block
+					showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 					e.printStackTrace();
 				}
 				startActivity(nextIntent);
@@ -183,10 +184,13 @@ public class ProfileActivity extends CommonActivity{
 			}
 		} catch (ThoundsConnectionException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		//	e1.printStackTrace();
+			showDialog(DIALOG_ALERT_CONNECTION);
+			
 		} catch (IllegalThoundsObjectException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			//e1.printStackTrace();
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 		}
 
 
@@ -232,7 +236,8 @@ public class ProfileActivity extends CommonActivity{
 			}
 		} catch (IllegalThoundsObjectException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
+			//e.printStackTrace();
 		}
 
 	}
@@ -246,10 +251,12 @@ public class ProfileActivity extends CommonActivity{
 				list.setThound(RequestWrapper.loadGenericUserLibrary(userId, 1, 20).getThoundsList());
 
 		} catch (IllegalThoundsObjectException e) {
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ThoundsConnectionException e) {
 			// TODO Auto-generated catch block
+			showDialog(DIALOG_ALERT_CONNECTION);
 			e.printStackTrace();
 		}
 
@@ -266,9 +273,11 @@ public class ProfileActivity extends CommonActivity{
 				band = RequestWrapper.loadGenericUserBand(userId);
 		} catch (ThoundsConnectionException e) {
 			// TODO Auto-generated catch block
+			showDialog(DIALOG_ALERT_CONNECTION);
 			e.printStackTrace();
 		} catch (IllegalThoundsObjectException e) {
 			// TODO Auto-generated catch block
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 			e.printStackTrace();
 		}
 
@@ -294,6 +303,7 @@ public class ProfileActivity extends CommonActivity{
 
 				}catch (IllegalThoundsObjectException e) {
 					// TODO Auto-generated catch block
+					showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 					e.printStackTrace();
 				}
 
@@ -318,10 +328,16 @@ public class ProfileActivity extends CommonActivity{
 				p.pause();
 			}
 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		 catch(IllegalThoundsObjectException ite)
+		 {
+			 showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
+			 
+		 }
+		catch (Exception e) {
+			showDialog(DIALOG_EXCEPTION_BUFFER_PALYER);
+		}
+	
 	}
 
 	public void progressUpdater() {

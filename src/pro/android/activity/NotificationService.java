@@ -29,7 +29,7 @@ public class NotificationService extends Service{
 
 	private NotificationManager notificationMgr;
 	private static final int NOTIFICATION_ID = 1;
-	private boolean runnable=true;
+	static  private boolean runnable=true;
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -109,13 +109,15 @@ ur[i].getSiteUrl();
 
 				catch (InterruptedException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+				//	e.printStackTrace();
+			
 				} catch (ThoundsConnectionException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IllegalThoundsObjectException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					//showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 				}
 
 
@@ -234,7 +236,7 @@ ur[i].getSiteUrl();
 		notificationMgr.notify(0, notification);
 	}*/
 
-	public void stop()
+static	public void stop()
 	{
 		runnable=false;
 	}

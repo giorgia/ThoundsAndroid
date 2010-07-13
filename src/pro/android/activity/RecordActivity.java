@@ -87,6 +87,7 @@ public class RecordActivity extends CommonActivity {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				
 			}
 		});
 

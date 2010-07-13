@@ -47,6 +47,7 @@ public class HomeActivity extends CommonActivity{
 		logout.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
+				StopNotification();
 				logout();
 			}
 		});
@@ -87,6 +88,23 @@ public class HomeActivity extends CommonActivity{
 		
 		}
 	}
+	
+	public synchronized void StopNotification()
+	{
+		
+		Log.e("notification", "qui arriva e poi eccezione");
+		if(runningNotificationService==true)
+		{
+	    Log.e("notification", "start service su Thounds ACtivity");
+	    runningNotificationService=false;
+	    NotificationService.stop();
+		//startService(new Intent(HomeActivity.this, NotificationService.class));
+		
+		}
+		
+	}
+	
+	
 
 	private synchronized void retrievedData() {
 		
@@ -97,10 +115,13 @@ public class HomeActivity extends CommonActivity{
 			
 			} catch (ThoundsConnectionException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				showDialog(DIALOG_ALERT_CONNECTION);
+				
 			} catch (IllegalThoundsObjectException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 			}
 			
 

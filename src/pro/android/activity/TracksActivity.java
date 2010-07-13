@@ -76,6 +76,7 @@ public class TracksActivity extends CommonActivity{
 
 		} catch (IllegalThoundsObjectException e) {
 			// TODO Auto-generated catch block
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 			e.printStackTrace();
 		}
 
@@ -106,13 +107,16 @@ public class TracksActivity extends CommonActivity{
 
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
+				showDialog(DIALOG_ILLEGAL_ARGUMENT_EXCEPTION);
 				e.printStackTrace();
 			} catch (IllegalStateException e) {
+				showDialog(DIALOG_ILLEGAL_STATE_EXCEPTION);
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
+				showDialog(DIALOG_GENERIC_EXCEPTION);
 				e.printStackTrace();
 			}
 
@@ -173,6 +177,7 @@ public class TracksActivity extends CommonActivity{
 
 				}catch (Exception e) {
 					// TODO Auto-generated catch block
+					showDialog(DIALOG_GENERIC_EXCEPTION);
 					e.printStackTrace();
 				}
 			}
@@ -200,6 +205,7 @@ public class TracksActivity extends CommonActivity{
 				p.pause(i);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
+				showDialog(DIALOG_GENERIC_EXCEPTION);
 				e.printStackTrace();
 			}
 		}

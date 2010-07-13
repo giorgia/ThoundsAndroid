@@ -122,10 +122,12 @@ public class NotificationsActivity extends CommonActivity {
 			userWrapper= nw.getBandRequestList();
 		} catch (ThoundsConnectionException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			//e1.printStackTrace();
+			showDialog(DIALOG_ALERT_CONNECTION);
 		} catch (IllegalThoundsObjectException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			//e1.printStackTrace();
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 		}
 
 		runOnUiThread(returnRes);
@@ -165,12 +167,14 @@ public class NotificationsActivity extends CommonActivity {
 			else
 			{
 				Log.d("NOoooo non ha funzionato.....",String.valueOf(idNotif));
+				showDialog(DIALOG_IGNORE_USER);
 				//nextIntent = new Intent(v.getContext(), HomeActivity.class);
 				//startActivity(nextIntent);
 			}
 
 		} catch (ThoundsConnectionException e) {
 			// TODO Auto-generated catch block
+			showDialog(DIALOG_ALERT_CONNECTION);
 			e.printStackTrace();
 
 		}
@@ -186,6 +190,7 @@ public class NotificationsActivity extends CommonActivity {
 			RequestWrapper.refuseFriendship(idNotif);
 		} catch (ThoundsConnectionException e1) {
 			// TODO Auto-generated catch block
+			showDialog(DIALOG_ALERT_CONNECTION);
 			e1.printStackTrace();
 		}
 

@@ -98,35 +98,6 @@ public class ThoundsActivity extends CommonActivity {
 
 	};
 
-	// =======NOTIFICHE==================================
-	public void notification() {
 
-		NotificationManager not = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		int icon = R.drawable.icon;
-		CharSequence tickerText = "Thounds!";
-		long when = java.lang.System.currentTimeMillis();
-		Notification notification = new Notification(icon, tickerText, when);
-		Context context = getApplicationContext();
-		CharSequence contentTitle = "New Thounds!";
-		CharSequence contentText = "Bellaaaa!";
-		Intent notificationIntent = new Intent(this, this.getClass());
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-				notificationIntent, 0);
-
-		notification.setLatestEventInfo(context, contentTitle, contentText,
-				contentIntent);
-		notification.defaults |= Notification.DEFAULT_SOUND;
-		notification.defaults |= Notification.DEFAULT_VIBRATE;
-		notification.ledARGB = 0xff00ff00;
-		notification.ledOnMS = 300;
-		notification.ledOffMS = 1000;
-		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-		try {
-			not.notify(1, notification);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
 
 }
