@@ -1,5 +1,6 @@
 package pro.android.activity;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,13 +11,12 @@ import org.thounds.thoundsapi.NotificationsWrapper;
 import org.thounds.thoundsapi.RequestWrapper;
 import org.thounds.thoundsapi.ThoundsConnectionException;
 import org.thounds.thoundsapi.UserWrapper;
-import pro.android.utils.ImageFromUrl;
 
 import pro.android.R;
+import pro.android.utils.ImageFromUrl;
 import pro.android.utils.Player;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +32,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
 public class NotificationsActivity extends CommonActivity {
 
 	ListView listView;
@@ -60,12 +61,12 @@ public class NotificationsActivity extends CommonActivity {
 	ProgressBar pBar;
 	TextView no_notifications;
 
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.notifications);
 		
-		//no_notifications = (TextView) findViewById(R.id.txt_no_notifications);
 		 
 		listView = (ListView) findViewById(R.id.listRequest);
 		adapter = new RequestFrindsAdapter(

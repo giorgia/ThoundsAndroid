@@ -11,7 +11,6 @@ import android.widget.MediaController.MediaPlayerControl;
 
 public class Player implements MediaPlayerControl, OnErrorListener{
 
-	//private MediaPlayer mediaPlayer;
 	private MediaPlayer[] mediaPlayers = new MediaPlayer[1];;
 
 	private int progress = 0;

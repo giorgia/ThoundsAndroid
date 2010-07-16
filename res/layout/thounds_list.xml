@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent"
-	android:layout_width="fill_parent" android:orientation="vertical" android:id="@+id/ThoundsList">
-	<RelativeLayout android:layout_width="fill_parent" android:id="@+id/listLayout" android:clickable="true" android:focusable="true" android:focusableInTouchMode="true" android:layout_height="373dip">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:id="@+id/ThoundsList" android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<RelativeLayout android:layout_width="fill_parent" android:id="@+id/listLayout" android:clickable="true" android:focusable="true" android:focusableInTouchMode="true" android:layout_height="360dip">
 		<LinearLayout android:orientation="vertical" android:layout_gravity="center" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:layout_centerInParent="true" android:visibility="invisible" android:id="@+id/retrieving_data">
 			<ProgressBar android:id="@+id/ProgressBar01" android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -12,6 +11,7 @@
 		</LinearLayout>
 		<ListView android:layout_width="wrap_content" android:id="@+id/list" android:clickable="true"
 			android:layout_height="wrap_content" android:layoutAnimation="@anim/layout_bottom_to_top_slide" android:focusableInTouchMode="true" android:headerDividersEnabled="true" android:focusable="true" android:choiceMode="singleChoice"></ListView>
+
 	</RelativeLayout>
 
 	
@@ -19,5 +19,5 @@
 
 
 
-<TextView android:id="@+id/txtMediaShow" android:gravity="center" android:layout_height="wrap_content" android:text="▲" android:textSize="30dip" android:background="@layout/shape" android:layout_width="60dip" android:layout_gravity="center_horizontal" android:clickable="true" android:focusable="true" android:focusableInTouchMode="true" android:selectAllOnFocus="true"></TextView>
+<TextView android:id="@+id/txtMediaShow" android:gravity="center" android:text="▲" android:textSize="30dip" android:background="@android:drawable/zoom_plate" android:layout_gravity="center_horizontal" android:clickable="true" android:focusable="true" android:focusableInTouchMode="true" android:selectAllOnFocus="true" android:layout_width="90dip" android:layout_height="wrap_content"></TextView>
 </LinearLayout>

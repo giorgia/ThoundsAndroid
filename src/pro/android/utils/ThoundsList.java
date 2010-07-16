@@ -13,31 +13,23 @@ import pro.android.activity.TracksActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class ThoundsList implements OnBufferingUpdateListener{
 
@@ -71,17 +63,12 @@ public class ThoundsList implements OnBufferingUpdateListener{
 		);
 
 		listView.setAdapter(adapter);
-		listView.setItemsCanFocus(true);
-
 		retrieving_bar.setVisibility(View.VISIBLE);
 
 		anchorView = (RelativeLayout) activity.findViewById(R.id.listLayout);
 		mediaController = new MediaController(activity);
 		mediaController.setAnchorView(anchorView);
 
-		//listView.setOnItemClickListener(this);
-		//listView.setOnItemLongClickListener(this);
-		//listView.setOnItemSelectedListener(this);
 		showMedia.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -89,6 +76,7 @@ public class ThoundsList implements OnBufferingUpdateListener{
 				mediaController.show(p.getDuration());
 			}
 		});
+		
 		listView.setOnScrollListener(new OnScrollListener() {
 
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -101,7 +89,7 @@ public class ThoundsList implements OnBufferingUpdateListener{
 			public void onScroll(AbsListView view, int firstVisibleItem,
 					int visibleItemCount, int totalItemCount) {
 				// TODO Auto-generated method stub
-				//mediaController.show(p.getDuration());
+				mediaController.hide();
 			}
 		});
 	}
@@ -115,7 +103,8 @@ public class ThoundsList implements OnBufferingUpdateListener{
 					thound = thounds[i];
 
 					item.put("line1",thound.getTrack(0).getTitle());
-					item.put("line2",thound.getTrack(0).getUserName());
+					int numTracks = thound.getTrackListLength();
+					item.put("line2",thound.getTrack(0).getUserName() +"    +"+numTracks+(numTracks==1?" track":" tracks"));
 					listThounds.add( item );
 					adapter.notifyDataSetChanged();
 
@@ -134,21 +123,21 @@ public class ThoundsList implements OnBufferingUpdateListener{
 
 
 	public void onItemClick(View v) {
-
 		if(imageLed != null) 
 			imageLed.setVisibility(View.INVISIBLE);
 		imageLed = (ImageView) ((RelativeLayout)v).getChildAt(0);
 		imageLed.setVisibility(View.VISIBLE);
 
-		int position = (Integer)v.getTag();
+		int position = (Integer) ((RelativeLayout)v.getParent()).getTag();
 
 		try {
 			if(p != null && p.isPlaying())
 				p.pause();
 			mix_url = thounds[position].getMixUrl();
 			p = new Player(mix_url);
-			p.getDefaulMediaPlayer().setOnBufferingUpdateListener(this);
 			p.bufferedAudio();
+			if(p.getOffset() != 0)
+				p.seekTo(p.getOffset());
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -160,27 +149,16 @@ public class ThoundsList implements OnBufferingUpdateListener{
 
 
 		mediaController.setMediaPlayer(p);
-
-
+		mediaController.show(p.getDuration());
+		p.getDefaulMediaPlayer().setOnBufferingUpdateListener(this);
+		
 
 	}
 
 
 	public void onBufferingUpdate(MediaPlayer mp, int percent) {
 		p.setBufferPercent(percent);
-		if(percent>50 && !p.isPlaying()){
-			if(p.getOffset() != 0){
-				p.seekTo(p.getOffset());
-			}
-			p.start();
-			p.setCurrentState(Player.STATE_PLAYING);
-
-		}
-		//Log.d("thoundList" , ""+p.getBufferPercentage());
-		mediaController.show(p.getDuration());
-		//	if(seekBar != null)
-		//	seekBar.setSecondaryProgress(percent);
-		//activity.runOnUiThread(updateProgress);
+		
 	}
 
 
@@ -198,10 +176,7 @@ public class ThoundsList implements OnBufferingUpdateListener{
 		this.thounds = thounds;
 	}
 
-	//
-	//	public boolean onItemLongClick(AdapterView<?> arg0, View v, int position,
-	//			long arg3) {
-	//	
+
 	public void onClickArrow(View v){
 		int position = (Integer)v.getTag();
 		CommonActivity.obj = thounds[position];
@@ -220,10 +195,8 @@ public class ThoundsList implements OnBufferingUpdateListener{
 		//CommonActivity.nextIntent.putExtra("thound", obj);
 		activity.startActivity(CommonActivity.nextIntent);
 
-
-
-		//return false;
 	}
+	
 
 	private class ThoundsAdapter extends ArrayAdapter<HashMap<String,String>> {
 
@@ -243,7 +216,7 @@ public class ThoundsList implements OnBufferingUpdateListener{
 			if (item != null) {
 				TextView tt = (TextView) v.findViewById(R.id.text1);
 				TextView bt = (TextView) v.findViewById(R.id.text2);
-				TextView at = (TextView) v.findViewById(R.id.arrow);
+				ImageButton at = (ImageButton) v.findViewById(R.id.arrow);
 								
 
 				if (tt != null) {
