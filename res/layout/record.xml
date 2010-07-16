@@ -23,13 +23,13 @@
 		android:layout_width="fill_parent"
 		android:visibility="visible" android:layout_margin="10dip" android:layout_centerInParent="true" android:id="@+id/MetronomeLayout"><ImageView android:id="@+id/ImageView01" android:layout_height="5dip" android:layout_centerHorizontal="true" android:layout_width="260dip" android:layout_above="@+id/MetronomeLayout" android:layout_margin="10dip" android:layout_below="@+id/ProgressBarLayout" android:src="@android:drawable/divider_horizontal_dark"></ImageView>
 
-		<Spinner android:id="@+id/Spinner01" android:minWidth="255dip"
+		<Spinner android:minWidth="255dip"
 			android:layout_height="wrap_content"
-			android:layout_width="wrap_content" android:layout_centerHorizontal="true" android:layout_below="@+id/ImageView01"></Spinner>
+			android:layout_width="wrap_content" android:layout_centerHorizontal="true" android:layout_below="@+id/ImageView01" android:id="@+id/spn_metronome"></Spinner>
 
 		<TextView android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/TextView03"
-			android:text="Adjust your tempo:" android:layout_below="@+id/Spinner01" android:layout_centerHorizontal="true"></TextView>
+			android:text="Adjust your tempo:" android:layout_centerHorizontal="true" android:layout_below="@+id/spn_metronome"></TextView>
 
 		
 

@@ -1,11 +1,8 @@
 package pro.android.activity;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 
-import org.json.JSONException;
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
 import org.thounds.thoundsapi.ThoundWrapper;
 import org.thounds.thoundsapi.TrackWrapper;
@@ -14,11 +11,12 @@ import pro.android.R;
 import pro.android.utils.ImageFromUrl;
 import pro.android.utils.Player;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +38,7 @@ public class TracksActivity extends CommonActivity{
 	private ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
 	private ThoundWrapper thound;
 	private TrackWrapper track;
-	private TrackWrapper[] tracks;
+	public TrackWrapper[] tracks;
 
 	private Player p;
 
@@ -48,13 +46,12 @@ public class TracksActivity extends CommonActivity{
 	private int progress;
 	private int buffered = 0;
 	private boolean isAllDownload = false;
-	private View itemView;
 	private ToggleButton tSolo = null;
 	private ToggleButton tMute = null;
 	private AudioManager am;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tracks);
 		currentActivity = -1;
@@ -88,36 +85,11 @@ public class TracksActivity extends CommonActivity{
 		listView.setAdapter(mAdapter);
 
 		p = new Player(tracks.length);
+		showDialog(DIALOG_RETRIEVING_TRACKS);
 
-		for(int i=0; i< tracks.length; i++){
-
-			final HashMap<String,String> item = new HashMap<String,String>();
-			try {
-				track = tracks[i];
-
-				p.setData(track.getUri(), track.getOffset(), i);
-
-				item.put("line1",track.getUserName());
-				item.put("line2",track.getCreatedAt().substring(0, 10)+" at "+track.getCreatedAt().substring(11, 16));
-
-				list.add( item );
-
-				mAdapter.notifyDataSetChanged();
-
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		runOnUiThread(dowloadingTracks);     	
 
 
-		}
 
 		final Button play = (Button) findViewById(R.id.PlayTracks);
 		play.setOnClickListener(new OnClickListener() {
@@ -133,13 +105,57 @@ public class TracksActivity extends CommonActivity{
 				}		
 			}
 		});
+
+		final Button record = (Button) findViewById(R.id.RecTrack);
+		record.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+
+				nextIntent = new Intent(v.getContext(), RecordActivity.class);
+				nextIntent.putExtra("thoundId", thound.getId());
+				nextIntent.putExtra("tracks", savedInstanceState);
+				startActivity(nextIntent);
+
+			}
+		});
 	}
+
+	private Runnable dowloadingTracks = new Runnable(){
+		public void run() {
+			for(int i=0; i< tracks.length; i++){
+				final HashMap<String,String> item = new HashMap<String,String>();
+				try {
+					track = tracks[i];
+
+					p.setData(track.getUri(), track.getOffset(), i);
+
+					item.put("line1",track.getUserName());
+					item.put("line2",track.getCreatedAt().substring(0, 10)+" at "+track.getCreatedAt().substring(11, 16));
+
+					list.add( item );
+
+					mAdapter.notifyDataSetChanged();
+					new Thread(isAllDownloaded).start();	
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalStateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		}
+	};
 
 	@Override
 	public void onStart(){
 		super.onStart();
-		showDialog(DIALOG_RETRIEVING_TRACKS);
-		new Thread(downlodingTracks).start();
+		Log.e("tracks", "OnStart");
 	}
 
 	@Override
@@ -148,9 +164,10 @@ public class TracksActivity extends CommonActivity{
 		if(p.isPlaying())
 			pauseTracks();
 	}
-	private Runnable downlodingTracks  = new Runnable(){
+	private Runnable isAllDownloaded  = new Runnable(){
 
 		public void run() {
+
 
 			for(int i =0; i < p.size(); i++ ){
 
@@ -173,6 +190,7 @@ public class TracksActivity extends CommonActivity{
 
 				}catch (Exception e) {
 					// TODO Auto-generated catch block
+					Log.e("Track error","error downloding tracks n. "+i);
 					e.printStackTrace();
 				}
 			}
@@ -261,39 +279,39 @@ public class TracksActivity extends CommonActivity{
 
 
 
-private class TracksAdapter extends ArrayAdapter<HashMap<String,String>> {
+	private class TracksAdapter extends ArrayAdapter<HashMap<String,String>> {
 
-	private ArrayList<HashMap<String,String>> items;
+		private ArrayList<HashMap<String,String>> items;
 
-	public TracksAdapter(Context context, int textViewResourceId, ArrayList<HashMap<String,String>> items) {
-		super(context, textViewResourceId, items);
-		this.items = items;
-	}
-	public View getView(int position, View convertView, ViewGroup parent) {
-		View v = convertView;
-		if (v == null) {
-			LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(R.layout.tracks_item_list, null);
+		public TracksAdapter(Context context, int textViewResourceId, ArrayList<HashMap<String,String>> items) {
+			super(context, textViewResourceId, items);
+			this.items = items;
 		}
-		HashMap<String,String> item = items.get(position);
-		if (item != null) {
-			TextView tt = (TextView) v.findViewById(R.id.text1);
-			TextView bt = (TextView) v.findViewById(R.id.text2);
-			ToggleButton tSolo = (ToggleButton) v.findViewById(R.id.ToggleSolo);
-			ToggleButton tMute = (ToggleButton) v.findViewById(R.id.ToggleMute);
-			LinearLayout lTrack = (LinearLayout) v.findViewById(R.id.trackItemLayout);
-
-			if (tt != null) {
-				tt.setText( item.get("line1"));                            }
-			if(bt != null){
-				bt.setText(item.get("line2"));
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.tracks_item_list, null);
 			}
-			tSolo.setTag("solo"+position);
-			tMute.setTag("mute"+position);
-			lTrack.setTag("layout"+position);
+			HashMap<String,String> item = items.get(position);
+			if (item != null) {
+				TextView tt = (TextView) v.findViewById(R.id.text1);
+				TextView bt = (TextView) v.findViewById(R.id.text2);
+				ToggleButton tSolo = (ToggleButton) v.findViewById(R.id.ToggleSolo);
+				ToggleButton tMute = (ToggleButton) v.findViewById(R.id.ToggleMute);
+				LinearLayout lTrack = (LinearLayout) v.findViewById(R.id.trackItemLayout);
 
+				if (tt != null) {
+					tt.setText( item.get("line1"));                            }
+				if(bt != null){
+					bt.setText(item.get("line2"));
+				}
+				tSolo.setTag("solo"+position);
+				tMute.setTag("mute"+position);
+				lTrack.setTag("layout"+position);
+
+			}
+			return v;
 		}
-		return v;
 	}
-}
 }

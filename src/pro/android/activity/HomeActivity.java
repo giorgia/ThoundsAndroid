@@ -31,6 +31,7 @@ public class HomeActivity extends CommonActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 		currentActivity = R.id.home;
+		
 		Button logout = (Button) findViewById(R.id.btnLogout);
 		logout.setOnClickListener(new OnClickListener() {
 
