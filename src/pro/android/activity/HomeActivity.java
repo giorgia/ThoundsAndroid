@@ -79,7 +79,7 @@ public class HomeActivity extends CommonActivity{
 	//Start Notification Service
 	public synchronized void StartNotification()
 	{
-		  Log.e("notification", "qui arriva e poi eccezione");
+	
 		if(runningNotificationService==false)
 		{
 	    Log.e("notification", "start service su Thounds ACtivity");
@@ -92,7 +92,7 @@ public class HomeActivity extends CommonActivity{
 	public synchronized void StopNotification()
 	{
 		
-		Log.e("notification", "qui arriva e poi eccezione");
+	
 		if(runningNotificationService==true)
 		{
 	    Log.e("notification", "start service su Thounds ACtivity");

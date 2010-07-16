@@ -1,11 +1,16 @@
 package pro.android.activity;
 
+import java.util.Vector;
+
 import org.json.JSONException;
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
 
 
+import org.thounds.thoundsapi.BandWrapper;
+import org.thounds.thoundsapi.NotificationPair;
 import org.thounds.thoundsapi.NotificationsWrapper;
 import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.ThoundWrapper;
 import org.thounds.thoundsapi.ThoundsConnectionException;
 import org.thounds.thoundsapi.UserWrapper;
 
@@ -30,9 +35,16 @@ public class NotificationService extends Service{
 	private NotificationManager notificationMgr;
 	private static final int NOTIFICATION_ID = 1;
 	static  private boolean runnable=true;
+	private Vector<Integer> idUserNotification;
+	private Vector<Integer> idThoundsNotification;
+	private int num=1;
+	private NotificationsWrapper nw;
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
+		idUserNotification=new Vector<Integer>();
+		idThoundsNotification=new Vector<Integer>();
 		notificationMgr =(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		Log.e("NOtification", "creato il serviio");
 		// displayNotificationMessage("starting Background Service");
@@ -48,32 +60,39 @@ public class NotificationService extends Service{
 			// do background processing here...
 			// stop the service when done...
 			// BackgroundService.this.stopSelf();
-
+  
 			while(runnable)
 			{
+				boolean trov=false;
 				try {
 					Log.e("NOtification", "dentro il metodo run");
 
 					//richiesta notifica
 
-					NotificationsWrapper nw= RequestWrapper.loadNotifications();
+					 nw= RequestWrapper.loadNotifications();
 					//vedere richieste amicizia
 					int bandRequest=-1;
 					
 						bandRequest = nw.getBandRequestListLength();
-					
+					   
 
 					if(bandRequest >0)
 					{
 						//recupero
 						int newusers=-1;
 						
-							newusers = nw.getBandRequestListLength();
+							//newusers = nw.getBandRequestListLength();
 						
+							newusers= isInVectorUser();
+							Log.e("Notification","Il numero di utenti e"+newusers);
 						if(newusers>0)
 						{
+							
+							
 							displayUserRequest(newusers);
-
+						
+							NotificationPair<UserWrapper>[]	userWrapper= nw.getBandRequestList();
+                            trov=true;
 						}
 						/*for(int i=0;i< ur.length;i++)
 {
@@ -93,15 +112,19 @@ ur[i].getSiteUrl();
 					}
         int newThounds=-1;
 	
-			newThounds = nw.getNewThoundsListLength();
-		
+			newThounds = isInVectorThounds();
+			Log.e("Notification","Il numero di thounds e"+newThounds);
 					if(newThounds>0)
 					{
 						displayNewThounds(newThounds);
+						   trov=true;
 					}
-
-
+                     
+					if(trov)
+					AddVector();
+					
 					Thread.sleep(10000);
+					//Thread.sleep(60000);
 					// RequestWrapper.getNotifications();
 					// displayNotificationMessage("ciao mondo");
 				}
@@ -123,6 +146,167 @@ ur[i].getSiteUrl();
 
 			}
 		}
+	}
+	
+	static private boolean isInVector(Vector<Integer> v,int element)
+	{
+	 for(int i=0;i<v.size();i++)
+	 {
+		 Log.e("Notification thounds",String.valueOf(v.get(i).intValue())+ " element:"+element);
+		 if(v.get(i).intValue()==element)
+		  return true;
+		 
+		 
+	 }
+	 
+	 return false;
+		
+	}
+	
+	
+	private int isInVectorUser()
+	{
+		
+		int bandRequest = nw.getBandRequestListLength();
+		   int equalsid=0;
+		try
+		{
+				if(bandRequest >0)
+				{
+					//recupero
+					int newusers=-1;
+					
+				     newusers = nw.getBandRequestListLength();
+					
+					if(newusers>0)
+					{
+						NotificationPair<UserWrapper>[]	userWrapper= nw.getBandRequestList();
+						//
+						for(int i=0;i< userWrapper.length;i++)
+						{
+							/*for(int i=0;i< userWrapper.length;i++)
+						   {
+							 int id=	userWrapper[i].getNotificationObject().getId();
+							 int userid=idUserNotification.get(j).intValue();
+						     if(id== userid)
+						     {
+						       	 trov=true;
+						     }
+					  	     }
+						  */
+							 
+							  if( isInVector(idUserNotification,userWrapper[i].getNotificationObject().getId() ) ==false)
+							  {
+								  equalsid++;
+								  
+							  }
+						   }
+						}
+					}
+				Log.e("Notification","li elementi uguali sono:"+String.valueOf(equalsid)+" gli elementi dell'array sono:"+idUserNotification.size() +" e la differenza è:"+ String.valueOf(equalsid));
+				//return equalsid-idUserNotification.size();
+				return equalsid;
+		}
+		catch(Exception e)
+		{
+			
+		}
+				
+		return 0;
+	}
+	
+	
+	private int isInVectorThounds()
+	{
+		
+		   int equalsid=0;
+		
+		try
+		{
+			int newThounds = nw.getNewThoundsListLength();
+			
+			if(newThounds>0)
+			{
+				ThoundWrapper [] thounds=nw.getNewThoundsList();
+				for(int i=0;i< thounds.length;i++)
+				{
+					/*for(int j=0;j<idThoundsNotification.size();j++)
+					{
+					   int idThounds =thounds[i].getId();
+					   int idPresentThounds= c.get(j).intValue();
+					   if(idThounds==idPresentThounds)
+					   {
+						   equalsid++;
+						   
+					   }
+					}*/
+					
+					if(isInVector(idThoundsNotification, thounds[i].getId())==false)
+					{
+						Log.e("Notification thounds","id"+String.valueOf(thounds[i].getId()));
+						equalsid++;
+						Log.e("Notification thounds","id"+String.valueOf(equalsid));
+						
+					}
+				}
+				
+			}
+			Log.e("Notification","li elementi uguali sono:"+String.valueOf(equalsid)+ " e la differenza è:"+ String.valueOf(equalsid));
+				//return equalsid-idThoundsNotification.size();
+				return equalsid;
+		}
+		catch(Exception e)
+		{
+			
+		}
+				
+		return 0;
+	}
+	
+	
+	
+	private void AddVector()
+	{
+		int bandRequest = nw.getBandRequestListLength();
+		   
+try
+{
+		if(bandRequest >0)
+		{
+			//recupero
+			int newusers=-1;
+			
+		     newusers = nw.getBandRequestListLength();
+			
+			if(newusers>0)
+			{
+				NotificationPair<UserWrapper>[]	userWrapper= nw.getBandRequestList();
+				for(int i=0;i< userWrapper.length;i++)
+				{
+				 idUserNotification.add(userWrapper[i].getNotificationObject().getId());
+				Log.e("Notification","Aggiunto al vettore utente id"+String.valueOf(userWrapper[i].getNotificationObject().getId()));
+				}
+			}
+		}
+		
+		int newThounds = nw.getNewThoundsListLength();
+		
+		if(newThounds>0)
+		{
+			ThoundWrapper [] thounds=	nw.getNewThoundsList()	;
+			for(int i=0;i< thounds.length;i++)
+			{
+				 idThoundsNotification.add(thounds[i].getId());
+				 Log.e("Notification","Aggiunto al vettore id"+String.valueOf(thounds[i].getId()));
+			}
+		}
+		
+		
+}
+catch(Exception e )
+{
+	
+}
 	}
 	@Override
 	public void onDestroy()
@@ -168,7 +352,8 @@ ur[i].getSiteUrl();
 			//PendingIntent contentIntent = PendingIntent.getActivity(this, 0,new Intent(this, LoginActivity.class), 0);
 			Log.d("Invio notification","Vado su profile");
 			notification.setLatestEventInfo(this, "Hai "+String.valueOf(numRequest)+" nuove richieste di amicizia","Scopri chi vuole diventare tuo amico", pendingIntent);//contentIntent);
-			notificationMgr.notify(0, notification);
+			notificationMgr.notify(num, notification);
+			num++;
 		}
 		catch(Exception e)
 		{
@@ -204,7 +389,8 @@ ur[i].getSiteUrl();
 			//PendingIntent contentIntent = PendingIntent.getActivity(this, 0,new Intent(this, LoginActivity.class), 0);
 			Log.d("Invio notification","Vado su profile");
 			notification.setLatestEventInfo(this, "Hai "+String.valueOf(numRequest)+" nuove thounds","Ascolta la traccia ", pendingIntent);//contentIntent);
-			notificationMgr.notify(0, notification);
+			notificationMgr.notify(num, notification);
+			num++;
 		}
 		catch(Exception e)
 		{
