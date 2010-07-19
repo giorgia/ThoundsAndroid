@@ -9,8 +9,6 @@ import org.thounds.thoundsapi.ThoundsConnectionException;
 
 import pro.android.R;
 import pro.android.utils.Player;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -18,21 +16,16 @@ import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class RecordActivity extends CommonActivity {
@@ -144,11 +137,7 @@ public class RecordActivity extends CommonActivity {
 					stopRecord();
 					setMediaPlayer();
 				}
-
-
 			}
-
-
 		});
 
 		thoundId = getIntent().getExtras()!=null?getIntent().getExtras().getInt("thoundId"):-1;

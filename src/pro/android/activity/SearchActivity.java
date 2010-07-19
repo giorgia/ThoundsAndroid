@@ -182,9 +182,11 @@ public class SearchActivity extends CommonActivity {
 		catch (IllegalThoundsObjectException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 		}
 		catch (Exception e) {
 			// TODO Auto-generated catch block
+			showDialog(DIALOG_ALERT_CONNECTION);
 			e.printStackTrace();
 		}
 //		dismissDialog(DIALOG_LOADING);
@@ -209,10 +211,12 @@ public class SearchActivity extends CommonActivity {
 	} catch (IllegalThoundsObjectException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
+		showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 	}
 	catch (Exception ex) {
 		// TODO Auto-generated catch block
 		ex.printStackTrace();
+		showDialog(DIALOG_ALERT_CONNECTION);
 	}
 	 }
 	
@@ -223,17 +227,27 @@ public class SearchActivity extends CommonActivity {
 		try {
 			
 			userCollection = RequestWrapper.search(splitSearch, pag, 10);
-			totalPag = userCollection.getusersTotalNumber();
-		
+			totalPag = userCollection.getPageTotalNumber();
+
+			if(userCollection.getusersTotalNumber()!=0)
+			{
 			Log.e("Search result","Bellaaaaaaaaa il numero di pagine sono:"+String.valueOf(userCollection.getUsersListLength()));
 			retrievalResult();
 			PagOf.setText("Page "+String.valueOf(pag)+" of "+String.valueOf(totalPag));
+			}
+			else
+			{
+				showDialog(RESULT_SEARCH_NULL);
+				
+			}
 		} catch (ThoundsConnectionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			showDialog(DIALOG_ALERT_CONNECTION);
 		} catch (IllegalThoundsObjectException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 		}
 		 
 	 }
@@ -248,6 +262,7 @@ public class SearchActivity extends CommonActivity {
 			nextIntent.putExtra("userId", userCollection.getUsers(position).getId());
 		} catch (IllegalThoundsObjectException e) {
 			// TODO Auto-generated catch block
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 			e.printStackTrace();
 		}
 		startActivity(nextIntent);
@@ -258,9 +273,11 @@ public class SearchActivity extends CommonActivity {
 	{
 		if(searchQuery!=null)
 		{
-			
+			if(currentPage+1 <= totalPag)
+			{
 			currentPage ++;
 			 retrievalSearch( searchQuery ,currentPage);
+			}
 		}
 		
 	}
@@ -269,49 +286,59 @@ public class SearchActivity extends CommonActivity {
 	{
 		if(searchQuery!=null)
 		{
-			
+			if(currentPage-1 > 0)
+			{
 			 currentPage --;
 			 retrievalSearch( searchQuery ,currentPage);
+			}
 		}
 		
 	}
 	
 	
 	public void onClickConfirm(View v){
+		
+	}
 
+	public void onClickIgnore(View v){ //E' associato a bottone Add
 		confirm = (Button)v;
 
 		int tag = (Integer)confirm.getTag();
+		int position = (Integer) v.getTag();
 
 		Log.d("il numero cliccato �",String.valueOf(tag));
 		try {
 
-			int idNotif=-1;
+			int idUser=-1;
 			try {
-				idNotif = userCollection.getUsers(position).getId();
+				
+				Log.e("Search error ", String.valueOf(tag));
+				idUser= userCollection.getUsers(tag).getId();
 			} catch (IllegalThoundsObjectException e) {
 				// TODO Auto-generated catch block
+				showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 				e.printStackTrace();
 			}
 			//UserWrapper us= RequestWrapper.acceptFriendship(tag);
 		//	int idNotif= userWrapper[tag].getNotificationId(); 
 			//mettere Id che c'� nelle librerie nuove
-			boolean ris = RequestWrapper.friendshipRequest(idNotif);
+			boolean ris = RequestWrapper.friendshipRequest(idUser);
 			if(ris)
 			{
-				Log.d("Evviva ha funzionato.....",String.valueOf(idNotif));
+				Log.d("Evviva ha funzionato.....",String.valueOf(idUser));
 				showDialog(DIALOG_ADD_USER);
 				//nextIntent = new Intent(v.getContext(), HomeActivity.class);
 				//startActivity(nextIntent);
 			}
 			else
 			{
-				Log.d("NOoooo non ha funzionato.....",String.valueOf(idNotif));
+				Log.d("NOoooo non ha funzionato.....",String.valueOf(idUser));
 				//nextIntent = new Intent(v.getContext(), HomeActivity.class);
 				//startActivity(nextIntent);
 			}
 
 		} catch (ThoundsConnectionException e) {
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
@@ -319,20 +346,7 @@ public class SearchActivity extends CommonActivity {
 
 	}
 
-	public void onClickIgnore(View v){
-		/*ignore = (Button)v;
-		//Log.e("tag",(String) confirm.getTag());
-		int tag = (Integer)ignore.getTag();
-		int idNotif= userWrapper[tag].getNotificationId();
-		try {
-			RequestWrapper.refuseFriendship(idNotif);
-		} catch (ThoundsConnectionException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		*/
-
-	}
+	
 
 
 	private class RequestSearchAdapter extends ArrayAdapter<HashMap<String,Object>> {
@@ -355,14 +369,15 @@ public class SearchActivity extends CommonActivity {
 				TextView tt = (TextView) v.findViewById(R.id.text1);
 				TextView bt = (TextView) v.findViewById(R.id.text2);
 				ImageView avatar = (ImageView) v.findViewById(R.id.ImageViewAvatar);
-				Button confirm = (Button) v.findViewById(R.id.ButtonConfirmFriends);
-				Button ignore = (Button) v.findViewById(R.id.ButtonIgnoreFriend);
+				Button invisible = (Button) v.findViewById(R.id.ButtonConfirmFriends);
+				Button Add = (Button) v.findViewById(R.id.ButtonIgnoreFriend);
 				LinearLayout ln = (LinearLayout) v.findViewById(R.id.lNewFriend);
                  UserWrapper user=null;
 				try {
 					user = userCollection.getUsers(position);
 				} catch (IllegalThoundsObjectException e) {
 					// TODO Auto-generated catch block
+					showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 					e.printStackTrace();
 				}
 				//avatar.setImageDrawable(new ImageFromUrl(userWrapper[position].getNotificationObject().getAvatarUrl()).getDrawable());
@@ -375,20 +390,21 @@ public class SearchActivity extends CommonActivity {
 				if (avatar != null)
 					avatar.setImageDrawable((Drawable)item.get("image"));
 				
-				if(confirm != null)
+				if(invisible!= null)
 				{
-					confirm.setText("Add");
+					//confirm.setText("Add");
+					invisible.setVisibility(View.INVISIBLE);
 					
 				}
-				if(ignore !=null)
+				if(Add !=null)
 				{
-					
-					ignore.setVisibility(0);
+					Add.setText("Add");
+					//ignore.setVisibility(View.INVISIBLE);
 				}
 				
 				ln.setTag(position);
-				confirm.setTag(position);
-				ignore.setTag(position);
+				Add.setTag(position);
+				invisible.setTag(position);
 
 			}
 			return v;

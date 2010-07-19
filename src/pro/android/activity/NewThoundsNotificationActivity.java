@@ -81,10 +81,12 @@ public class NewThoundsNotificationActivity extends CommonActivity{
 			
 		} catch (ThoundsConnectionException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			showDialog(DIALOG_ALERT_CONNECTION);
 		} catch (IllegalThoundsObjectException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 		}
 		
 			

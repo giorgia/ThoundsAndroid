@@ -24,7 +24,6 @@ public class HomeActivity extends CommonActivity{
 	HomeWrapper home;
 	ThoundWrapper thounds;
 
-
 	private boolean runningNotificationService=false; 
 
 	Thread thread;
@@ -40,6 +39,7 @@ public class HomeActivity extends CommonActivity{
 		logout.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
+				StopNotification();
 				logout();
 			}
 		});
@@ -48,55 +48,70 @@ public class HomeActivity extends CommonActivity{
 		reload.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				 reload();
+				reload();
 			}
 		});
 
-		
-		 run = new Runnable(){
+
+		run = new Runnable(){
 
 			public void run() {
 				retrievedData();     	
 			}			
 		};
 
+
 		
-		StartNotification();
 		reload();
-		
+
 	}
-	
+
 	//Start Notification Service
 	public synchronized void StartNotification()
 	{
-		  Log.e("notification", "qui arriva e poi eccezione");
+
 		if(runningNotificationService==false)
 		{
-	    Log.e("notification", "start service su Thounds ACtivity");
-	    runningNotificationService=true;
-		startService(new Intent(HomeActivity.this, NotificationService.class));
-		
+			Log.e("notification", "start service su Thounds ACtivity");
+			runningNotificationService=true;
+			startService(new Intent(HomeActivity.this, NotificationService.class));
+
+		}
+	}
+
+	public synchronized void StopNotification()
+	{
+		if(runningNotificationService==true)
+		{
+			Log.e("notification", "start service su Thounds ACtivity");
+			runningNotificationService=false;
+			NotificationService.stop();
+			//startService(new Intent(HomeActivity.this, NotificationService.class));
+
 		}
 	}
 
 	private synchronized void retrievedData() {
-		
-			try {
-				home = RequestWrapper.loadHome(1, 20);
-			
-					list.setThound(home.getThoundsCollection().getThoundsList());
-			
-			} catch (ThoundsConnectionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalThoundsObjectException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+
+		try {
+			home = RequestWrapper.loadHome(1, 20);
+
+			list.setThound(home.getThoundsCollection().getThoundsList());
+
+		} catch (ThoundsConnectionException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			showDialog(DIALOG_ALERT_CONNECTION);
+
+		} catch (IllegalThoundsObjectException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			//showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
+		}
+
 
 		runOnUiThread(list.getReturnRes());
-
+		StartNotification();
 	}
 	public void reload(){
 		list = new ThoundsList(this);
@@ -113,7 +128,7 @@ public class HomeActivity extends CommonActivity{
 	@Override
 	public void onRestart(){
 		super.onRestart();
-		reload();
+		//reload();
 		Log.d("HOME","RESTART");
 	}
 

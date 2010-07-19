@@ -87,8 +87,8 @@ public class SignUpActivity extends CommonActivity {
 				}
 				catch(Exception e)
 				{
-
-					Log.d("ATTENZIONE",e.toString());
+                  
+					showDialog(DIALOG_FORMAT_JSON);
 				}
 			}
 

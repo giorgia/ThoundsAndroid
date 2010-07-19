@@ -73,6 +73,7 @@ public class TracksActivity extends CommonActivity{
 
 		} catch (IllegalThoundsObjectException e) {
 			// TODO Auto-generated catch block
+			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 			e.printStackTrace();
 		}
 
@@ -87,39 +88,68 @@ public class TracksActivity extends CommonActivity{
 		p = new Player(tracks.length);
 		showDialog(DIALOG_RETRIEVING_TRACKS);
 
+
 		runOnUiThread(dowloadingTracks);     	
 
+		for(int i=0; i< tracks.length; i++){
 
+			final HashMap<String,String> item = new HashMap<String,String>();
+			try {
+				track = tracks[i];
 
-		final Button play = (Button) findViewById(R.id.PlayTracks);
-		play.setOnClickListener(new OnClickListener() {
+				p.setData(track.getUri(), track.getOffset(), i);
 
-			public void onClick(View v) {
-				if(!p.isPlaying()){
-					play.setText("PAUSE");
-					playTracks();
-					progressUpdater();
-				}else{
-					play.setText("PLAY");
-					pauseTracks();
-				}		
+				item.put("line1",track.getUserName());
+				item.put("line2", track.getCreatedAt());
+
+				list.add( item );
+
+				mAdapter.notifyDataSetChanged();
+
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				showDialog(DIALOG_ILLEGAL_ARGUMENT_EXCEPTION);
+				e.printStackTrace();
+			} catch (IllegalStateException e) {
+				showDialog(DIALOG_ILLEGAL_STATE_EXCEPTION);
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				showDialog(DIALOG_GENERIC_EXCEPTION);
+				e.printStackTrace();
 			}
-		});
 
-		final Button record = (Button) findViewById(R.id.RecTrack);
-		record.setOnClickListener(new OnClickListener() {
+			final Button play = (Button) findViewById(R.id.PlayTracks);
+			play.setOnClickListener(new OnClickListener() {
 
-			public void onClick(View v) {
+				public void onClick(View v) {
+					if(!p.isPlaying()){
+						play.setText("PAUSE");
+						playTracks();
+						progressUpdater();
+					}else{
+						play.setText("PLAY");
+						pauseTracks();
+					}		
+				}
+			});
 
-				nextIntent = new Intent(v.getContext(), RecordActivity.class);
-				nextIntent.putExtra("thoundId", thound.getId());
-				nextIntent.putExtra("tracks", savedInstanceState);
-				startActivity(nextIntent);
+			final Button record = (Button) findViewById(R.id.RecTrack);
+			record.setOnClickListener(new OnClickListener() {
 
-			}
-		});
+				public void onClick(View v) {
+
+					nextIntent = new Intent(v.getContext(), RecordActivity.class);
+					nextIntent.putExtra("thoundId", thound.getId());
+					nextIntent.putExtra("tracks", savedInstanceState);
+					startActivity(nextIntent);
+
+				}
+			});
+		}
 	}
-
 	private Runnable dowloadingTracks = new Runnable(){
 		public void run() {
 			for(int i=0; i< tracks.length; i++){
@@ -191,6 +221,9 @@ public class TracksActivity extends CommonActivity{
 				}catch (Exception e) {
 					// TODO Auto-generated catch block
 					Log.e("Track error","error downloding tracks n. "+i);
+
+					showDialog(DIALOG_GENERIC_EXCEPTION);
+
 					e.printStackTrace();
 				}
 			}
@@ -218,6 +251,7 @@ public class TracksActivity extends CommonActivity{
 				p.pause(i);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
+				showDialog(DIALOG_GENERIC_EXCEPTION);
 				e.printStackTrace();
 			}
 		}

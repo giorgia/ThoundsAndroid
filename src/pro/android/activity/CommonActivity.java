@@ -27,7 +27,14 @@ public class CommonActivity extends Activity {
 	static final int DIALOG_RETRIEVING_THOUNDS = 4;
 	static final int DIALOG_RETRIEVING_TRACKS = 5;
 	static final int DIALOG_ADD_USER = 6;
-
+	static final int RESULT_SEARCH_NULL = 7;
+	static final int DIALOG_IGNORE_USER = 8;
+	static final int DIALOG_ILLEGAL_THOUNDS_OBJECT = 9;
+	static final int DIALOG_EXCEPTION_BUFFER_PALYER = 10;
+	static final int DIALOG_FORMAT_JSON=11;
+	static final int DIALOG_GENERIC_EXCEPTION=12;
+	static final int DIALOG_ILLEGAL_ARGUMENT_EXCEPTION=13;
+	static final int DIALOG_ILLEGAL_STATE_EXCEPTION=14;
 	public static boolean isLogged = false;
 	public static boolean connectionError = false;
 
@@ -126,6 +133,141 @@ public class CommonActivity extends Activity {
 			return builder.create();
 		}
 		
+		case DIALOG_FORMAT_JSON: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Information").setMessage("Format Json Exception")
+			.setCancelable(false).setIcon(
+					android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							finish();
+							dialog.cancel();
+						}
+					});
+
+			return builder.create();
+		}
+		
+		case DIALOG_GENERIC_EXCEPTION: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Information").setMessage("Generic exception")
+			.setCancelable(false).setIcon(
+					android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							finish();
+							dialog.cancel();
+						}
+					});
+
+			return builder.create();
+		}
+		
+		case DIALOG_ILLEGAL_THOUNDS_OBJECT: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Information").setMessage("Illegal thounds object")
+			.setCancelable(false).setIcon(
+					android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							finish();
+							dialog.cancel();
+						}
+					});
+
+			return builder.create();
+		}
+		
+		case DIALOG_ILLEGAL_ARGUMENT_EXCEPTION: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Information").setMessage("Illegal Argument")
+			.setCancelable(false).setIcon(
+					android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							finish();
+							dialog.cancel();
+						}
+					});
+
+			return builder.create();
+		}
+		
+		case DIALOG_ILLEGAL_STATE_EXCEPTION: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Information").setMessage("Illegal state")
+			.setCancelable(false).setIcon(
+					android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							finish();
+							dialog.cancel();
+						}
+					});
+
+			return builder.create();
+		}
+		
+		case DIALOG_EXCEPTION_BUFFER_PALYER: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Information").setMessage("Exception Buffer Player")
+			.setCancelable(false).setIcon(
+					android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							finish();
+							dialog.cancel();
+						}
+					});
+
+			return builder.create();
+		}
+		case DIALOG_IGNORE_USER: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Information").setMessage("User ignore")
+			.setCancelable(false).setIcon(
+					android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							finish();
+							dialog.cancel();
+						}
+					});
+
+			return builder.create();
+		}
+		
+		case RESULT_SEARCH_NULL: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Information").setMessage("No user foundsk")
+			.setCancelable(false).setIcon(
+					android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							finish();
+							dialog.cancel();
+						}
+					});
+
+			return builder.create();
+		}
+		
 		
 		case DIALOG_RETRIEVING_THOUNDS: {
 			ProgressDialog progressDialog = new ProgressDialog(this);
@@ -150,5 +292,7 @@ public class CommonActivity extends Activity {
 
 		super.onDestroy();
 	}
+	
+	
 
 }
