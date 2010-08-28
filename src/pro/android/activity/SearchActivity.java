@@ -256,7 +256,7 @@ public class SearchActivity extends CommonActivity {
 
 		int position = (Integer) v.getTag();
 
-		nextIntent = new Intent(v.getContext(), ProfileActivity.class);
+		nextIntent = new Intent(v.getContext(), ProfileActivity_02.class);
 		//nextIntent.putExtra("userId", userWrapper[position].getNotificationObject().getId());
 		try {
 			nextIntent.putExtra("userId", userCollection.getUsers(position).getId());

@@ -42,7 +42,7 @@ public class NotificationService extends Service{
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
+
 		idUserNotification=new Vector<Integer>();
 		idThoundsNotification=new Vector<Integer>();
 		notificationMgr =(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -60,7 +60,7 @@ public class NotificationService extends Service{
 			// do background processing here...
 			// stop the service when done...
 			// BackgroundService.this.stopSelf();
-  
+
 			while(runnable)
 			{
 				boolean trov=false;
@@ -68,33 +68,33 @@ public class NotificationService extends Service{
 					Log.e("NOtification", "dentro il metodo run");
 
 					//richiesta notifica
-				
-						 nw= RequestWrapper.loadNotifications();
-				
-					
+
+					nw= RequestWrapper.loadNotifications();
+
+
 					//vedere richieste amicizia
 					int bandRequest=-1;
-					
-						bandRequest = nw.getBandRequestListLength();
-					   
+
+					bandRequest = nw.getBandRequestListLength();
+
 
 					if(bandRequest >0)
 					{
 						//recupero
 						int newusers=-1;
-						
-							//newusers = nw.getBandRequestListLength();
-						
-							newusers= isInVectorUser();
-							Log.e("Notification","Il numero di utenti e"+newusers);
+
+						//newusers = nw.getBandRequestListLength();
+
+						newusers= isInVectorUser();
+						Log.e("Notification","Il numero di utenti e"+newusers);
 						if(newusers>0)
 						{
-							
-							
+
+
 							displayUserRequest(newusers);
-						
+
 							NotificationPair<UserWrapper>[]	userWrapper= nw.getBandRequestList();
-                            trov=true;
+							trov=true;
 						}
 						/*for(int i=0;i< ur.length;i++)
 {
@@ -112,19 +112,19 @@ ur[i].getSiteUrl();
 
 						Log.e("NOTIFICAAAAAAAAAAAAAa", "FINE");
 					}
-        int newThounds=-1;
-	
-			newThounds = isInVectorThounds();
-			Log.e("Notification","Il numero di thounds e"+newThounds);
+					int newThounds=-1;
+
+					newThounds = isInVectorThounds();
+					Log.e("Notification","Il numero di thounds e"+newThounds);
 					if(newThounds>0)
 					{
 						displayNewThounds(newThounds);
-						   trov=true;
+						trov=true;
 					}
-                     
+
 					if(trov)
-					AddVector();
-					
+						AddVector();
+
 					Thread.sleep(500000);
 					//Thread.sleep(60000);
 					// RequestWrapper.getNotifications();
@@ -134,8 +134,8 @@ ur[i].getSiteUrl();
 
 				catch (InterruptedException e) {
 					// TODO Auto-generated catch block
-				//	e.printStackTrace();
-			
+					//	e.printStackTrace();
+
 				} catch (ThoundsConnectionException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -143,50 +143,51 @@ ur[i].getSiteUrl();
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					//showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
+					stop();
 				}
 
 
 			}
 		}
 	}
-	
+
 	static private boolean isInVector(Vector<Integer> v,int element)
 	{
-	 for(int i=0;i<v.size();i++)
-	 {
-		 Log.e("Notification thounds",String.valueOf(v.get(i).intValue())+ " element:"+element);
-		 if(v.get(i).intValue()==element)
-		  return true;
-		 
-		 
-	 }
-	 
-	 return false;
-		
+		for(int i=0;i<v.size();i++)
+		{
+			Log.e("Notification thounds",String.valueOf(v.get(i).intValue())+ " element:"+element);
+			if(v.get(i).intValue()==element)
+				return true;
+
+
+		}
+
+		return false;
+
 	}
-	
-	
+
+
 	private int isInVectorUser()
 	{
-		
+
 		int bandRequest = nw.getBandRequestListLength();
-		   int equalsid=0;
+		int equalsid=0;
 		try
 		{
-				if(bandRequest >0)
+			if(bandRequest >0)
+			{
+				//recupero
+				int newusers=-1;
+
+				newusers = nw.getBandRequestListLength();
+
+				if(newusers>0)
 				{
-					//recupero
-					int newusers=-1;
-					
-				     newusers = nw.getBandRequestListLength();
-					
-					if(newusers>0)
+					NotificationPair<UserWrapper>[]	userWrapper= nw.getBandRequestList();
+					//
+					for(int i=0;i< userWrapper.length;i++)
 					{
-						NotificationPair<UserWrapper>[]	userWrapper= nw.getBandRequestList();
-						//
-						for(int i=0;i< userWrapper.length;i++)
-						{
-							/*for(int i=0;i< userWrapper.length;i++)
+						/*for(int i=0;i< userWrapper.length;i++)
 						   {
 							 int id=	userWrapper[i].getNotificationObject().getId();
 							 int userid=idUserNotification.get(j).intValue();
@@ -195,38 +196,38 @@ ur[i].getSiteUrl();
 						       	 trov=true;
 						     }
 					  	     }
-						  */
-							 
-							  if( isInVector(idUserNotification,userWrapper[i].getNotificationObject().getId() ) ==false)
-							  {
-								  equalsid++;
-								  
-							  }
-						   }
+						 */
+
+						if( isInVector(idUserNotification,userWrapper[i].getNotificationObject().getId() ) ==false)
+						{
+							equalsid++;
+
 						}
 					}
-				Log.e("Notification","li elementi uguali sono:"+String.valueOf(equalsid)+" gli elementi dell'array sono:"+idUserNotification.size() +" e la differenza è:"+ String.valueOf(equalsid));
-				//return equalsid-idUserNotification.size();
-				return equalsid;
+				}
+			}
+			Log.e("Notification","li elementi uguali sono:"+String.valueOf(equalsid)+" gli elementi dell'array sono:"+idUserNotification.size() +" e la differenza è:"+ String.valueOf(equalsid));
+			//return equalsid-idUserNotification.size();
+			return equalsid;
 		}
 		catch(Exception e)
 		{
-			
+
 		}
-				
+
 		return 0;
 	}
-	
-	
+
+
 	private int isInVectorThounds()
 	{
-		
-		   int equalsid=0;
-		
+
+		int equalsid=0;
+
 		try
 		{
 			int newThounds = nw.getNewThoundsListLength();
-			
+
 			if(newThounds>0)
 			{
 				ThoundWrapper [] thounds=nw.getNewThoundsList();
@@ -239,76 +240,76 @@ ur[i].getSiteUrl();
 					   if(idThounds==idPresentThounds)
 					   {
 						   equalsid++;
-						   
+
 					   }
 					}*/
-					
+
 					if(isInVector(idThoundsNotification, thounds[i].getId())==false)
 					{
 						Log.e("Notification thounds","id"+String.valueOf(thounds[i].getId()));
 						equalsid++;
 						Log.e("Notification thounds","id"+String.valueOf(equalsid));
-						
+
 					}
 				}
-				
+
 			}
 			Log.e("Notification","li elementi uguali sono:"+String.valueOf(equalsid)+ " e la differenza è:"+ String.valueOf(equalsid));
-				//return equalsid-idThoundsNotification.size();
-				return equalsid;
+			//return equalsid-idThoundsNotification.size();
+			return equalsid;
 		}
 		catch(Exception e)
 		{
-			
+
 		}
-				
+
 		return 0;
 	}
-	
-	
-	
+
+
+
 	private void AddVector()
 	{
 		int bandRequest = nw.getBandRequestListLength();
-		   
-try
-{
-		if(bandRequest >0)
+
+		try
 		{
-			//recupero
-			int newusers=-1;
-			
-		     newusers = nw.getBandRequestListLength();
-			
-			if(newusers>0)
+			if(bandRequest >0)
 			{
-				NotificationPair<UserWrapper>[]	userWrapper= nw.getBandRequestList();
-				for(int i=0;i< userWrapper.length;i++)
+				//recupero
+				int newusers=-1;
+
+				newusers = nw.getBandRequestListLength();
+
+				if(newusers>0)
 				{
-				 idUserNotification.add(userWrapper[i].getNotificationObject().getId());
-				Log.e("Notification","Aggiunto al vettore utente id"+String.valueOf(userWrapper[i].getNotificationObject().getId()));
+					NotificationPair<UserWrapper>[]	userWrapper= nw.getBandRequestList();
+					for(int i=0;i< userWrapper.length;i++)
+					{
+						idUserNotification.add(userWrapper[i].getNotificationObject().getId());
+						Log.e("Notification","Aggiunto al vettore utente id"+String.valueOf(userWrapper[i].getNotificationObject().getId()));
+					}
 				}
 			}
-		}
-		
-		int newThounds = nw.getNewThoundsListLength();
-		
-		if(newThounds>0)
-		{
-			ThoundWrapper [] thounds=	nw.getNewThoundsList()	;
-			for(int i=0;i< thounds.length;i++)
+
+			int newThounds = nw.getNewThoundsListLength();
+
+			if(newThounds>0)
 			{
-				 idThoundsNotification.add(thounds[i].getId());
-				 Log.e("Notification","Aggiunto al vettore id"+String.valueOf(thounds[i].getId()));
+				ThoundWrapper [] thounds=	nw.getNewThoundsList()	;
+				for(int i=0;i< thounds.length;i++)
+				{
+					idThoundsNotification.add(thounds[i].getId());
+					Log.e("Notification","Aggiunto al vettore id"+String.valueOf(thounds[i].getId()));
+				}
 			}
+
+
 		}
-		
-		
-}
-catch(Exception e )
-{
-	
-}
+		catch(Exception e )
+		{
+
+		}
 	}
 	@Override
 	public void onDestroy()
@@ -324,7 +325,7 @@ catch(Exception e )
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-	
+
 
 
 
@@ -421,7 +422,7 @@ catch(Exception e )
 		notificationMgr.notify(0, notification);
 	}*/
 
-static	public void stop()
+	static	public void stop()
 	{
 		runnable=false;
 	}

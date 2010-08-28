@@ -8,7 +8,6 @@ import org.thounds.thoundsapi.RequestWrapper;
 import org.thounds.thoundsapi.ThoundsConnectionException;
 
 import pro.android.R;
-import android.R.anim;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -40,7 +39,7 @@ public class SaveActivity extends CommonActivity{
 
 	static int SELECT_IMAGE = 0;
 	static int TAKE_IMAGE = 1;
-
+  
 	private TextView vTitle;
 	private TextView vTags;
 	private RadioGroup vGroup;

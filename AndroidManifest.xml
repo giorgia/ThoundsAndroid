@@ -12,7 +12,7 @@
 		</activity>
 		<activity android:name=".activity.LoginActivity" android:windowSoftInputMode="stateAlwaysVisible"
 			android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
-		<activity android:name=".activity.HomeActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.NoTitleBar"></activity>
+		<activity android:name=".activity.HomeActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
 		<!--
 			android:theme="@android:style/Theme.Light"
 		-->
@@ -22,7 +22,7 @@
 			<activity android:name=".activity.SaveActivity" android:screenOrientation="portrait" android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
 		<activity android:name=".activity.NotificationsActivity" android:screenOrientation="portrait"></activity>
 		<activity android:name=".activity.ProfileActivity" android:screenOrientation="portrait"
-			android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
+			android:theme="@android:style/Theme.NoTitleBar"></activity>
 		<activity android:name=".activity.SearchActivity" android:screenOrientation="portrait"></activity>
 		<activity android:name=".activity.NewThoundsNotificationActivity" android:screenOrientation="portrait"></activity>
 		<activity android:name=".activity.SignUpActivity" android:screenOrientation="portrait"></activity>

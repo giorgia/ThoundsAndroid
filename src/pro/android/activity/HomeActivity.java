@@ -1,6 +1,5 @@
 package pro.android.activity;
 
-import org.json.JSONObject;
 import org.thounds.thoundsapi.HomeWrapper;
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
 import org.thounds.thoundsapi.RequestWrapper;
@@ -8,8 +7,10 @@ import org.thounds.thoundsapi.ThoundWrapper;
 import org.thounds.thoundsapi.ThoundsConnectionException;
 
 import pro.android.R;
+import pro.android.utils.ImageFromUrl;
 import pro.android.utils.ThoundsList;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -54,9 +55,8 @@ public class HomeActivity extends CommonActivity{
 
 
 		run = new Runnable(){
-
 			public void run() {
-				retrievedData();     	
+				retrievedData();
 			}			
 		};
 
@@ -95,9 +95,13 @@ public class HomeActivity extends CommonActivity{
 
 		try {
 			home = RequestWrapper.loadHome(1, 20);
-
-			list.setThound(home.getThoundsCollection().getThoundsList());
-
+			ThoundWrapper[] ths = home.getThoundsCollection().getThoundsList();
+			Drawable[] imgs = new Drawable[ths.length];
+			for(int i = 0; i < ths.length; i++){
+				imgs[i] = new ImageFromUrl(ths[i].getUserAvatarUrl()).getDrawable();
+			}
+			list.setThound(ths);
+			list.setAvatars(imgs);
 		} catch (ThoundsConnectionException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
@@ -107,8 +111,10 @@ public class HomeActivity extends CommonActivity{
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			//showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
+		}catch (IllegalStateException e) {
+			// TODO: handle exception
+			reload();
 		}
-
 
 		runOnUiThread(list.getReturnRes());
 		StartNotification();

@@ -2,18 +2,17 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 ﻿    <item
         android:state_enabled="false"
-        android:drawable="@drawable/list_item_background" />
-   
+        android:drawable="@drawable/btn_rec_stop_pressed" />
     <item
         android:state_pressed="true"
         android:state_enabled="true"
-        android:drawable="@drawable/list_item_pressed" />
+        android:drawable="@drawable/btn_rec_stop_pressed" />
     <item
         android:state_focused="true"
         android:state_enabled="true"
-       android:drawable="@drawable/list_item_pressed" />
-   <!--  <item
+        android:drawable="@drawable/btn_rec_stop_pressed" />
+    <item
         android:state_enabled="true"
-        android:drawable="@drawable/list_item_background" /> -->
+        android:drawable="@drawable/btn_rec_stop" />
 </selector>
 

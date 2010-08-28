@@ -37,6 +37,7 @@ public class CommonActivity extends Activity {
 	static final int DIALOG_ILLEGAL_STATE_EXCEPTION=14;
 	public static boolean isLogged = false;
 	public static boolean connectionError = false;
+	static String DEFAULT_COVER_URL = "http://thounds.com/images/speaker.gif";
 
 	public static Intent nextIntent = null;
 	public int currentActivity;
@@ -79,7 +80,7 @@ public class CommonActivity extends Activity {
 					item.setIntent(new Intent(this, RecordActivity.class));
 				break;
 			case R.id.profile:
-				ProfileActivity.userId = -1;
+				ProfileActivity_02.userId = -1;
 				item.setIntent(new Intent(this, ProfileActivity.class));
 				break;
 			case R.id.search:

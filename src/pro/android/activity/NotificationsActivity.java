@@ -139,7 +139,7 @@ public class NotificationsActivity extends CommonActivity {
 
 		int position = (Integer) v.getTag();
 
-		nextIntent = new Intent(v.getContext(), ProfileActivity.class);
+		nextIntent = new Intent(v.getContext(), ProfileActivity_02.class);
 		nextIntent.putExtra("userId", userWrapper[position].getNotificationObject().getId());
 		startActivity(nextIntent);
 	}

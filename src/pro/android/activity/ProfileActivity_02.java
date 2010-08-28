@@ -16,6 +16,7 @@ import pro.android.utils.Player;
 import pro.android.utils.ThoundsList;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
@@ -24,20 +25,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TabHost;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.TabHost.OnTabChangeListener;
-import android.widget.TabHost.TabSpec;
 
 
-public class ProfileActivity extends CommonActivity{
+public class ProfileActivity_02 extends CommonActivity{
 
 	ThoundsList list;
 	static int userId;
@@ -58,10 +60,11 @@ public class ProfileActivity extends CommonActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profile);
 		currentActivity = R.id.profile;
+
 		list = new ThoundsList(this);
 
 		userId = getIntent().getExtras()!=null?getIntent().getExtras().getInt("userId"):-1;
-		
+
 		contactsList = (ListView) findViewById(R.id.contactsListView);
 
 		sAdapter = new ContactsAdapter(this, R.layout.contacts_item_list, arrayList);
@@ -70,7 +73,7 @@ public class ProfileActivity extends CommonActivity{
 		contactsList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-				nextIntent = new Intent(arg1.getContext(), ProfileActivity.class);
+				nextIntent = new Intent(arg1.getContext(), ProfileActivity_02.class);
 				try {
 					nextIntent.putExtra("userId", band.getFriend(arg2).getId());
 				} catch (IllegalThoundsObjectException e) {
@@ -79,56 +82,88 @@ public class ProfileActivity extends CommonActivity{
 					e.printStackTrace();
 				}
 				startActivity(nextIntent);
-			};
-
+		};
+				
 		});
-		//=========== SETUP THE TABS ======================================
-		TabHost tabHost=(TabHost)findViewById(R.id.tabHost);
-		tabHost.setup();
 
-		TabSpec spec1=tabHost.newTabSpec("info");
-		spec1.setContent(R.id.tab1);
-		spec1.setIndicator("info", getResources().getDrawable(android.R.drawable.ic_menu_info_details));
+		final ScrollView lInfo = (ScrollView) findViewById(R.id.scrollInfo);
+		final LinearLayout lLibrary = (LinearLayout) findViewById(R.id.lLibrary);
+		final LinearLayout lContacts = (LinearLayout) findViewById(R.id.lContacts);
 
-		TabSpec spec2=tabHost.newTabSpec("library");
-		spec2.setIndicator("library", getResources().getDrawable(android.R.drawable.ic_menu_more));
-		spec2.setContent(R.id.tab2);
+		final Button info = (Button) findViewById(R.id.btnInfo);
+		final Button library = (Button) findViewById(R.id.btnLibrary);
+		final Button contacts = (Button) findViewById(R.id.btnContacts);
+		seek = (ProgressBar) findViewById(R.id.ProgressDefault);
 
-		TabSpec spec3=tabHost.newTabSpec("contacts");
-		spec3.setIndicator("contacts", getResources().getDrawable(android.R.drawable.ic_menu_sort_by_size));
-		spec3.setContent(R.id.tab3);
+		info.setOnClickListener(new OnClickListener() {
 
-		tabHost.addTab(spec1);
-		tabHost.addTab(spec2);
-		tabHost.addTab(spec3);
-		//-----------------TAB LISTNER ----------------------------------------
-		tabHost.setOnTabChangedListener(new OnTabChangeListener(){
+			public void onClick(View v) {
+				lInfo.setVisibility(View.VISIBLE);
+				lLibrary.setVisibility(View.INVISIBLE);
+				lContacts.setVisibility(View.INVISIBLE);
+				info.setBackgroundResource(R.layout.shape_darkgray_left);
+				info.setTextColor(Color.WHITE);
+				library.setBackgroundResource(R.layout.shape_gray_center);
+				library.setTextColor(Color.BLACK);
+				contacts.setBackgroundResource(R.layout.shape_gray_right);
+				contacts.setTextColor(Color.BLACK);
+			}
+		});
 
-			public void onTabChanged(String tagId) {
-				if(tagId.equals("info")){
 
-				}else if (tagId.equals("library")){
-					Runnable run = new Runnable(){
-						public void run() {
-							retrievedLibrary();
-						}			
-					};
-					Thread thread =  new Thread(run, "retrievedLibrary");
-					thread.start();
-				}else{
-					Runnable run = new Runnable(){
-						public void run() {
-							retrievedContacts();
-						}			
-					};
-					Thread thread =  new Thread(run, "retrievedContacts");
-					thread.start();
+		library.setOnClickListener(new OnClickListener() {
 
-					showDialog(DIALOG_RETRIEVING_THOUNDS);
-				}
+			public void onClick(View v) {
+				lInfo.setVisibility(View.INVISIBLE);
+				lLibrary.setVisibility(View.VISIBLE);
+				lContacts.setVisibility(View.INVISIBLE);
+				library.setBackgroundResource(R.layout.shape_darkgray_center);
+				library.setTextColor(Color.WHITE);
+				info.setBackgroundResource(R.layout.shape_gray_left);
+				info.setTextColor(Color.BLACK);
+				contacts.setBackgroundResource(R.layout.shape_gray_right);
+				contacts.setTextColor(Color.BLACK);
+
+				Runnable run = new Runnable(){
+					public void run() {
+						retrievedLibrary();
+						Log.d("Profile", "dopo retireved");
+					}			
+				};
+				Thread thread =  new Thread(run, "retrievedLibrary");
+				thread.start();
+
 			}
 
+
 		});
+
+		contacts.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				lContacts.setVisibility(View.VISIBLE);
+				lInfo.setVisibility(View.INVISIBLE);
+				lLibrary.setVisibility(View.INVISIBLE);
+				contacts.setBackgroundResource(R.layout.shape_darkgray_right);
+				contacts.setTextColor(Color.WHITE);
+				info.setBackgroundResource(R.layout.shape_gray_left);
+				info.setTextColor(Color.BLACK);
+				library.setBackgroundResource(R.layout.shape_gray_center);
+				library.setTextColor(Color.BLACK);
+
+
+				Runnable run = new Runnable(){
+					public void run() {
+						retrievedContacts();
+					}			
+				};
+				Thread thread =  new Thread(run, "retrievedContacts");
+				thread.start();
+
+				showDialog(DIALOG_RETRIEVING_THOUNDS);
+			}
+		});
+
 
 		
 		try {
@@ -140,9 +175,9 @@ public class ProfileActivity extends CommonActivity{
 			}
 		} catch (ThoundsConnectionException e1) {
 			// TODO Auto-generated catch block
-			//	e1.printStackTrace();
+		//	e1.printStackTrace();
 			showDialog(DIALOG_ALERT_CONNECTION);
-
+			
 		} catch (IllegalThoundsObjectException e1) {
 			// TODO Auto-generated catch block
 			//e1.printStackTrace();
@@ -183,7 +218,7 @@ public class ProfileActivity extends CommonActivity{
 
 				TextView line1 = (TextView) findViewById(R.id.txt_def_title);
 				TextView line2 = (TextView) findViewById(R.id.txt_def_date);
-
+				
 				line1.setText(obj.getTrack(0).getTitle());
 				line2.setText(obj.getTrack(0).getCreatedAt().subSequence(0, 10)+" at "+obj.getTrack(0).getCreatedAt().substring(11, 16));
 			}
@@ -192,7 +227,6 @@ public class ProfileActivity extends CommonActivity{
 			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 			//e.printStackTrace();
 		}
-
 
 	}
 
@@ -253,7 +287,7 @@ public class ProfileActivity extends CommonActivity{
 				try {
 					friend = band.getFriend(i);
 					if(friend.getAvatarUrl()!=null)
-						item.put("image", new ImageFromUrl(friend.getAvatarUrl()).getDrawable());
+					item.put("image", new ImageFromUrl(friend.getAvatarUrl()).getDrawable());
 					item.put("line1",friend.getName());
 					item.put("line2",friend.getCity()+", "+friend.getCountry());
 
@@ -273,7 +307,6 @@ public class ProfileActivity extends CommonActivity{
 
 		}
 	};
-
 	public void onClickButton(final View v){
 
 		Log.d("Profile", "play default");
@@ -334,7 +367,7 @@ public class ProfileActivity extends CommonActivity{
 	public void onItemClick(View v){
 		list.onItemClick(v);
 	}
-	
+
 	private class ContactsAdapter extends ArrayAdapter<HashMap<String,Object>> {
 
 		private ArrayList<HashMap<String,Object>> items;
@@ -368,4 +401,5 @@ public class ProfileActivity extends CommonActivity{
 			return v;
 		}
 	}
+
 }

@@ -1,17 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent"
+	android:layout_width="fill_parent">
 
 
-<TabHost android:layout_width="fill_parent"
-	android:layout_height="fill_parent" android:id="@+id/tabHost"
-	xmlns:android="http://schemas.android.com/apk/res/android">
-	<TabWidget android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:id="@android:id/tabs" />
-	<FrameLayout android:layout_width="fill_parent"
-		android:layout_height="fill_parent" android:id="@android:id/tabcontent">
-		<LinearLayout android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:id="@+id/tab1"
-			android:orientation="vertical" android:paddingTop="60px">
-			<ScrollView android:layout_above="@+id/LinearLayout01" android:layout_below="@+id/lTabs"
+
+	<LinearLayout android:layout_width="fill_parent" android:layout_height="50dip" android:gravity="center"
+		android:id="@+id/lTabs" android:background="@drawable/gradient">
+		<Button android:text="info" android:id="@+id/btnInfo" android:layout_height="40dip" android:layout_width="75dip"
+			style="@style/pressed_info"></Button>
+		<Button android:text="library" android:id="@+id/btnLibrary" android:layout_toRightOf="@+id/btnInfo"
+			android:layout_height="40dip" android:layout_width="75dip" style="@style/unpressed_library"></Button>
+		<Button android:text="contacts" android:id="@+id/btnContacts" android:layout_toRightOf="@+id/btnLibrary"
+			android:layout_height="40dip" android:layout_width="75dip" style="@style/unpressed_contacts"></Button>
+
+
+
+
+	</LinearLayout>
+
+	<LinearLayout android:layout_width="fill_parent" android:layout_below="@+id/lTabs" android:layout_height="fill_parent"
+		android:id="@+id/lContacts" android:visibility="invisible">
+		<ListView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/contactsListView"></ListView>
+
+
+	</LinearLayout>
+
+	<LinearLayout android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_below="@+id/lTabs"
+		android:id="@+id/lLibrary" android:visibility="invisible">
+		<include android:id="@+id/include01" layout="@layout/thounds_list" android:layout_height="fill_parent"
+			android:layout_width="fill_parent"></include>
+
+	</LinearLayout>
+	<ScrollView android:layout_above="@+id/LinearLayout01" android:layout_below="@+id/lTabs"
 		android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/scrollInfo">
 		<LinearLayout android:id="@+id/lInfo" android:layout_height="fill_parent" android:layout_width="fill_parent"
 			android:layout_below="@+id/lTabs" android:gravity="center_horizontal" android:orientation="vertical"
@@ -126,35 +146,13 @@
 			</LinearLayout>
 
 
+
+
+
+
+
 		</LinearLayout>
 
 	</ScrollView>
 
-		</LinearLayout>
-
-		<LinearLayout android:layout_width="fill_parent"
-			android:layout_height="fill_parent" android:id="@+id/tab2"
-			android:orientation="vertical" android:paddingTop="60px">
-			<LinearLayout android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_below="@+id/lTabs"
-		android:id="@+id/lLibrary">
-		<include android:id="@+id/include01" layout="@layout/thounds_list" android:layout_height="fill_parent"
-			android:layout_width="fill_parent" ></include>
-
-	</LinearLayout>
-
-		</LinearLayout>
-
-		<LinearLayout android:layout_width="fill_parent"
-			android:layout_height="fill_parent" android:id="@+id/tab3"
-			android:orientation="vertical" android:paddingTop="60px">
-			<LinearLayout android:layout_width="fill_parent" android:layout_below="@+id/lTabs" android:layout_height="fill_parent"
-		android:id="@+id/lContacts">
-		<ListView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/contactsListView"></ListView>
-
-
-	</LinearLayout>
-
-		</LinearLayout>
-	</FrameLayout>
-
-</TabHost>
+</RelativeLayout>
