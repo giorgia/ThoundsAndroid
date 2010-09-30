@@ -10,9 +10,10 @@ import org.json.JSONObject;
 import org.thounds.thoundsapi.HomeWrapper;
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
 import org.thounds.thoundsapi.NotificationsWrapper;
-import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.Thounds;
 import org.thounds.thoundsapi.ThoundWrapper;
 import org.thounds.thoundsapi.ThoundsConnectionException;
+import org.thounds.thoundsapi.ThoundsNotAuthenticatedexception;
 
 import pro.android.R;
 import pro.android.utils.ThoundsList;
@@ -73,7 +74,7 @@ public class NewThoundsNotificationActivity extends CommonActivity{
 		
 		NotificationsWrapper nw;
 		try {
-			nw = RequestWrapper.loadNotifications();
+			nw = Thounds.loadNotifications();
 			
 				thounds=nw.getNewThoundsList();
 			
@@ -87,10 +88,13 @@ public class NewThoundsNotificationActivity extends CommonActivity{
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
+		} catch (ThoundsNotAuthenticatedexception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 			
-			//home = RequestWrapper.loadHome(1, 20);
+			//home = Thounds.loadHome(1, 20);
 			//list.setThound(home.getThoundsCollection().getThoundsList());
 
 	

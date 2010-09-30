@@ -7,14 +7,8 @@
 	<RelativeLayout android:layout_width="fill_parent" android:layout_gravity="center_vertical|center_horizontal|center"
 		android:layout_height="50dip" android:background="@drawable/header_logo">
 		
-
-		<Button android:text="Logout" android:id="@+id/btnLogout"
-			android:background="@layout/shape_blue" android:textColor="@android:color/white"
-			android:layout_toLeftOf="@+id/btnReload" android:layout_height="50dip" android:layout_width="60dip" android:visibility="invisible"></Button>
-
-
 		<ImageButton android:src="@android:drawable/ic_popup_sync"
-			android:layout_alignParentRight="true" android:id="@+id/btnReload" android:background="@layout/shape_blue"
+			android:layout_alignParentRight="true" android:id="@+id/btnReload" 
 			android:layout_centerVertical="true" android:layout_height="50dip" android:layout_width="60dip" android:visibility="invisible"></ImageButton>
 
 

@@ -7,8 +7,9 @@ import org.json.JSONObject;
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
 import org.thounds.thoundsapi.NotificationPair;
 import org.thounds.thoundsapi.NotificationsWrapper;
-import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.Thounds;
 import org.thounds.thoundsapi.ThoundsConnectionException;
+import org.thounds.thoundsapi.ThoundsNotAuthenticatedexception;
 import org.thounds.thoundsapi.UserWrapper;
 import org.thounds.thoundsapi.UsersCollectionWrapper;
 
@@ -40,35 +41,35 @@ import android.widget.TextView;
 
 public class SearchActivity extends CommonActivity {
 	
-	ListView listView;
-	RequestSearchAdapter adapter;
-
-	UsersCollectionWrapper userCollection;
-
-	boolean isPlaying = false;
-	boolean isPaused = false;
-
-	String mix_url = null;
-	Player p;
-	NotificationsWrapper nw=null;
-	JSONObject json;
-	ArrayList<HashMap<String,Object>> list = new ArrayList<HashMap<String,Object>>();
-	private HashMap<String,Object> item = new HashMap<String,Object>();
-	Button confirm = null;
-	Button ignore = null;
-	int position = -1;
-	int prevPosition= -1;
-    int totalPag=0;
-    int currentPage=0;
-    String [] searchQuery=null;
-	SeekBar seekBar;
-	ImageButton btn;
-	LinearLayout retrieving_bar;
-	LinearLayout vParent;
-	ProgressBar pBar;
-	TextView no_notifications;
-	private EditText searchEditText;
-	private TextView PagOf;
+//	ListView listView;
+//	RequestSearchAdapter adapter;
+//
+//	UsersCollectionWrapper userCollection;
+//
+//	boolean isPlaying = false;
+//	boolean isPaused = false;
+//
+//	String mix_url = null;
+//	Player p;
+//	NotificationsWrapper nw=null;
+//	JSONObject json;
+//	ArrayList<HashMap<String,Object>> list = new ArrayList<HashMap<String,Object>>();
+//	private HashMap<String,Object> item = new HashMap<String,Object>();
+//	Button confirm = null;
+//	Button ignore = null;
+//	int position = -1;
+//	int prevPosition= -1;
+//    int totalPag=0;
+//    int currentPage=0;
+//    String [] searchQuery=null;
+//	SeekBar seekBar;
+//	ImageButton btn;
+//	LinearLayout retrieving_bar;
+//	LinearLayout vParent;
+//	ProgressBar pBar;
+//	TextView no_notifications;
+//	private EditText searchEditText;
+//	private TextView PagOf;
 	//private TextView nextPage;
 //	private TextView previusPage;
 	
@@ -77,17 +78,17 @@ public class SearchActivity extends CommonActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.search);
-		listView = (ListView) findViewById(R.id.listRequest);
-		adapter = new RequestSearchAdapter(
-				this,
-				R.layout.newfriendslist,
-				list
-		);
-
-		listView.setAdapter(adapter);
-		listView.setItemsCanFocus(true);
-		searchEditText = (EditText) findViewById(R.id.EditTextSearch);
-	    PagOf= (TextView) findViewById(R.id.TextViewPagdi);
+//		listView = (ListView) findViewById(R.id.);
+//		adapter = new RequestSearchAdapter(
+//				this,
+//				R.layout.newfriendslist,
+//				list
+//		);
+//
+//		listView.setAdapter(adapter);
+//		listView.setItemsCanFocus(true);
+//		searchEditText = (EditText) findViewById(R.id.EditTextSearch);
+//	    PagOf= (TextView) findViewById(R.id.TextViewPagdi);
         //nextPage =(TextView) findViewById(R.id.TextView01);
         //previusPage =(TextView) findViewById(R.id.TextView02);
 		//showDialog(DIALOG_LOADING);
@@ -144,7 +145,7 @@ public class SearchActivity extends CommonActivity {
 
 	}
 */
-	
+	/*
 	public void retrievalResult()
 	{
 		list.clear();
@@ -226,7 +227,7 @@ public class SearchActivity extends CommonActivity {
 	 {
 		try {
 			
-			userCollection = RequestWrapper.search(splitSearch, pag, 10);
+			userCollection = Thounds.search(splitSearch, pag, 10);
 			totalPag = userCollection.getPageTotalNumber();
 
 			if(userCollection.getusersTotalNumber()!=0)
@@ -248,6 +249,9 @@ public class SearchActivity extends CommonActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
+		} catch (ThoundsNotAuthenticatedexception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		 
 	 }
@@ -256,8 +260,7 @@ public class SearchActivity extends CommonActivity {
 
 		int position = (Integer) v.getTag();
 
-		nextIntent = new Intent(v.getContext(), ProfileActivity_02.class);
-		//nextIntent.putExtra("userId", userWrapper[position].getNotificationObject().getId());
+		nextIntent = new Intent(v.getContext(), ProfileActivity.class);
 		try {
 			nextIntent.putExtra("userId", userCollection.getUsers(position).getId());
 		} catch (IllegalThoundsObjectException e) {
@@ -322,7 +325,7 @@ public class SearchActivity extends CommonActivity {
 			//UserWrapper us= RequestWrapper.acceptFriendship(tag);
 		//	int idNotif= userWrapper[tag].getNotificationId(); 
 			//mettere Id che c'� nelle librerie nuove
-			boolean ris = RequestWrapper.friendshipRequest(idUser);
+			boolean ris = Thounds.friendshipRequest(idUser);
 			if(ris)
 			{
 				Log.d("Evviva ha funzionato.....",String.valueOf(idUser));
@@ -342,6 +345,9 @@ public class SearchActivity extends CommonActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
+		} catch (ThoundsNotAuthenticatedexception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -422,7 +428,7 @@ public class SearchActivity extends CommonActivity {
 	public void onPause(){
 		super.onPause();
 	}
-
+*/
 }
 
 

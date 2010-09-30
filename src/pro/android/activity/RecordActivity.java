@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
-import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.Thounds;
+import org.thounds.thoundsapi.ThoundWrapper;
 import org.thounds.thoundsapi.ThoundsConnectionException;
+import org.thounds.thoundsapi.ThoundsNotAuthenticatedexception;
 
 import pro.android.R;
 import pro.android.utils.Player;
@@ -17,14 +19,15 @@ import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -42,28 +45,64 @@ public class RecordActivity extends CommonActivity {
 	private int thoundId = -1;
 	private boolean isThoundDownloaded = false;
 	private boolean isDialogShow = false;
-
-	private RelativeLayout lTimer;
+	private ThoundWrapper track;
+	private ImageButton btnRec;
+	private RelativeLayout lRecorder;
+	private RelativeLayout lSeek;
 	private RelativeLayout lMetronome;
 	private LinearLayout lMedia; 
 	private LinearLayout lRec;
 	private TextView countdown;
 	private TextView timer;
 	private TextView txtBpm;
-	private int ledOnOff=0;
+	private TextView txtTime60;
+	private TextView txtTime0;
+	private String time;
+	private SeekBar seekBar;
 	private boolean isRecording = false;
 	private int mestronomeState = METRO_OFF;
 	private Thread th;
 	private long mStartTime = 0L;
 	private int bpm = 90;
-
+	private long currentTime = 0L;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.record);
 		currentActivity = R.id.record;
+		
+		//==================================================================
+
+		lRecorder = (RelativeLayout) findViewById(R.id.lRecorder);
+		countdown = (TextView) findViewById(R.id.txt_countdown);
+		lSeek = (RelativeLayout) findViewById(R.id.SeekLayout);
+		lMetronome = (RelativeLayout) findViewById(R.id.MetronomeLayout);
+		lMedia = (LinearLayout) findViewById(R.id.MediaLayout);
+		lRec = (LinearLayout) findViewById(R.id.RecLayout);
+		seekBar = (SeekBar) findViewById(R.id.RecSeekBar);
+		timer = (TextView) findViewById(R.id.txt_timer);
+		txtBpm = (TextView) findViewById(R.id.txtBpm);
+		txtTime60 = (TextView) findViewById(R.id.txt_time60);
+		txtTime0 = (TextView) findViewById(R.id.txt_time0);
 
 		thoundId = getIntent().getExtras()!=null?getIntent().getExtras().getInt("thoundId"):-1;
+		if(thoundId != -1){
+			try {
+				track = Thounds.loadThounds(thoundId);
+				bpm = track.getBmp();
+				lRecorder.setVisibility(View.VISIBLE);
+			} catch (ThoundsConnectionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalThoundsObjectException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ThoundsNotAuthenticatedexception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		//========================= Setup Recorder ======================================
 		try {
@@ -108,7 +147,7 @@ public class RecordActivity extends CommonActivity {
 				}else if(items[arg2].equals("Metronome")){
 					mestronomeState = METRO_ON;
 					bpm = 90;
-					changeBpb(bpm);					
+					changeBpm(bpm);					
 				}
 			}
 
@@ -116,6 +155,7 @@ public class RecordActivity extends CommonActivity {
 				// TODO Auto-generated method stub
 
 			}});
+
 
 		ImageButton plus = (ImageButton) findViewById(R.id.btn_plus);
 		plus.setOnClickListener(new OnClickListener(){
@@ -126,7 +166,7 @@ public class RecordActivity extends CommonActivity {
 						bpm = 80;
 					stopMetronome();
 					bpm+=10;
-					changeBpb(bpm);
+					changeBpm(bpm);
 				}
 			}
 		});
@@ -139,22 +179,13 @@ public class RecordActivity extends CommonActivity {
 						bpm = 150;
 					stopMetronome();
 					bpm-=10;
-					changeBpb(bpm);
+					changeBpm(bpm);
 				}
 			}
 		});
-		//==================================================================
-		countdown = (TextView) findViewById(R.id.txt_countdown);
-		lTimer = (RelativeLayout) findViewById(R.id.ProgressBarLayout);
-		lMetronome = (RelativeLayout) findViewById(R.id.MetronomeLayout);
-		lMedia = (LinearLayout) findViewById(R.id.MediaLayout);
-		lRec = (LinearLayout) findViewById(R.id.RecLayout);
 
-		timer = (TextView) findViewById(R.id.txt_timer);
-		txtBpm = (TextView) findViewById(R.id.txtBpm);
-
-		//===================== RECORD =========================================
-		final ImageButton btnRec = (ImageButton) this.findViewById(R.id.btnRec);
+//===================== RECORD =========================================
+	    btnRec = (ImageButton) this.findViewById(R.id.btnRec);
 		btnRec.setOnClickListener(new OnClickListener(){
 
 			public void onClick(View v) {
@@ -176,6 +207,7 @@ public class RecordActivity extends CommonActivity {
 					isRecording = false;
 					lRec.setVisibility(View.INVISIBLE);
 					lMedia.setVisibility(View.VISIBLE);
+					
 					stopRecord();
 					stopMetronome();
 					setMediaPlayer();
@@ -184,12 +216,13 @@ public class RecordActivity extends CommonActivity {
 		});
 
 		if(thoundId!=-1){
+			lMetronome.setVisibility(View.INVISIBLE);
 			runOnUiThread(
 					new Runnable(){
 
 						public void run() {
 							try {
-								playerTh = new Player(RequestWrapper.loadThounds(thoundId).getMixUrl());
+								playerTh = new Player(track.getMixUrl());
 								runOnUiThread(playerTh.getBufferedAudio());
 								//playerTh.bufferedAudio();
 								playerTh.getDefaulMediaPlayer().setOnBufferingUpdateListener(new OnBufferingUpdateListener(){
@@ -203,26 +236,14 @@ public class RecordActivity extends CommonActivity {
 											}
 										}
 									}
+								});
 
-								}
-
-
-								);
-
-							} catch (ThoundsConnectionException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (IllegalThoundsObjectException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
-
 					});
-
 		}
 
 		//=================================MEDIA CONTROLLER===========================================================
@@ -234,41 +255,53 @@ public class RecordActivity extends CommonActivity {
 				if(isThoundDownloaded)
 					playerTh.start();
 				playerRec.start();
-
+				seekBar.setProgress(0);
+				if(isThoundDownloaded) {
+					seekBar.setMax((int) (track.getMixDuration()));
+					txtTime60.setText(track.getMixDuration());
+				}
+				else {
+					seekBar.setMax((int) (currentTime/1000));
+					txtTime60.setText(time.substring(0, 5));
+				}
+				th = new Thread(null, updateTime, "updateProgress");
+				th.start();
 			}
 		});
-
+		//REC AGAIN
 		ImageButton recAgain = (ImageButton) findViewById(R.id.btnRecAgain);
 		recAgain.setOnClickListener(new OnClickListener()
 
 		{
 			public void onClick(View v) {
-				if(playerTh!=null)
-					playerTh.pause();
-				nextIntent = new Intent(v.getContext(), RecordActivity.class);
-				startActivity(nextIntent);
-				finish();
+				stopAllPlayer();
+				isRecording = false;
+				btnRec.setPressed(false);
+				lMedia.setVisibility(View.INVISIBLE);
+				lRec.setVisibility(View.VISIBLE);
+				seekBar.setProgress(0);
 			}
 		});
-
+		//SAVE
 		ImageButton save = (ImageButton) findViewById(R.id.btnSave);
 		save.setOnClickListener(new OnClickListener()
 
 		{
 			public void onClick(View v) {
+				stopAllPlayer();
 				nextIntent = new Intent(v.getContext(), SaveActivity.class);
-				nextIntent.putExtra("duration", playerRec.getDuration());
+				nextIntent.putExtra("duration", currentTime);
+				Log.d("Durationd", ""+playerRec.getDuration());
 				startActivity(nextIntent);
 				finish();				}
 		});
-
+		//CANCEL
 		ImageButton delete = (ImageButton) findViewById(R.id.btnDelete);
 		delete.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v) {
-				if(playerTh!=null)
-					playerTh.pause();
-				nextIntent = new Intent(v.getContext(), HomeActivity.class);
+				stopAllPlayer();
+				nextIntent = new Intent(v.getContext(), RecordActivity.class);
 				startActivity(nextIntent);
 				finish();
 			}
@@ -277,7 +310,7 @@ public class RecordActivity extends CommonActivity {
 
 	//=========================================================================================
 
-	private void changeBpb(int bpm) {
+	private void changeBpm(int bpm) {
 		switch (bpm) {
 		case 80:
 			playerMetr = new MediaPlayer().create(getBaseContext(), R.raw.bpm_80);
@@ -316,6 +349,8 @@ public class RecordActivity extends CommonActivity {
 
 
 	public void startRecord(){
+		lMetronome.setVisibility(View.INVISIBLE);
+		lSeek.setVisibility(View.VISIBLE);
 
 		if(isThoundDownloaded)
 			playerTh.start();
@@ -325,7 +360,6 @@ public class RecordActivity extends CommonActivity {
 			th.start();
 		}
 		recorder.start();   // Recording is now started
-
 	}
 
 	public void stopRecord(){
@@ -334,7 +368,6 @@ public class RecordActivity extends CommonActivity {
 		recorder.stop();
 		recorder.reset();   // You can reuse the object by going back to setAudioSource() step
 		recorder.release(); // Now the object cannot be reused
-
 	}
 
 	private void stopMetronome(){
@@ -348,6 +381,17 @@ public class RecordActivity extends CommonActivity {
 			playerMetr.start();
 		}
 	}
+
+	private void stopAllPlayer(){
+		if(playerTh!=null){
+			playerTh.pause();
+		}
+		if(playerRec!=null){
+			playerRec.pause();
+		}
+		stopMetronome();
+	}
+	
 	private void setMediaPlayer(){
 		playerRec = new MediaPlayer();
 		try {
@@ -367,7 +411,11 @@ public class RecordActivity extends CommonActivity {
 
 	//===================== Count Down =====================================
 	private void countDown(int bpm){
-		startMetronome();
+		lRecorder.setVisibility(View.INVISIBLE);
+		lSeek.setVisibility(View.VISIBLE);
+
+		if(mestronomeState == METRO_ON)
+			startMetronome();
 		new MyCountDownTimer(5*(60000/bpm), 60000/bpm).start();
 	}
 
@@ -388,6 +436,7 @@ public class RecordActivity extends CommonActivity {
 
 		public void onFinish() {
 			countdown.setVisibility(View.INVISIBLE);
+			lRecorder.setVisibility(View.VISIBLE);
 			startRecord();
 		}
 	};
@@ -400,7 +449,8 @@ public class RecordActivity extends CommonActivity {
 
 				if(isRecording)
 					runOnUiThread(mUpdateTimeText);
-
+				if(playerRec != null && playerRec.isPlaying())
+					runOnUiThread(mUpdatePlayProgress);
 				try {
 					th.sleep(150);
 				} catch (InterruptedException e) {
@@ -412,9 +462,26 @@ public class RecordActivity extends CommonActivity {
 
 	private Runnable mUpdateTimeText = new Runnable() {
 		public void run() {
-			ledOnOff= (ledOnOff==0? 1: 0);
 			SimpleDateFormat formatter = new SimpleDateFormat("mm:ss:SSS");
-			timer.setText(formatter.format(System.currentTimeMillis() - mStartTime));
+			currentTime = System.currentTimeMillis() - mStartTime;
+			time = formatter.format(currentTime);
+			seekBar.setProgress((int) (currentTime/1000));
+			timer.setText(time);
+
+			// end recording after 60 seconds
+			if(currentTime/1000 > 60){
+				btnRec.performClick();
+				timer.setText("01:00:000");
+			}
+		}
+	};
+	private Runnable mUpdatePlayProgress = new Runnable() {
+		public void run() {
+			SimpleDateFormat formatter = new SimpleDateFormat("mm:ss");
+			currentTime = System.currentTimeMillis() - mStartTime;
+			time = formatter.format(currentTime);
+			seekBar.setProgress(playerRec.getCurrentPosition());
+			txtTime0.setText(time);
 		}
 	};
 

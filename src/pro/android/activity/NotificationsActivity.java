@@ -8,8 +8,9 @@ import org.json.JSONObject;
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
 import org.thounds.thoundsapi.NotificationPair;
 import org.thounds.thoundsapi.NotificationsWrapper;
-import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.Thounds;
 import org.thounds.thoundsapi.ThoundsConnectionException;
+import org.thounds.thoundsapi.ThoundsNotAuthenticatedexception;
 import org.thounds.thoundsapi.UserWrapper;
 
 import pro.android.R;
@@ -19,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +36,7 @@ import android.widget.TextView;
 public class NotificationsActivity extends CommonActivity {
 
 	ListView listView;
-	RequestFrindsAdapter adapter;
+	RequestFriendshipAdapter adapter;
 
 	NotificationPair<UserWrapper>[] userWrapper;
 
@@ -61,17 +61,17 @@ public class NotificationsActivity extends CommonActivity {
 	ProgressBar pBar;
 	TextView no_notifications;
 
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.notifications);
-		
-		 
-		listView = (ListView) findViewById(R.id.listRequest);
-		adapter = new RequestFrindsAdapter(
+
+
+		listView = (ListView) findViewById(R.id.friendshipList);
+		adapter = new RequestFriendshipAdapter(
 				this,
-				R.layout.newfriendslist,
+				R.layout.friendship_item,
 				list
 		);
 
@@ -94,7 +94,7 @@ public class NotificationsActivity extends CommonActivity {
 
 	private Runnable returnRes = new Runnable() {
 		public void run() {
-			
+
 			for(int i=0; i<userWrapper.length; i++){
 				item = new HashMap<String,Object>();
 				try {
@@ -119,7 +119,7 @@ public class NotificationsActivity extends CommonActivity {
 
 	private void retrievedNotification() {
 		try {
-			nw = RequestWrapper.loadNotifications();
+			nw = Thounds.loadNotifications();
 			userWrapper= nw.getBandRequestList();
 		} catch (ThoundsConnectionException e1) {
 			// TODO Auto-generated catch block
@@ -129,6 +129,9 @@ public class NotificationsActivity extends CommonActivity {
 			// TODO Auto-generated catch block
 			//e1.printStackTrace();
 			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
+		} catch (ThoundsNotAuthenticatedexception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		runOnUiThread(returnRes);
@@ -139,7 +142,7 @@ public class NotificationsActivity extends CommonActivity {
 
 		int position = (Integer) v.getTag();
 
-		nextIntent = new Intent(v.getContext(), ProfileActivity_02.class);
+		nextIntent = new Intent(v.getContext(), ProfileActivity.class);
 		nextIntent.putExtra("userId", userWrapper[position].getNotificationObject().getId());
 		startActivity(nextIntent);
 	}
@@ -148,61 +151,51 @@ public class NotificationsActivity extends CommonActivity {
 	public void onClickConfirm(View v){
 
 		confirm = (Button)v;
-
 		int tag = (Integer)confirm.getTag();
 
-		Log.d("il numero cliccato �",String.valueOf(tag));
 		try {
-
-			//UserWrapper us= RequestWrapper.acceptFriendship(tag);
 			int idNotif= userWrapper[tag].getNotificationId(); 
-			//mettere Id che c'� nelle librerie nuove
-			boolean ris = RequestWrapper.acceptFriendship(idNotif);
-			if(ris)
-			{
-				Log.d("Evviva ha funzionato.....",String.valueOf(idNotif));
+			boolean ris = Thounds.acceptFriendship(idNotif);
+			if(ris)	{
 				showDialog(DIALOG_ADD_USER);
-				//nextIntent = new Intent(v.getContext(), HomeActivity.class);
-				//startActivity(nextIntent);
-			}
-			else
-			{
-				Log.d("NOoooo non ha funzionato.....",String.valueOf(idNotif));
+			} else {
 				showDialog(DIALOG_IGNORE_USER);
-				//nextIntent = new Intent(v.getContext(), HomeActivity.class);
-				//startActivity(nextIntent);
 			}
-
 		} catch (ThoundsConnectionException e) {
 			// TODO Auto-generated catch block
 			showDialog(DIALOG_ALERT_CONNECTION);
 			e.printStackTrace();
 
+		} catch (ThoundsNotAuthenticatedexception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
 
 	public void onClickIgnore(View v){
 		ignore = (Button)v;
-		//Log.e("tag",(String) confirm.getTag());
 		int tag = (Integer)ignore.getTag();
 		int idNotif= userWrapper[tag].getNotificationId();
 		try {
-			RequestWrapper.refuseFriendship(idNotif);
+			Thounds.refuseFriendship(idNotif);
 		} catch (ThoundsConnectionException e1) {
 			// TODO Auto-generated catch block
 			showDialog(DIALOG_ALERT_CONNECTION);
 			e1.printStackTrace();
+		} catch (ThoundsNotAuthenticatedexception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
 
 
-	private class RequestFrindsAdapter extends ArrayAdapter<HashMap<String,Object>> {
+	private class RequestFriendshipAdapter extends ArrayAdapter<HashMap<String,Object>> {
 
 		private ArrayList<HashMap<String,Object>> items;
 
-		public RequestFrindsAdapter(Context context, int textViewResourceId, ArrayList<HashMap<String,Object>> items) {
+		public RequestFriendshipAdapter(Context context, int textViewResourceId, ArrayList<HashMap<String,Object>> items) {
 			super(context, textViewResourceId, items);
 			this.items = items;
 		}
@@ -210,11 +203,11 @@ public class NotificationsActivity extends CommonActivity {
 			View v = convertView;
 			if (v == null) {
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.newfriendslist, null);
+				v = vi.inflate(R.layout.friendship_item, null);
 			}
 			HashMap<String,Object> item = items.get(position);
 			if (item != null) {
-				
+
 				TextView tt = (TextView) v.findViewById(R.id.text1);
 				TextView bt = (TextView) v.findViewById(R.id.text2);
 				ImageView avatar = (ImageView) v.findViewById(R.id.ImageViewAvatar);
@@ -230,7 +223,7 @@ public class NotificationsActivity extends CommonActivity {
 				}
 				if (avatar != null)
 					avatar.setImageDrawable((Drawable)item.get("image"));
-				
+
 				ln.setTag(position);
 				confirm.setTag(position);
 				ignore.setTag(position);

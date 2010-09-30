@@ -1,7 +1,7 @@
 package pro.android.activity;
 
 
-import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.Thounds;
 import org.thounds.thoundsapi.ThoundsConnectionException;
 
 import pro.android.R;
@@ -60,8 +60,7 @@ public class LoginActivity extends CommonActivity {
 					Runnable run = new Runnable(){
 						public void run() {
 							try {
-								if (RequestWrapper.login(username, password)) {
-									Log.d("login", "dopo login");
+								if (login(username, password)) {
 									nextIntent = new Intent(viewParam.getContext(), HomeActivity.class);
 								}
 							} catch (ThoundsConnectionException e) {
@@ -70,9 +69,7 @@ public class LoginActivity extends CommonActivity {
 								showDialog(DIALOG_ALERT_CONNECTION);
 								e.printStackTrace();
 							}
-
-
-							runOnUiThread(returnRes);
+							runOnUiThread(checkAutentication);
 						}			
 					};
 					Thread thread =  new Thread(null, run, "Login");
@@ -83,10 +80,16 @@ public class LoginActivity extends CommonActivity {
 		});
 
 	}
-	private Runnable returnRes = new Runnable() {
+	private Runnable checkAutentication = new Runnable() {
 		public void run() {
-			if(RequestWrapper.isLogged()){
-				Log.d("login", ""+RequestWrapper.isLogged());
+			if(connector.isAuthenticated()){
+				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+				SharedPreferences.Editor editor = settings.edit();
+			
+				editor.putString("silentUsername", username);
+				editor.putString("silentPassword", password);
+				
+				editor.commit();
 				dismissDialog(DIALOG_LOGIN);
 				startActivity(nextIntent);
 			} else {
@@ -97,59 +100,7 @@ public class LoginActivity extends CommonActivity {
 		}
 
 	};
-	@Override
-	protected void onStop() {
-		super.onStop();
-
-		// Save user preferences. We need an Editor object to
-		// make changes. All objects are from android.context.Context
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		if (RequestWrapper.isLogged()) {
-			editor.putString("silentUsername", username);
-			editor.putString("silentPassword", password);
-		}
-
-		// Don't forget to commit your edits!!!
-		editor.commit();
-
-	}
-
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		switch (id) {
-		case DIALOG_LOGIN: {
-			ProgressDialog mDialog1 = new ProgressDialog(this);
-			mDialog1.setTitle("Login");
-			mDialog1.setMessage("Please wait...");
-			mDialog1.setIndeterminate(true);
-			mDialog1.setCancelable(true);
-
-			return mDialog1;
-		}
-		case DIALOG_ALERT_LOGIN: {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Alert").setIcon(
-					android.R.drawable.ic_dialog_alert).setMessage(
-					"Username or Password incorrect. Try again!")
-					.setCancelable(false).setPositiveButton("Ok",
-							new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int id) {
-							dialog.cancel();
-						}
-					});
-
-			return builder.create();
-		}
-		}
-		return null;
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		return false;
-	}
+	
 
 	public void onClickUsername(View v){
 		if((usernameEditText.getText().toString()).equals("e-mail"))

@@ -2,17 +2,17 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 ﻿    <item
         android:state_enabled="false"
-        android:background="@layout/shape_gray_left" />
+        android:drawable="@drawable/btn_logut_over" />
     <item
         android:state_pressed="true"
         android:state_enabled="true"
-        android:background="@layout/shape_darkgray_left" />
+        android:drawable="@drawable/btn_logut_over" />
     <item
         android:state_focused="true"
         android:state_enabled="true"
-        android:background="@layout/shape_darkgray_left" />
+        android:drawable="@drawable/btn_logut_over" />
     <item
         android:state_enabled="true"
-        android:background="@layout/shape_gray_left" />
+        android:drawable="@drawable/btn_logut" />
 </selector>
 

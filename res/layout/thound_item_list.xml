@@ -2,7 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_height="fill_parent" android:layout_width="fill_parent"
-	android:id="@+id/lThoundItem" android:focusableInTouchMode="true" android:focusable="true" android:background="@drawable/thound_item" android:onClick="onItemClick"><!--
+	android:id="@+id/lThoundItem" android:background="@drawable/thound_item" android:onClick="onItemClick"><!--
 
 	<RelativeLayout android:id="@+id/RelativeLayout01"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -37,4 +37,5 @@
 
 
 
+<ProgressBar android:layout_centerVertical="true" android:layout_alignParentRight="true" android:visibility="invisible" android:id="@+id/pgr_arrow" android:layout_width="20dip" android:layout_height="20dip" android:layout_marginRight="10dip"></ProgressBar>
 </RelativeLayout>	

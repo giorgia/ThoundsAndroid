@@ -11,8 +11,7 @@
 		
 		
 		
-	<LinearLayout android:id="@+id/LinearLayout02" android:layout_y="76dip" android:layout_height="wrap_content" android:layout_width="320dip"><include android:id="@+id/include01" layout="@layout/request_list" android:layout_height="fill_parent" android:layout_width="fill_parent"></include>
-</LinearLayout></AbsoluteLayout>
+</AbsoluteLayout>
 	
 	
 

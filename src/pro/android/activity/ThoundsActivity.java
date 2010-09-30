@@ -1,15 +1,8 @@
 package pro.android.activity;
 
-import java.net.UnknownHostException;
-
-import org.thounds.thoundsapi.RequestWrapper;
 import org.thounds.thoundsapi.ThoundsConnectionException;
 
 import pro.android.R;
-
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,7 +10,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -40,7 +32,7 @@ public class ThoundsActivity extends CommonActivity {
 
 				// ========= CHECK CONNECTION ===================
 				ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
- 
+
 				wifiInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 				mobileInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
@@ -57,24 +49,18 @@ public class ThoundsActivity extends CommonActivity {
 									PREFS_NAME, 0);
 							username = settings.getString("silentUsername", username);
 							password = settings.getString("silentPassword", password);
-
-							
-							try {
-								if (username != null && password!= null && RequestWrapper.login(username, password)){	
+							try{
+								if (username != null && password!= null && login(username, password)){	
 									nextIntent = new Intent(v.getContext(), HomeActivity.class);
 								} else {
-									
 									nextIntent = new Intent(v.getContext(), LoginActivity.class);
 								}
 							} catch (ThoundsConnectionException e) {
+								// TODO Auto-generated catch block
 								connectionError = true;
-								dismissDialog(DIALOG_LOADING);
-								
 								e.printStackTrace();
 							}
-							
-
-							runOnUiThread(returnRes);
+							runOnUiThread(checkAutentication);
 						}			
 					};
 					Thread thread =  new Thread(null, run, "LoginMain");
@@ -85,11 +71,9 @@ public class ThoundsActivity extends CommonActivity {
 			}
 		});
 	}
-
-	private Runnable returnRes = new Runnable() {
+	private Runnable checkAutentication = new Runnable() {
 		public void run() {
 			dismissDialog(DIALOG_LOADING);
-		
 			if(connectionError)
 				showDialog(DIALOG_ALERT_CONNECTION);
 			else
@@ -97,7 +81,5 @@ public class ThoundsActivity extends CommonActivity {
 		}
 
 	};
-
-
 
 }

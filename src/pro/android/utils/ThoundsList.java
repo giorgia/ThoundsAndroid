@@ -49,9 +49,7 @@ public class ThoundsList implements OnBufferingUpdateListener{
 	private RelativeLayout anchorView;
 	private LinearLayout retrieving_bar;
 	private TextView showMedia;
-	private ImageView imgAvatar;
-	private ProgressBar pgrThound;
-
+	
 	public ThoundsList(final Activity activity) {
 		this.activity = activity;
 		showMedia = (TextView) activity.findViewById(R.id.txtMediaShow);
@@ -115,9 +113,7 @@ public class ThoundsList implements OnBufferingUpdateListener{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 				retrieving_bar.setVisibility(View.INVISIBLE);
-
 			}
 
 		}
@@ -126,30 +122,13 @@ public class ThoundsList implements OnBufferingUpdateListener{
 
 
 	public void onItemClick(View v) {
-		//pgrThound = (ProgressBar) v.findViewById(R.id.pgrThound);
-		//if(imageLed != null) 
-		//	imageLed.setVisibility(View.INVISIBLE);
-		//imageLed = (ImageView) v.findViewById(R.id.imgLed);
-
 
 		int position = (Integer)v.getTag();
-		
+		adapter.setDowloadPosition(position);
+		adapter.setSelectedPosition(position);
+
 		Log.d("LISTITEM", "list item position: " + position);
-//		Log.d("LISTITEM", "list item (v) position: " + v.getTag());
-//		Log.d("LISTITEM", "v.getClass: " + v.getClass().toString());
-//		Log.d("LISTITEM", "v.getParent.getClass: " + v.getParent().toString());
 
-//		pgrThound =(ProgressBar) ((RelativeLayout)v.getParent()).getChildAt(0);
-	
-//		if ((Integer)((RelativeLayout)pgrThound.getParent()).getTag() == position) {
-//			pgrThound.setVisibility(View.VISIBLE);
-//		}
-
-		pgrThound = (ProgressBar) v.findViewWithTag("progress"+position);
-		pgrThound.setVisibility(View.VISIBLE);
-
-		imgAvatar = (ImageView) v.findViewWithTag("avatar"+position);
-		imgAvatar.setVisibility(View.INVISIBLE);
 		try {
 			if(p != null && p.isPlaying())
 				p.pause();
@@ -173,8 +152,7 @@ public class ThoundsList implements OnBufferingUpdateListener{
 		p.setBufferPercent(percent);
 		if(percent > 50){
 			p.start();
-			pgrThound.setVisibility(View.INVISIBLE);
-			imgAvatar.setVisibility(View.VISIBLE);
+			adapter.setDowloadPosition(-1);
 			mediaController.show(10000);
 		}
 	}
@@ -196,6 +174,8 @@ public class ThoundsList implements OnBufferingUpdateListener{
 
 	public void onClickArrow(View v){
 		int position = (Integer)v.getTag();
+		adapter.setArrowPosition(position);
+
 		CommonActivity.obj = thounds[position];
 
 		try {
@@ -207,21 +187,46 @@ public class ThoundsList implements OnBufferingUpdateListener{
 			e1.printStackTrace();
 		}
 
-
 		CommonActivity.nextIntent = new Intent(v.getContext(), TracksActivity.class);
 		//CommonActivity.nextIntent.putExtra("thound", obj);
 		activity.startActivity(CommonActivity.nextIntent);
-
 	}
 
 
 	private class ThoundsAdapter extends ArrayAdapter<HashMap<String,Object>> {
 
 		private ArrayList<HashMap<String,Object>> items;
+		private int selectedPos = -1;
+		private int downloadPos = -1;	
+		private int arrowPos = -1;	
 
 		public ThoundsAdapter(Context context, int textViewResourceId, ArrayList<HashMap<String,Object>> items) {
 			super(context, textViewResourceId, items);
 			this.items = items;
+		}
+		public void setSelectedPosition(int pos){
+			selectedPos = pos;
+			notifyDataSetChanged();
+		}
+
+		public int getSelectedPosition(){
+			return selectedPos;
+		}
+		public void setArrowPosition(int pos){
+			arrowPos = pos;
+			notifyDataSetChanged();
+		}
+
+		public int getArrowPosition(){
+			return arrowPos;
+		}
+		public void setDowloadPosition(int pos){
+			downloadPos = pos;
+			notifyDataSetChanged();
+		}
+
+		public int getDowloadPosition(){
+			return downloadPos;
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
@@ -237,6 +242,9 @@ public class ThoundsList implements OnBufferingUpdateListener{
 				ImageButton at = (ImageButton) v.findViewById(R.id.arrow);
 				ImageView img = (ImageView) v.findViewById(R.id.imgAvatar);
 				ProgressBar pr = (ProgressBar) v.findViewById(R.id.pgrThound);
+				ImageView arrow = (ImageView) v.findViewById(R.id.arrow);
+				ProgressBar pr_arr = (ProgressBar) v.findViewById(R.id.pgr_arrow);
+
 				if (img != null){
 					img.setImageDrawable((Drawable)item.get("image"));
 					img.setTag("avatar"+position);
@@ -257,12 +265,39 @@ public class ThoundsList implements OnBufferingUpdateListener{
 				if(pr != null){
 					pr.setTag("progress"+position);
 				}
+				if(selectedPos == position){
+					v.setBackgroundResource(R.drawable.list_item_pressed);		
+				}else{
+					v.setBackgroundResource(R.drawable.list_item_background);		
+				}
+				if(downloadPos == position){
+					pr.setVisibility(View.VISIBLE);
+					img.setVisibility(View.INVISIBLE);
+					v.setSelected(true);		
+				}else{
+					pr.setVisibility(View.INVISIBLE);
+					img.setVisibility(View.VISIBLE);
+				}
+				if(arrowPos == position){
+					arrow.setVisibility(View.INVISIBLE);
+					pr_arr.setVisibility(View.VISIBLE);
+					v.setBackgroundResource(R.drawable.list_item_pressed);		
+				}else{
+					arrow.setVisibility(View.VISIBLE);
+					pr_arr.setVisibility(View.INVISIBLE);
+				}
 
 			}
 			return v;
 		}
 	}
 
+
+	public void resetListAdapter(){
+		adapter.setSelectedPosition(-1);
+		adapter.setDowloadPosition(-1);
+		adapter.setArrowPosition(-1);
+	}
 
 	public void setAvatars(Drawable[] imgs) {
 		// TODO Auto-generated method stub

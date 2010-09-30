@@ -25,7 +25,6 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -105,6 +104,7 @@ public class TracksActivity extends CommonActivity{
 
 		//Button PLAY
 		play = (ImageButton) findViewById(R.id.PlayTracks);
+		
 		play.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -286,6 +286,8 @@ public class TracksActivity extends CommonActivity{
 	}
 
 
+//==================================================================================================
+//===============================================ADAPTER===================================================
 
 
 	private class TracksAdapter extends ArrayAdapter<HashMap<String,Object>> {

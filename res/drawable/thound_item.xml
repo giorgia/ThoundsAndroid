@@ -8,12 +8,6 @@
         android:state_pressed="true"
         android:state_enabled="true"
         android:drawable="@drawable/list_item_pressed" />
-    <item
-        android:state_focused="true"
-        android:state_enabled="true"
-       android:drawable="@drawable/list_item_pressed" />
-   <!--  <item
-        android:state_enabled="true"
-        android:drawable="@drawable/list_item_background" /> -->
+   
 </selector>
 

@@ -1,7 +1,9 @@
 package pro.android.activity;
 
-import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.Thounds;
 import org.thounds.thoundsapi.ThoundWrapper;
+import org.thounds.thoundsapi.ThoundsConnectionException;
+import org.thounds.thoundsapi.connector.ThoundsDigestConnector;
 
 import pro.android.R;
 import android.app.Activity;
@@ -11,6 +13,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,7 +22,9 @@ public class CommonActivity extends Activity {
 
 	public static final String PREFS_NAME = "thound_prefs";
 	public static ThoundWrapper obj;
-	
+
+	private boolean runningNotificationService=false; 
+
 	static final int DIALOG_LOADING = 0;
 	static final int DIALOG_ALERT_CONNECTION = 1;
 	static final int DIALOG_LOGIN = 2;
@@ -35,10 +40,11 @@ public class CommonActivity extends Activity {
 	static final int DIALOG_GENERIC_EXCEPTION=12;
 	static final int DIALOG_ILLEGAL_ARGUMENT_EXCEPTION=13;
 	static final int DIALOG_ILLEGAL_STATE_EXCEPTION=14;
-	public static boolean isLogged = false;
+	static final int DIALOG_RESULT_SIGNUP = 15;
+
 	public static boolean connectionError = false;
 	static String DEFAULT_COVER_URL = "http://thounds.com/images/speaker.gif";
-
+	public ThoundsDigestConnector connector;
 	public static Intent nextIntent = null;
 	public int currentActivity;
 
@@ -50,9 +56,15 @@ public class CommonActivity extends Activity {
 		return true;
 	}
 
-	
+	public boolean login(String username, String password) throws ThoundsConnectionException{	
+		connector = new ThoundsDigestConnector(username, password);
+		Thounds.setConnector(connector);
+		return connector.login(username, password);
+	}
+
+
 	public void logout() {
-		RequestWrapper.logout();
+		((ThoundsDigestConnector)Thounds.getConnector()).logout();
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 
@@ -65,28 +77,28 @@ public class CommonActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	
-			switch (item.getItemId()) {
 
-			case R.id.home:
-				if(currentActivity != R.id.home)
-					item.setIntent(new Intent(this, HomeActivity.class));
-				break;
-			case R.id.notifications:
-				item.setIntent(new Intent(this, NotificationsActivity.class));
-				break;
-			case R.id.record:
-				if(currentActivity != R.id.record)
-					item.setIntent(new Intent(this, RecordActivity.class));
-				break;
-			case R.id.profile:
-				ProfileActivity_02.userId = -1;
-				item.setIntent(new Intent(this, ProfileActivity.class));
-				break;
-			case R.id.search:
-				item.setIntent(new Intent(this, SearchActivity.class));
-				break;
-			}
+		switch (item.getItemId()) {
+
+		case R.id.home:
+			if(currentActivity != R.id.home)
+				item.setIntent(new Intent(this, HomeActivity.class));
+			break;
+		case R.id.notifications:
+			item.setIntent(new Intent(this, NotificationsActivity.class));
+			break;
+		case R.id.record:
+			if(currentActivity != R.id.record)
+				item.setIntent(new Intent(this, RecordActivity.class));
+			break;
+		case R.id.profile:
+			ProfileActivity.userId = -1;
+			item.setIntent(new Intent(this, ProfileActivity.class));
+			break;
+		case R.id.search:
+			item.setIntent(new Intent(this, SearchActivity.class));
+			break;
+		}
 
 		return false;
 	}
@@ -133,7 +145,7 @@ public class CommonActivity extends Activity {
 
 			return builder.create();
 		}
-		
+
 		case DIALOG_FORMAT_JSON: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Information").setMessage("Format Json Exception")
@@ -150,7 +162,7 @@ public class CommonActivity extends Activity {
 
 			return builder.create();
 		}
-		
+
 		case DIALOG_GENERIC_EXCEPTION: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Information").setMessage("Generic exception")
@@ -167,7 +179,7 @@ public class CommonActivity extends Activity {
 
 			return builder.create();
 		}
-		
+
 		case DIALOG_ILLEGAL_THOUNDS_OBJECT: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Information").setMessage("Illegal thounds object")
@@ -184,7 +196,7 @@ public class CommonActivity extends Activity {
 
 			return builder.create();
 		}
-		
+
 		case DIALOG_ILLEGAL_ARGUMENT_EXCEPTION: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Information").setMessage("Illegal Argument")
@@ -201,7 +213,7 @@ public class CommonActivity extends Activity {
 
 			return builder.create();
 		}
-		
+
 		case DIALOG_ILLEGAL_STATE_EXCEPTION: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Information").setMessage("Illegal state")
@@ -218,7 +230,7 @@ public class CommonActivity extends Activity {
 
 			return builder.create();
 		}
-		
+
 		case DIALOG_EXCEPTION_BUFFER_PALYER: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Information").setMessage("Exception Buffer Player")
@@ -251,7 +263,7 @@ public class CommonActivity extends Activity {
 
 			return builder.create();
 		}
-		
+
 		case RESULT_SEARCH_NULL: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Information").setMessage("No user foundsk")
@@ -268,8 +280,46 @@ public class CommonActivity extends Activity {
 
 			return builder.create();
 		}
-		
-		
+
+		case DIALOG_RESULT_SIGNUP: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Alert").setIcon(
+					android.R.drawable.ic_dialog_alert).setMessage(
+					"Registration Successful.")
+					.setCancelable(false).setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							dialog.cancel();
+						}
+					});
+
+			return builder.create();
+		}
+		case DIALOG_LOGIN: {
+			ProgressDialog mDialog1 = new ProgressDialog(this);
+			mDialog1.setTitle("Login");
+			mDialog1.setMessage("Please wait...");
+			mDialog1.setIndeterminate(true);
+			mDialog1.setCancelable(true);
+
+			return mDialog1;
+		}
+		case DIALOG_ALERT_LOGIN: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Alert").setIcon(
+					android.R.drawable.ic_dialog_alert).setMessage(
+					"Username or Password incorrect. Try again!")
+					.setCancelable(false).setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int id) {
+							dialog.cancel();
+						}
+					});
+
+			return builder.create();
+		}
 		case DIALOG_RETRIEVING_THOUNDS: {
 			ProgressDialog progressDialog = new ProgressDialog(this);
 			progressDialog.setTitle("Please wait...");
@@ -293,7 +343,29 @@ public class CommonActivity extends Activity {
 
 		super.onDestroy();
 	}
-	
-	
+
+	//Start Notification Service
+	public synchronized void StartNotification()
+	{
+		if(runningNotificationService==false)
+		{
+			Log.e("notification", "start service su Thounds ACtivity");
+			runningNotificationService=true;
+			startService(new Intent(CommonActivity.this, NotificationService.class));
+
+		}
+	}
+
+	public synchronized void StopNotification()
+	{
+		if(runningNotificationService==true)
+		{
+			Log.e("notification", "start service su Thounds ACtivity");
+			runningNotificationService=false;
+			NotificationService.stop();
+			//startService(new Intent(HomeActivity.this, NotificationService.class));
+
+		}
+	}
 
 }

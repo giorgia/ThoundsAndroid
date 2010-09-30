@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<ScrollView android:id="@+id/ScrollView01" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android" android:background="@color/celeste"><AbsoluteLayout android:id="@+id/AbsoluteLayout01" android:background="@color/celeste" android:layout_height="fill_parent" android:layout_width="fill_parent"><EditText android:id="@+id/EditTextUser" android:text="User" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText><EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="50px" android:id="@+id/EditTextName" android:text="Name"></EditText>
-<EditText android:layout_y="100px" android:text="Email" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/EditTextEmail"></EditText>
-<EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="150px" android:text="country" android:id="@+id/EditTextCountry"></EditText>
-<EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="200px" android:text="City" android:id="@+id/EditTextCity"></EditText>
-<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SignUP" android:id="@+id/ButtonSignUp" android:layout_y="300px"></Button>
-<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_x="150px" android:text="Reset" android:id="@+id/ButtonRese" android:layout_y="300px"></Button>
-<EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_y="250px" android:id="@+id/EditTextTags" android:text="Tags"></EditText>
-</AbsoluteLayout>
+<ScrollView android:id="@+id/ScrollView01"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android" android:background="#D9D9D9">
+	<RelativeLayout android:id="@+id/AbsoluteLayout01"
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent" android:background="#D9D9D9">
+		<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="PERSONAL INFORMATION" android:layout_margin="10dip" android:textSize="18dip" android:textColor="#575655" android:id="@+id/personal_label"></TextView><RelativeLayout android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/RelativeLayout01" android:layout_margin="10dip" android:background="@layout/shape" android:padding="10dip" android:layout_below="@+id/personal_label"><EditText android:id="@+id/EditTextName" android:text="Name" android:layout_height="wrap_content" android:layout_width="fill_parent" android:textColor="#878685" android:onClick="onClickEditText"></EditText><EditText android:layout_height="wrap_content" android:layout_y="150px" android:id="@+id/EditTextCountry" android:layout_below="@+id/EditTextName" android:layout_width="fill_parent" android:text="Country" android:textColor="#878685" android:onClick="onClickEditText"></EditText><EditText android:layout_height="wrap_content" android:layout_y="200px" android:text="City" android:id="@+id/EditTextCity" android:layout_below="@+id/EditTextCountry" android:layout_width="fill_parent" android:textColor="#878685" android:onClick="onClickEditText"></EditText>
+</RelativeLayout><TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="10dip" android:textSize="18dip" android:textColor="#575655" android:id="@+id/account_Label" android:text="ACCOUNT INFORMATION" android:layout_below="@+id/RelativeLayout01"></TextView><RelativeLayout android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/RelativeLayout02" android:layout_below="@+id/account_Label" android:background="@layout/shape" android:layout_margin="10dip" android:padding="10dip"><EditText android:layout_y="100px" android:layout_height="wrap_content" android:id="@+id/EditTextEmail" android:layout_below="@+id/EditTextCity" android:layout_width="fill_parent" android:text="E-mail" android:textColor="#878685" android:onClick="onClickEditText"></EditText></RelativeLayout><TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="10dip" android:textSize="18dip" android:textColor="#575655" android:id="@+id/music_Label" android:layout_below="@+id/RelativeLayout02" android:text="MUSIC INFORMATION"></TextView><RelativeLayout android:layout_height="wrap_content" android:layout_width="wrap_content" android:background="@layout/shape" android:layout_margin="10dip" android:padding="10dip" android:id="@+id/RelativeLayout03" android:layout_below="@+id/music_Label"><EditText android:layout_height="wrap_content" android:id="@+id/EditTextTags" android:text="Tags" android:layout_below="@+id/EditTextEmail" android:layout_width="fill_parent" android:textColor="#878685" android:onClick="onClickEditText"></EditText></RelativeLayout>
+		
+		
+		
+		
+		<Button android:layout_height="wrap_content" android:id="@+id/ButtonSignUp" android:text="Sign Up!" android:layout_marginLeft="10dip" android:layout_width="200dip" android:layout_below="@+id/RelativeLayout03"></Button>
+		<Button android:layout_height="wrap_content" android:text="Reset" android:id="@+id/ButtonRese" android:layout_toRightOf="@+id/ButtonSignUp" android:layout_marginLeft="10dip" android:layout_marginRight="10dip" android:layout_width="90dip" android:layout_below="@+id/RelativeLayout03"></Button>
+		
+	
+
+</RelativeLayout>
 
 </ScrollView>

@@ -1,7 +1,7 @@
 package pro.android.activity;
 
 import org.json.JSONStringer;
-import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.Thounds;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,35 +18,19 @@ import pro.android.R;
 
 public class SignUpActivity extends CommonActivity {
 
-	private static final int DIALOG_SIGN_UP = 0;
-	private static final int DIALOG_RESULT_SIGNUP = 0;
-	private String s="";
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.e("OKOKOKOKKO","ALLORA VAI");
 		setContentView(R.layout.sign_up);
 		Button signUp = (Button) findViewById(R.id.ButtonSignUp);
-		final EditText userEdit =(EditText) findViewById(R.id.EditTextUser);
-
-
-
-		userEdit.setOnClickListener(new OnClickListener() {
-			public void onClick(View viewParam) {
-				userEdit.setText(" ");
-			}
-
-
-		});
-
+		
 		//Click on SignUp Button
 		signUp.setOnClickListener(new OnClickListener() {
 			public void onClick(View viewParam) {
 				try
 				{
-					EditText userEditText = (EditText) findViewById(R.id.EditTextUser);
-					String user = userEditText.getText().toString();
+					EditText userEditText = (EditText) findViewById(R.id.EditTextName);
+					String name = userEditText.getText().toString();
 
 					EditText emailEditText = (EditText) findViewById(R.id.EditTextEmail);
 					String email = emailEditText.getText().toString();
@@ -65,7 +49,7 @@ public class SignUpActivity extends CommonActivity {
 					.key("user")
 					.object()
 					.key("name")
-					.value(user)
+					.value(name)
 					.key("email")
 					.value(email)
 					.key("country")
@@ -80,14 +64,11 @@ public class SignUpActivity extends CommonActivity {
 					.toString();
 
 					Log.e("json-------->",myString);
-
-					//OLD::s= comm.signUp(myString);
-					RequestWrapper.registrateUser(user, email, country, city, tags);
+					Thounds.registrateUser(name, email, country, city, tags);
 					showDialog(DIALOG_RESULT_SIGNUP);
 				}
 				catch(Exception e)
-				{
-                  
+				{ 
 					showDialog(DIALOG_FORMAT_JSON);
 				}
 			}
@@ -96,39 +77,8 @@ public class SignUpActivity extends CommonActivity {
 		});
 	}
 
-	@Override
-	protected void onStop() {
-		super.onStop();
+	public void onClickEditText(View v){
+		((EditText)v).setText("");
 	}
-
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		switch (id) {
-
-
-		case DIALOG_RESULT_SIGNUP: {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Alert").setIcon(
-					android.R.drawable.ic_dialog_alert).setMessage(
-							"ok vecchio!"+ s)
-							.setCancelable(false).setPositiveButton("Ok",
-									new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int id) {
-									dialog.cancel();
-								}
-							});
-
-			return builder.create();
-		}
-
-		}
-		return null;
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		return false;
-	}
-
+	
 }

@@ -2,20 +2,19 @@ package pro.android.activity;
 
 import org.thounds.thoundsapi.HomeWrapper;
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
-import org.thounds.thoundsapi.RequestWrapper;
 import org.thounds.thoundsapi.ThoundWrapper;
+import org.thounds.thoundsapi.Thounds;
 import org.thounds.thoundsapi.ThoundsConnectionException;
+import org.thounds.thoundsapi.ThoundsNotAuthenticatedexception;
 
 import pro.android.R;
 import pro.android.utils.ImageFromUrl;
 import pro.android.utils.ThoundsList;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 
@@ -24,8 +23,6 @@ public class HomeActivity extends CommonActivity{
 	ThoundsList list;
 	HomeWrapper home;
 	ThoundWrapper thounds;
-
-	private boolean runningNotificationService=false; 
 
 	Thread thread;
 	Runnable run;
@@ -36,15 +33,7 @@ public class HomeActivity extends CommonActivity{
 		setContentView(R.layout.home);
 		currentActivity = R.id.home;
 
-		Button logout = (Button) findViewById(R.id.btnLogout);
-		logout.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-				StopNotification();
-				logout();
-			}
-		});
-
+		
 		ImageButton reload = (ImageButton) findViewById(R.id.btnReload);
 		reload.setOnClickListener(new OnClickListener() {
 
@@ -53,48 +42,19 @@ public class HomeActivity extends CommonActivity{
 			}
 		});
 
-
 		run = new Runnable(){
 			public void run() {
 				retrievedData();
 			}			
-		};
-
-
-		
+		};	
 		reload();
-
 	}
 
-	//Start Notification Service
-	public synchronized void StartNotification()
-	{
-
-		if(runningNotificationService==false)
-		{
-			Log.e("notification", "start service su Thounds ACtivity");
-			runningNotificationService=true;
-			startService(new Intent(HomeActivity.this, NotificationService.class));
-
-		}
-	}
-
-	public synchronized void StopNotification()
-	{
-		if(runningNotificationService==true)
-		{
-			Log.e("notification", "start service su Thounds ACtivity");
-			runningNotificationService=false;
-			NotificationService.stop();
-			//startService(new Intent(HomeActivity.this, NotificationService.class));
-
-		}
-	}
 
 	private synchronized void retrievedData() {
 
 		try {
-			home = RequestWrapper.loadHome(1, 20);
+			home = Thounds.loadHome(1,20);
 			ThoundWrapper[] ths = home.getThoundsCollection().getThoundsList();
 			Drawable[] imgs = new Drawable[ths.length];
 			for(int i = 0; i < ths.length; i++){
@@ -114,6 +74,9 @@ public class HomeActivity extends CommonActivity{
 		}catch (IllegalStateException e) {
 			// TODO: handle exception
 			reload();
+		} catch (ThoundsNotAuthenticatedexception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		runOnUiThread(list.getReturnRes());
@@ -141,7 +104,7 @@ public class HomeActivity extends CommonActivity{
 	@Override
 	public void onResume(){
 		super.onResume();
-		//reload();
+		list.resetListAdapter();
 		Log.d("HOME","RESUME");
 	}
 	@Override

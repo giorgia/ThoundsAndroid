@@ -5,9 +5,10 @@ import java.util.HashMap;
 
 import org.thounds.thoundsapi.BandWrapper;
 import org.thounds.thoundsapi.IllegalThoundsObjectException;
-import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.Thounds;
 import org.thounds.thoundsapi.ThoundWrapper;
 import org.thounds.thoundsapi.ThoundsConnectionException;
+import org.thounds.thoundsapi.ThoundsNotAuthenticatedexception;
 import org.thounds.thoundsapi.UserWrapper;
 
 import pro.android.R;
@@ -24,8 +25,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -58,6 +61,15 @@ public class ProfileActivity extends CommonActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profile);
 		currentActivity = R.id.profile;
+		
+		ImageView avatar = (ImageView) findViewById(R.id.imgAvatar);
+		TextView name = (TextView) findViewById(R.id.txtName);
+		TextView country = (TextView) findViewById(R.id.txtCountry);
+		TextView site = (TextView) findViewById(R.id.txtSite);
+		TextView blog = (TextView) findViewById(R.id.txtBolg);
+		TextView tags = (TextView) findViewById(R.id.txtTags);
+		TextView about = (TextView) findViewById(R.id.txtAbout);
+		
 		list = new ThoundsList(this);
 
 		userId = getIntent().getExtras()!=null?getIntent().getExtras().getInt("userId"):-1;
@@ -88,19 +100,21 @@ public class ProfileActivity extends CommonActivity{
 
 		TabSpec spec1=tabHost.newTabSpec("info");
 		spec1.setContent(R.id.tab1);
-		spec1.setIndicator("info", getResources().getDrawable(android.R.drawable.ic_menu_info_details));
+		spec1.setIndicator("info", getResources().getDrawable(R.drawable.tab_info));
 
 		TabSpec spec2=tabHost.newTabSpec("library");
-		spec2.setIndicator("library", getResources().getDrawable(android.R.drawable.ic_menu_more));
+		spec2.setIndicator("library", getResources().getDrawable(R.drawable.tab_library));
 		spec2.setContent(R.id.tab2);
 
 		TabSpec spec3=tabHost.newTabSpec("contacts");
-		spec3.setIndicator("contacts", getResources().getDrawable(android.R.drawable.ic_menu_sort_by_size));
+		spec3.setIndicator("contacts", getResources().getDrawable(R.drawable.tab_contacts));
 		spec3.setContent(R.id.tab3);
 
 		tabHost.addTab(spec1);
 		tabHost.addTab(spec2);
 		tabHost.addTab(spec3);
+		
+		
 		//-----------------TAB LISTNER ----------------------------------------
 		tabHost.setOnTabChangedListener(new OnTabChangeListener(){
 
@@ -127,16 +141,15 @@ public class ProfileActivity extends CommonActivity{
 					showDialog(DIALOG_RETRIEVING_THOUNDS);
 				}
 			}
-
 		});
 
-		
+		//---------------- Request User Info ----------------------------
 		try {
 			if(userId == -1)
-				user = RequestWrapper.loadUserProfile();
+				user = Thounds.loadUserProfile();
 			else{
 				Log.d("ID",""+userId);
-				user = RequestWrapper.loadGenericUserProfile(userId);
+				user = Thounds.loadGenericUserProfile(userId);
 			}
 		} catch (ThoundsConnectionException e1) {
 			// TODO Auto-generated catch block
@@ -147,23 +160,31 @@ public class ProfileActivity extends CommonActivity{
 			// TODO Auto-generated catch block
 			//e1.printStackTrace();
 			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
+		} catch (ThoundsNotAuthenticatedexception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
+		//------- Setting Header ------------------------
+		Button logout = (Button) findViewById(R.id.btn_logout);
+		logout.setOnClickListener(new OnClickListener() {
 
-		ImageView avatar = (ImageView) findViewById(R.id.imgAvatar);
-		TextView name = (TextView) findViewById(R.id.txtName);
-		TextView country = (TextView) findViewById(R.id.txtCountry);
-		TextView site = (TextView) findViewById(R.id.txtSite);
-		TextView blog = (TextView) findViewById(R.id.txtBolg);
-		TextView tags = (TextView) findViewById(R.id.txtTags);
-		TextView about = (TextView) findViewById(R.id.txtAbout);
+			public void onClick(View v) {
+				StopNotification();
+				logout();
+			}
+		});
+		
+		TextView userName = (TextView) findViewById(R.id.UserName);
+		userName.setText(user.getName());
 
+		//--------------- Setting User Info -----------------------
 		if(user.getAvatarUrl()!=null)
 			avatar.setImageDrawable(new ImageFromUrl(user.getAvatarUrl()).getDrawable());
 		name.setText(user.getName());
 		country.setText(user.getCountry()+", "+user.getCity());
 		site.setText(user.getSiteUrl()!=null?user.getSiteUrl():"--");
-		//blog.setText(user.getBlog()!=null?user.getBlog():"--");
+		//blog.setText(user.!=null?user.getBlog():"--");
 		about.setText(user.getAbout()!=null?user.getAbout():"--");
 		if( user.getTagList() != null){
 			String[] tagList = user.getTagList();
@@ -189,6 +210,7 @@ public class ProfileActivity extends CommonActivity{
 			}
 		} catch (IllegalThoundsObjectException e) {
 			// TODO Auto-generated catch block
+			Log.d("Profile Activity - getDefaultThound", "IllegalThoundsObjectException");
 			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 			//e.printStackTrace();
 		}
@@ -200,9 +222,9 @@ public class ProfileActivity extends CommonActivity{
 		try {
 			ThoundWrapper[] ths;
 			if (userId == -1){
-				ths = RequestWrapper.loadUserLibrary().getThoundsList();	
+				ths = Thounds.loadUserLibrary().getThoundsList();	
 			}else{
-				ths = RequestWrapper.loadGenericUserLibrary(userId, 1, 20).getThoundsList();
+				ths = Thounds.loadGenericUserLibrary(userId, 1, 20).getThoundsList();
 			}
 			Drawable[] imgs = new Drawable[ths.length];
 			for(int i = 0; i < ths.length; i++){
@@ -218,19 +240,20 @@ public class ProfileActivity extends CommonActivity{
 			// TODO Auto-generated catch block
 			showDialog(DIALOG_ALERT_CONNECTION);
 			e.printStackTrace();
+		} catch (ThoundsNotAuthenticatedexception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
 		runOnUiThread(list.getReturnRes());
-
 	}
 
 	private void retrievedContacts() {
 		try {
 
 			if (userId == -1)
-				band = RequestWrapper.loadUserBand();
+				band = Thounds.loadUserBand();
 			else
-				band = RequestWrapper.loadGenericUserBand(userId);
+				band = Thounds.loadGenericUserBand(userId);
 		} catch (ThoundsConnectionException e) {
 			// TODO Auto-generated catch block
 			showDialog(DIALOG_ALERT_CONNECTION);
@@ -239,10 +262,11 @@ public class ProfileActivity extends CommonActivity{
 			// TODO Auto-generated catch block
 			showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 			e.printStackTrace();
+		} catch (ThoundsNotAuthenticatedexception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
 		runOnUiThread(returnRes);
-
 	}
 
 	private Runnable returnRes = new Runnable() {
@@ -266,8 +290,6 @@ public class ProfileActivity extends CommonActivity{
 					showDialog(DIALOG_ILLEGAL_THOUNDS_OBJECT);
 					e.printStackTrace();
 				}
-
-
 			}
 			dismissDialog(DIALOG_RETRIEVING_THOUNDS);
 
@@ -334,7 +356,9 @@ public class ProfileActivity extends CommonActivity{
 	public void onItemClick(View v){
 		list.onItemClick(v);
 	}
-	
+	//==================================================================================================
+	//===============================================ADAPTER===================================================
+
 	private class ContactsAdapter extends ArrayAdapter<HashMap<String,Object>> {
 
 		private ArrayList<HashMap<String,Object>> items;

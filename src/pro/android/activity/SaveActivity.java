@@ -4,8 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.thounds.thoundsapi.RequestWrapper;
+import org.thounds.thoundsapi.Thounds;
 import org.thounds.thoundsapi.ThoundsConnectionException;
+import org.thounds.thoundsapi.ThoundsNotAuthenticatedexception;
 
 import pro.android.R;
 import android.app.Activity;
@@ -14,6 +15,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
@@ -21,6 +24,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.Media;
 import android.util.Log;
@@ -32,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
@@ -40,6 +45,8 @@ public class SaveActivity extends CommonActivity{
 	static int SELECT_IMAGE = 0;
 	static int TAKE_IMAGE = 1;
   
+	Context context;
+	Toast toast;
 	private TextView vTitle;
 	private TextView vTags;
 	private RadioGroup vGroup;
@@ -81,7 +88,9 @@ public class SaveActivity extends CommonActivity{
 		vSave = (ImageButton) findViewById(R.id.btn_save);
 		
 		Bundle extras = getIntent().getExtras();
-		duration = extras.getInt("duration");
+		duration = (int)extras.getLong("duration");
+		Log.d("duration",""+duration);
+	    context = getApplicationContext();
 
 		vTitle.setOnClickListener(new OnClickListener() {		
 			public void onClick(View v) {
@@ -105,11 +114,11 @@ public class SaveActivity extends CommonActivity{
 
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
 				if(checkedId == vPublic.getId()){
-					privacy = RequestWrapper.PUBLIC;
+					privacy = Thounds.PUBLIC;
 				}else if (checkedId == vContacts.getId()){
-					privacy = RequestWrapper.CONTACTS;
+					privacy = Thounds.CONTACTS;
 				}else if(checkedId == vPrivate.getId()){
-					privacy = RequestWrapper.PRIVATE;
+					privacy = Thounds.PRIVATE;
 				}else
 					privacy = null;
 			}
@@ -138,27 +147,26 @@ public class SaveActivity extends CommonActivity{
 		});
 
 		vSave.setOnClickListener(new OnClickListener() {
-
+			int duration = Toast.LENGTH_SHORT;
+			CharSequence text ="";
 			public void onClick(View v) {
 				title = vTitle.getText().toString();
 				tags = vTags.getText().toString();
 				if(vLocation.isChecked()){
 					locating();
 				}
-				if(privacy == null){
-					//dialog campo privacy obbligatorio
-				}else if(!title.equals("")){
-					try {
-						Log.d("thound upload", title);
-						boolean ris = RequestWrapper.createThound(title, tags, delay, offset, duration, privacy, 100, lat, lng, thoundPath, null);
-						if(ris)
-							Log.d("thound upload", "OK");
-						else Log.d("thound upload", "BAD");
-					} catch (ThoundsConnectionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						
-					}
+				if ( title.equals("")) {
+					text = "Title is required";
+					toast = Toast.makeText(context, text, duration);
+					toast.show();
+				}
+				if ( privacy == null ) {
+					text = "Privacy is required";
+					toast = Toast.makeText(context, text, duration);
+					toast.show();
+				} else {
+					showDialog(DIALOG_LOADING);
+					new Thread (uploadThound).start();
 				}
 			}
 		});
@@ -166,13 +174,15 @@ public class SaveActivity extends CommonActivity{
 
 
 	}
+	
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Uri selectedImage = null;
 		if (requestCode == SELECT_IMAGE && resultCode == Activity.RESULT_OK) {
-			Uri selectedImage = data.getData();
+			selectedImage = data.getData();
 			vCamera.setScaleType(ScaleType.FIT_XY);
 			vCamera.setImageURI(selectedImage);
-			coverPath = selectedImage.getPath();
 		} 
 		if (requestCode== TAKE_IMAGE && resultCode == Activity.RESULT_OK){
 			Bitmap x = (Bitmap) data.getExtras().get("data");
@@ -185,23 +195,28 @@ public class SaveActivity extends CommonActivity{
 			values.put(Images.Media.BUCKET_ID, "test");
 			values.put(Images.Media.DESCRIPTION, "test Image taken");
 			values.put(Images.Media.MIME_TYPE, "image/jpeg");
-			Uri selectedImage = getContentResolver().insert(Media.EXTERNAL_CONTENT_URI, values);
-
+			selectedImage = getContentResolver().insert(Media.EXTERNAL_CONTENT_URI, values);
+			
 			OutputStream outstream;
 			try {
 				outstream = getContentResolver().openOutputStream(selectedImage);
-
 				x.compress(Bitmap.CompressFormat.JPEG, 70, outstream);
-
 				outstream.close();
 			} catch (FileNotFoundException e) {
 				//
 			}catch (IOException e){
 				//
 			}
-			coverPath = selectedImage.getPath();	
 		}
-		Log.d("PHOTO", coverPath);
+	      Cursor cursor;
+	      if (selectedImage != null) {
+	    	 // now we get the path to the imagefile
+	    	cursor = getContentResolver().query(selectedImage, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
+	    	cursor.moveToFirst();
+	    	coverPath = cursor.getString(0);
+	    	cursor.close();
+	    	}	
+	      Log.d("PHOTO", coverPath);
 	}
 
 	private void locating(){
@@ -219,6 +234,31 @@ public class SaveActivity extends CommonActivity{
 	}
 
 
+	Runnable uploadThound = new Runnable(){
 
+		public void run() {
+			Looper.prepare();
+			boolean ris = false;
+			try {
+				Log.d("thound upload", title);
+				 ris = Thounds.createThound(title, tags, delay, offset, duration, privacy, 100, lat, lng, thoundPath, "3gp" , coverPath);
+			} catch (ThoundsConnectionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				
+			} catch (ThoundsNotAuthenticatedexception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(ris){
+				toast = Toast.makeText(context, "Done! Thound correctly uploaded", duration);
+			}
+			else {
+				toast = Toast.makeText(context, "Upload failure...", duration);
+			}
+			dismissDialog(DIALOG_LOADING);
+			toast.show();
+		}	
+	};
 
 }

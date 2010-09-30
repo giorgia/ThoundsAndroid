@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout android:id="@+id/LinearLayout01" android:layout_width="fill_parent" android:layout_height="fill_parent"
-	xmlns:android="http://schemas.android.com/apk/res/android">
-	<include android:id="@+id/include01" android:layout_width="wrap_content" android:layout_height="wrap_content"
-		layout="@layout/request_list"></include>
-		
-</LinearLayout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent"
+	android:layout_width="fill_parent" android:id="@+id/NotificationsLayout" android:background="#878685">
+	<ListView android:layout_width="wrap_content" android:clickable="true" android:layout_height="wrap_content" android:choiceMode="singleChoice" android:focusableInTouchMode="true" android:transcriptMode="alwaysScroll" android:headerDividersEnabled="true" android:id="@+id/friendshipList"></ListView><ListView android:layout_width="wrap_content" android:clickable="true" android:layout_height="wrap_content" android:choiceMode="singleChoice" android:focusableInTouchMode="true" android:transcriptMode="alwaysScroll" android:headerDividersEnabled="true" android:id="@+id/newLineList"></ListView>
+
+
+</RelativeLayout>
